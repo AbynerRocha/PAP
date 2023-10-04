@@ -1,7 +1,8 @@
 import fastify from 'fastify'
 import { addUser, getAllUsers } from './controllers/UserController'
-import mongoose from 'mongoose'
 import { UserData } from './@types/User'
+import './database'
+
 
 const server = fastify()
 
@@ -23,8 +24,10 @@ server.get('/add-user', async (req, eep) => {
     return JSON.stringify(registered)
 })
 
-server.get('/users', async (req, eep) => {
-    return JSON.stringify(getAllUsers())
+server.get('/users', async (req, rep) => {
+    const users = await getAllUsers()
+    
+    return JSON.stringify(users)
 })
 
 
@@ -34,15 +37,6 @@ server.listen({ port: 8080 }, (err, address) => {
         process.exit(1)
     }
 
-    mongoose.connect('mongodb://root:passwd@0.0.0.0:27017/')
-        .then(() => {
-            console.log("[√] Database connected")
-            console.log(`Server listening at ${address}`)
-
-        })
-        .catch((err) => {
-            console.error("[X] An error occurred when connecting to the database")
-            console.error(err);
-
-        })
+    console.log('[√] Server online ' + address);
+    
 })

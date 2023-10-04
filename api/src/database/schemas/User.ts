@@ -11,10 +11,6 @@ const userSchema = new Schema<UserData>({
     createdAt: { type: Date, defualt: Date.now() }
 })
 
-const User = model('User', userSchema)
-
-User.on('save', () => {
-    
-})
+const User = model('users', userSchema)
 
 export { User }
