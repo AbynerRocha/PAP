@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { UserData } from "../../@types/User";
 import { User } from "../../database/schemas/User";
 import bcrypt from 'bcrypt'
@@ -21,7 +22,7 @@ export async function thisUserExists(id: string | null, email?: string) {
     return false
 }
 
-export function addUser(user: UserData) {
+export function addUser(user: Omit<UserData, '_id'>) {
     return new Promise<Omit<UserData, 'password'>>(async (resolve, reject) => {
         const exists = await thisUserExists(null, user.email)
 
@@ -42,7 +43,7 @@ export function addUser(user: UserData) {
 
         userRegistered.save().then(() => {
             const dataToReturn = {
-                id: userRegistered._id,
+                _id: userRegistered._id,
                 name: userRegistered.name,
                 email: userRegistered.email,
                 avatar: userRegistered?.avatar,
@@ -54,7 +55,6 @@ export function addUser(user: UserData) {
         })
     })
 }
-
 
 export function delUser(id: string) {
     return new Promise<boolean>(async (resolve, reject) => {

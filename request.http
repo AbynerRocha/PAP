@@ -1,5 +1,9 @@
-POST http://localhost:8080/user/register
+POST http://localhost:8080/user/auth/login
+content-type: application/json
+
 
 {
-    "prefix": "Teste"
+    "name": "admin",
+    "email": "admin@evotraining.com",
+    "password": "teste"
 }

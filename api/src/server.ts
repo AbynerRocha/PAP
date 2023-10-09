@@ -1,9 +1,9 @@
 import fastify from 'fastify'
-import { addUser, getAllUsers } from './controllers/UserController'
-import { UserData } from './@types/User'
 import './database'
 import { Users } from './routes/user'
+import dotenv from 'dotenv'
 
+dotenv.config()
 
 const server = fastify()
 
