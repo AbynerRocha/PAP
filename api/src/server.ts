@@ -2,6 +2,7 @@ import fastify from 'fastify'
 import './database'
 import { Users } from './routes/user'
 import dotenv from 'dotenv'
+import { saveDataFromJSONToDB } from './controllers/Exercises'
 
 dotenv.config()
 
@@ -20,5 +21,4 @@ server.listen({ port: 8080 }, (err, address) => {
     }
 
     console.log('[√] Server online ' + address);
-    
 })

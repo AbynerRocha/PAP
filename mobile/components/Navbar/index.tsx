@@ -1,10 +1,7 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
-import Home from '../../app/(tabs)/home'
-import Charts from '../../app/(tabs)/charts'
-import Settings from '../../app/(tabs)/settings'
-import Workouts from '../../app/(tabs)/workouts'
+import { useApp } from '../../contexts/App/AppContext'
 
 export type Tabs = 'home' | 'workout' | 'evolution' | 'settings'
 
@@ -14,6 +11,7 @@ type NavbarProps = {
 
 export default function Navbar({ onSelectTab }: NavbarProps) {
   const [tabSelected, setTab] = useState<'home' | 'workout' | 'evolution' | 'settings'>('home')
+  const { setTabSelected } = useApp()
 
   const tabs: { name: string; key: 'home' | 'workout' | 'evolution' | 'settings' }[] = [
     { name: 'Inicio', key: 'home' },
@@ -25,14 +23,7 @@ export default function Navbar({ onSelectTab }: NavbarProps) {
 
 
   useEffect(() => {
-    if (!onSelectTab) return
-
-    const Component = tabSelected === 'home' ? Home 
-    : tabSelected === 'workout' ? Workouts 
-    : tabSelected === 'evolution' ? Charts 
-    : Settings
-
-    onSelectTab(<Component/>)
+    setTabSelected(tabSelected)
   }, [tabSelected])
 
   return (

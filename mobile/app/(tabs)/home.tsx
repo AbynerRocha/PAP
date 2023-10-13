@@ -6,6 +6,8 @@ import dayjs from 'dayjs'
 import workoutData, { WeekWorkouts } from '../../tests/calendar/data'
 import getDaysOfWeek from '../../utils/getDaysOfWeek'
 import { FontAwesome } from '@expo/vector-icons';
+import { useAuth } from '../../contexts/Auth/AuthContext'
+import { useRouter } from 'expo-router'
 
 
 export default function Home() {
@@ -14,6 +16,9 @@ export default function Home() {
   const [weekWorkout, setWeekWorkout] = useState<WeekWorkouts[]>(workoutData)
   const [workout, setWorkout] = useState(weekWorkout.find((w) => dayjs(w.date).isSame(weekDaySelected.date, 'date')))
   const [animVisible, setAnimVisible] = useState(true)
+  
+  const { user } = useAuth()
+  const router = useRouter()
 
   function handlerClickCalendar(day: { date: Date; day: string; weekday: string; weekDayId: number; today: boolean }) {
     if (weekDaySelected?.date === day.date) return
