@@ -22,14 +22,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        loadData()
+        loadData().finally(() => setTimeout(() => setIsLoading(false), 1500))
     }, [])
 
     function loadData() {
         return new Promise(async (resolve, reject) => {
             try {
                 const userData = await getUserDataStoraged()
-    
+                
+                if(userData === null) return 
+
                 setUser(userData.user)
                 setRefreshToken(refreshToken)
                 setAuthToken(authToken)

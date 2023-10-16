@@ -4,9 +4,12 @@ import { useApp } from '../contexts/App/AppContext'
 import { AnimatePresence, MotiView } from 'moti'
 import Header from '../components/Header'
 import Navbar from '../components/Navbar'
+import { useAuth } from '../contexts/Auth/AuthContext'
+import Loading from './loading'
 
 export default function App() {
   const { getTabComponent } = useApp()
+  const { isLoading } = useAuth()
   const [makeAnim, setMakeAnim] = useState(true)
 
   useEffect(() => {
@@ -18,9 +21,11 @@ export default function App() {
   }, [getTabComponent])
 
   const tab = getTabComponent()
+  
+  if(isLoading) return <Loading/>
 
   return (
-    <View className='h-full w-full'>
+   <View className='h-full w-full'>
       <Header />
       <Navbar/>
       {makeAnim &&

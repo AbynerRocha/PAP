@@ -25,8 +25,8 @@ export async function haveAnyDataStorage(key: string) {
 export async function getUserDataStoraged() {
     try {
         const data = await AsyncStorage.getItem(userKey)
-        if(data === null) throw new Error("This key '"+userKey+"' dont have any data")
-
+        if(data === null) return null
+        
         const userLocalData: UserLocalStorageData = JSON.parse(data)
 
         return userLocalData
@@ -37,7 +37,7 @@ export async function getUserDataStoraged() {
 
 export async function saveUserDataToStorage(data: UserLocalStorageData) {
     try {
-        AsyncStorage.setItem(userKey, data.toString())
+        AsyncStorage.setItem(userKey, JSON.stringify(data))
 
         return true
     } catch(error: any) {
