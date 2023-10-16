@@ -35,7 +35,7 @@ const textVariant = tv({
       xl: 'text-xl'
     }
   },
-  defaultVariants: { text: 'dark', textSize: 'md' }
+  defaultVariants: { text: 'dark', textSize: 'lg' }
 })
 
 type ButtonProps = PressableProps & VariantProps<typeof button> & VariantProps<typeof textVariant> & { 

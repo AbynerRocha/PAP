@@ -14,7 +14,7 @@ export default function App() {
 
     setTimeout(() => {
       setMakeAnim(true)
-    }, 150)
+    }, 100)
   }, [getTabComponent])
 
   const tab = getTabComponent()

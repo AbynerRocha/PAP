@@ -1,10 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeysStorage, LocalStorage } from "../keys";
+import { UserData } from "../../@types/User";
 
 export type UserLocalStorageData = {
-    name: string
-    email: string
-    accessLevel: number
+    user: UserData
     refreshToken: string
     authToken: string
 }

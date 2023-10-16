@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios'
-import { saveUserDataToStorage } from "../../database/controller/user";
+import { getUserDataStoraged, saveUserDataToStorage } from "../../database/controller/user";
 import { UserData } from "../../@types/User";
 
 export type AuthContextData = {
@@ -9,6 +9,7 @@ export type AuthContextData = {
     authToken: string
     signIn: (email: string, password: string) => Promise<any>
     signOut: () => Promise<any>
+    isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
@@ -18,6 +19,27 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
     const [user, setUser] = useState<UserData | null>(null)
     const [refreshToken, setRefreshToken] = useState('')
     const [authToken, setAuthToken] = useState('')
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        loadData()
+    }, [])
+
+    function loadData() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const userData = await getUserDataStoraged()
+    
+                setUser(userData.user)
+                setRefreshToken(refreshToken)
+                setAuthToken(authToken)
+
+                resolve(true)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
 
     function signIn(email: string, password: string) {
         type Response = {
@@ -28,10 +50,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
 
         return new Promise(async (resolve, reject) => {
             try {
-                const req = await axios.post<Response>(backendUrl, { email, password })
+                const req = await axios.post<Response>(backendUrl+'user/auth/login', { email, password })
                 const { user, authToken, refreshToken } = req.data
 
-                saveUserDataToStorage({ name: user.name, email: user.email, accessLevel: user.accountType, authToken, refreshToken })
+                saveUserDataToStorage({ user, authToken, refreshToken })
                 setUser(req.data.user)
                 setAuthToken(authToken)
                 setRefreshToken(refreshToken)
@@ -49,7 +71,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
         })
     }
 
-    return <AuthContext.Provider value={{ user, signIn, signOut, refreshToken, authToken }}>
+    return <AuthContext.Provider value={{ user, signIn, signOut, refreshToken, authToken, isLoading }}>
         {children}
     </AuthContext.Provider>
 }
