@@ -1,11 +1,9 @@
-import { View, Text, TextInputProps, TextInput } from 'react-native'
-import React from 'react'
+import { TextInputProps } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 
-type InputProps = TextInputProps & {}
-
-export default function Input({className, ...rest}: InputProps) {
-  return <TextInput 
-  className={className}
-    {...rest}
-  />
+export default function Input({ ...rest }: TextInputProps) {
+    return <TextInput
+        className={rest.className}
+        {...rest}
+    />
 }

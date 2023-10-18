@@ -14,7 +14,7 @@ const button = tv({
     size: {
       sm: 'py-3 px-5 w-24 h-12',
       md: 'py-3 px-5 w-40 h-12',
-      lg: 'py-3 px-5 w-56 h-12',
+      lg: 'py-3 px-5 w-56 h-14',
       full: 'py-3 px-5, w-full h-12'
     }
   },
@@ -46,8 +46,10 @@ type ButtonProps = PressableProps & VariantProps<typeof button> & VariantProps<t
 
 export default function Button({ 
   children, 
-  className, 
-  textStyle, 
+  className,
+  size, 
+  textStyle,
+  textSize, 
   color, 
   text,
   ...rest 
@@ -55,10 +57,10 @@ export default function Button({
   
   return (
     <Pressable
-        className={twMerge(button({ color }) ,className)}
+        className={twMerge(button({ size, color }) ,className)}
         {...rest}
     >
-        {typeof children === 'string' ? <Text className={twMerge(textVariant({ text }), textStyle)}>{children}</Text> : children}
+        {typeof children === 'string' ? <Text className={twMerge(textVariant({ text, textSize }), textStyle)}>{children}</Text> : children}
         
     </Pressable>
   )

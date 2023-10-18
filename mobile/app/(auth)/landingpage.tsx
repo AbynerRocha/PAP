@@ -7,10 +7,10 @@ import Button from '../../components/Button'
 
 export default function Login() {
   const router = useRouter()
-  const { user } =  useAuth()
-  
+  const { user } = useAuth()
+
   useEffect(() => {
-    if(user !== null) {
+    if (user !== null) {
       router.replace('/')
       return
     }
@@ -27,16 +27,20 @@ export default function Login() {
         width={screenWidth}
         height={screenHeight}
       />
-      <View className='flex-row absolute top-2 ml-3 p-3'>
-        
-        <Text className='text-4xl font-bold italic text-neutral-50'>Evo</Text>
-        <Text className='text-4xl font-bold italic text-blue-700'>Training</Text>
+      <View className='flex-row items-center absolute top-0 p-3 w-full'>
+        <View className='bg-neutral-50 flex-row items-center p-2 rounded-xl w-fit'>
+
+          <View className='bg-blue-800 py-1 px-3 w-fit rounded-xl'>
+            <Text className='text-neutral-50 text-2xl font-bold italic'>Evo</Text>
+          </View>
+          <Text className='text-neutral-950 font-bold italic text-2xl'>Training</Text>
+        </View>
       </View>
       <View className='h-32 w-full bottom-0 absolute bg-neutral-100 rounded-t-2xl items-center justify-center space-y-3'>
-      <View className='absolute -top-12'>
+        <View className='absolute -top-12'>
           <Text className='font-semibold text-xl text-neutral-50 italic'>Aumente e Organize a sua Evolução</Text>
-      </View>
-        <Button 
+        </View>
+        <Button
           className='bg-blue-800 rounded-lg w-[60%] h-11 flex-row items-center justify-center'
         >
           <Link

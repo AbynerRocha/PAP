@@ -11,7 +11,7 @@ export default function Layout() {
     <QueryClientProvider client={clientQuery}>
         <AppProvider>
             <AuthProvider>
-              <View className={Platform.OS === 'android' ? 'mt-10 h-screen w-screen' : 'h-screen w-screen'}>
+              <View className={Platform.OS === 'android' ? 'mt-8 h-screen w-screen' : 'h-screen w-screen'}>
                 <Slot/>
               </View>
             </AuthProvider>

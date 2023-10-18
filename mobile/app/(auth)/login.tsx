@@ -57,8 +57,7 @@ export default function Login() {
         resolve(true)
       })
       .catch((err: AxiosError<any>) => {
-        console.log(err.response);
-        
+
         switch(err.response?.data.error) {
           case 'MISSING_DATA': 
             setError('root', { message: err.response?.data.message })

@@ -13,7 +13,7 @@ export type AuthContextData = {
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
-const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL!
+export const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL!
 
 const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNode[] }) => {
     const [user, setUser] = useState<UserData | null>(null)
@@ -22,7 +22,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        loadData().finally(() => setTimeout(() => setIsLoading(false), 1500))
+        loadData().finally(() => setIsLoading(false))
     }, [])
 
     function loadData() {
@@ -30,7 +30,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
             try {
                 const userData = await getUserDataStoraged()
                 
-                if(userData === null) return 
+                if(userData === null) return reject() 
 
                 setUser(userData.user)
                 setRefreshToken(refreshToken)
