@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios'
-import { getUserDataStoraged, saveUserDataToStorage } from "../../database/controller/user";
+import { deleteUserDataFromStorage, getUserDataStoraged, saveUserDataToStorage } from "../../database/controller/user";
 import { UserData } from "../../@types/User";
 
 export type AuthContextData = {
@@ -69,7 +69,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
 
     function signOut() {
         return new Promise((resolve, reject) => {
+            if(user === null) return reject()
 
+            deleteUserDataFromStorage()
+            setUser(null)
+            setAuthToken('')
+            setRefreshToken('')
+
+            resolve(true)
         })
     }
 

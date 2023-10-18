@@ -1,7 +1,9 @@
-export type KeysStorage = {
-    [key: string]: string
-}
 
-export const LocalStorage: KeysStorage = {
-    USER: '@user'
+
+export const LocalStorage = {
+    USER: '@user',
+    WORKOUT: {
+        WORKOUTS_SAVED: '@w_saved.user',
+        HISTORY: '@w_history.user'
+    }
 }

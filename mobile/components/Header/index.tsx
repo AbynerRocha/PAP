@@ -24,7 +24,7 @@ export default function Header() {
                             ? 'Bom dia,' : userHour >= 12 && userHour <= 18
                                 ? 'Boa Tarde,' : 'Boa noite,'
                     }</Text>
-                    <Text className='text-neutral-900 text-xl font-bold'>{user.name}</Text>
+                    <Text className='text-neutral-900 text-xl font-bold'>{user.name.includes(" ") ? user.name.split(' ')[0] : user.name}</Text>
                 </View>
             </> 
             : 

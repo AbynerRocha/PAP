@@ -8,6 +8,7 @@ import getDaysOfWeek from '../../utils/getDaysOfWeek'
 import { FontAwesome } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { useRouter } from 'expo-router'
+import Modal from '../../components/Modal'
 
 
 export default function Home() {
@@ -84,6 +85,7 @@ export default function Home() {
           </View>
         </View>
       </View>
+      
     </View>
   )
 }

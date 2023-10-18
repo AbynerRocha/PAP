@@ -5,16 +5,22 @@ import Charts from "../../app/(tabs)/charts";
 import Workouts from "../../app/(tabs)/workouts";
 import Settings from "../../app/(tabs)/settings";
 
+type BgTranslucentState = 'show' | 'hide'
+
 type AppContextData = {
     tab: Tabs
     getTabComponent: () => React.ReactNode 
     setTabSelected: (tab: Tabs) => void
+    setBGTranslucent: (state: BgTranslucentState) => void
+    stateBgTranslucent: BgTranslucentState
 }
+
 
 const AppContext = createContext<AppContextData>({} as AppContextData)
 
 function AppProvider({ children }: { children: React.ReactNode }) {
     const [tab, setTab] = useState<Tabs>('home')
+    const [stateBgTranslucent, setStateBgTranslucent] = useState<BgTranslucentState>('hide')
 
     function getTabComponent() {
         switch(tab) {
@@ -35,7 +41,19 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         setTab(tabs)
     }
 
-    return <AppContext.Provider value={{ tab, getTabComponent, setTabSelected }}>
+    function disableNav() {
+        
+    }
+    
+    function enableNav() {
+
+    }
+
+    function setBGTranslucent(state: BgTranslucentState) {
+        setStateBgTranslucent(state)
+    }
+
+    return <AppContext.Provider value={{ tab, getTabComponent, setTabSelected, setBGTranslucent, stateBgTranslucent }}>
         {children}
     </AppContext.Provider>
 }
