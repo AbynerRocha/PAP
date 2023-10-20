@@ -5,6 +5,7 @@ import { UserData } from "../../@types/User";
 
 export type AuthContextData = {
     user: UserData | null
+    setUser: (user: UserData) => void
     refreshToken: string
     authToken: string
     signIn: (email: string, password: string) => Promise<any>
@@ -80,7 +81,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
         })
     }
 
-    return <AuthContext.Provider value={{ user, signIn, signOut, refreshToken, authToken, isLoading }}>
+    return <AuthContext.Provider value={{ user, signIn, signOut, setUser, refreshToken, authToken, isLoading }}>
         {children}
     </AuthContext.Provider>
 }

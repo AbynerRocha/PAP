@@ -1,13 +1,15 @@
 import { View, Text, Pressable } from 'react-native'
 import React from 'react'
-import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/Auth/AuthContext';
 import { Link, useRouter } from 'expo-router';
 import Avatar from '../Avatar';
+import { useApp } from '../../contexts/App/AppContext';
 
 export default function Header() {
     const userHour = new Date().getHours()
     const { user } = useAuth()
+    const { setTabSelected } = useApp()
     const router = useRouter()
 
     return (
@@ -24,7 +26,16 @@ export default function Header() {
                             ? 'Bom dia,' : userHour >= 12 && userHour <= 18
                                 ? 'Boa Tarde,' : 'Boa noite,'
                     }</Text>
-                    <Text className='text-neutral-900 text-xl font-bold'>{user.name.includes(" ") ? user.name.split(' ')[0] : user.name}</Text>
+                    <View className='flex-row space-x-1 items-center'>
+                        <Text className='text-neutral-900 text-xl font-bold'>{user.name.includes(" ") ? user.name.split(' ')[0] : user.name}</Text>
+                        {user.verified === false && <Pressable
+                            onPress={() => {
+                                setTabSelected('settings')
+                            }}
+                        >
+                            <Ionicons name="alert-circle" size={20} color="red" />
+                        </Pressable>}
+                    </View>
                 </View>
             </> 
             : 

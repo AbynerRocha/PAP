@@ -153,9 +153,9 @@ export default function Login() {
               color='blue'
               textSize='lg'
               onPress={handleSubmit((data) => onSubmit(data)) }
-              disabled={isLoading}
+              isLoading={isLoading}
             >
-              {isLoading ? <ActivityIndicator color='white' size={30} /> : 'Entrar'}
+              Entrar
             </Button>
           </View>
 

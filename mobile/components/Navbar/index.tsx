@@ -11,7 +11,7 @@ type NavbarProps = {
 
 export default function Navbar({ onSelectTab }: NavbarProps) {
   const [tabSelected, setTab] = useState<'home' | 'workout' | 'evolution' | 'settings'>('home')
-  const { setTabSelected } = useApp()
+  const { setTabSelected, tab } = useApp()
 
   const tabs: { name: string; key: 'home' | 'workout' | 'evolution' | 'settings' }[] = [
     { name: 'Inicio', key: 'home' },
@@ -20,11 +20,9 @@ export default function Navbar({ onSelectTab }: NavbarProps) {
     { name: 'Definições', key: 'settings' },
   ]
 
-
-
   useEffect(() => {
-    setTabSelected(tabSelected)
-  }, [tabSelected])
+    setTab(tab)
+  }, [tab])
 
   return (
     <View className='flex-row h-18 w-full mt-4'>
@@ -35,6 +33,7 @@ export default function Navbar({ onSelectTab }: NavbarProps) {
             className={twMerge('px-4 py-1 h-9 items-center justify-center', (tabSelected === tab.key && 'bg-blue-800 rounded-3xl'), (idx === arr.length-1 && 'mr-8'))}
             onPress={() => {
               setTab(tab.key)
+              setTabSelected(tab.key)
             }}
           >
             <Text className={twMerge('text-md font-semibold', (tabSelected === tab.key ? 'text-neutral-50' : 'text-neutral-950'))}>{tab.name}</Text>

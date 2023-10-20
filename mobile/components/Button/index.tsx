@@ -1,4 +1,4 @@
-import { View, Text, PressableProps, Pressable } from 'react-native'
+import { View, Text, PressableProps, Pressable, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { twMerge } from 'tailwind-merge'
 import { tv, VariantProps } from 'tailwind-variants'
@@ -18,7 +18,7 @@ const button = tv({
       full: 'py-3 px-5, w-full h-12'
     }
   },
-  defaultVariants: { size: 'lg', color: 'blue' }
+  defaultVariants: { size: 'md', color: 'blue' }
 })
 
 const textVariant = tv({
@@ -35,13 +35,14 @@ const textVariant = tv({
       xl: 'text-xl'
     }
   },
-  defaultVariants: { text: 'dark', textSize: 'lg' }
+  defaultVariants: { text: 'dark', textSize: 'md' }
 })
 
 type ButtonProps = PressableProps & VariantProps<typeof button> & VariantProps<typeof textVariant> & { 
     children: string | React.ReactNode
     textStyle?: string
     className?: string
+    isLoading?: boolean
 }
 
 export default function Button({ 
@@ -52,15 +53,21 @@ export default function Button({
   textSize, 
   color, 
   text,
+  isLoading,
   ...rest 
 }: ButtonProps) {
   
   return (
     <Pressable
         className={twMerge(button({ size, color }) ,className)}
+        disabled={isLoading}
         {...rest}
     >
-        {typeof children === 'string' ? <Text className={twMerge(textVariant({ text, textSize }), textStyle)}>{children}</Text> : children}
+        {!isLoading 
+        ? typeof children === 'string' 
+        ? <Text className={twMerge(textVariant({ text, textSize }), textStyle)}>{children}</Text> 
+        : children
+        : <ActivityIndicator size={20} color='white' />}
         
     </Pressable>
   )

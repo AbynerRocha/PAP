@@ -12,7 +12,7 @@ export default function Layout() {
       <AppProvider>
         <AuthProvider>
             <View className={Platform.OS === 'android' ? 'mt-8 h-screen w-screen' : 'h-screen w-screen'}>
-              <StatusBar barStyle='dark-content' translucent />
+              <StatusBar barStyle='dark-content' backgroundColor='white' />
                 <Slot />
             </View>
         </AuthProvider>
