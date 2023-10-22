@@ -2,7 +2,7 @@
 import { Schema, model } from 'mongoose'
 import { UserData } from '../../@types/User'
 
-export const userSchema = new Schema<UserData>({
+const userSchema = new Schema<UserData>({
     name: { type: String, required: true }, 
     email: { type: String, required: true }, 
     password: { type: String, required: true },

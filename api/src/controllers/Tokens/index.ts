@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken'
 import env from '../../env'
 import { Types } from 'mongoose'
+import { TokensBlackList } from '../../database/schemas/Token'
 
 // Refresh Token
 
-const refreshTokenDuration = '30d'
+const refreshTokenDuration = '7d'
 const secretRefreshToken = process.env.SECRET_JWT_REFRESH ?? env.SECRET_JWT_REFRESH
 
 export function generateRefreshToken(userId: Types.ObjectId) {
@@ -17,7 +18,10 @@ export function generateRefreshToken(userId: Types.ObjectId) {
     return token
 }
 
-export function validateRefreshToken(token: string) {
+export async function validateRefreshToken(token: string) {
+    const blToken = await TokensBlackList.findOne({ token })
+    if(blToken !== null) return null
+
     try {
         const decoded = jwt.verify(token, secretRefreshToken) as { sub: string };
         return decoded.sub;
@@ -42,7 +46,10 @@ export function generateAuthToken(userId: Types.ObjectId, accessLevel: number) {
     return token
 }
 
-export function validateAuthToken(token: string) {
+export async function validateAuthToken(token: string) {
+    const blToken = await TokensBlackList.findOne({ token })
+    if(blToken !== null) return null
+    
     try {
         const decoded = jwt.verify(token, secretAuthToken) as { sub: string; accessLevel: number };
         return decoded;

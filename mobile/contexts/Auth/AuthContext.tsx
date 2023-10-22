@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { deleteUserDataFromStorage, getUserDataStoraged, saveUserDataToStorage } from "../../database/controller/user";
 import { UserData } from "../../@types/User";
 
@@ -71,6 +71,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
     function signOut() {
         return new Promise((resolve, reject) => {
             if(user === null) return reject()
+
+            const url = backendUrl+`user/auth/signout?rf=${refreshToken}&at=${authToken}`
+            
+            axios.delete(url)
+            .catch((err: AxiosError<any>) => {
+                console.log(err.response);
+                reject()
+            })
 
             deleteUserDataFromStorage()
             setUser(null)

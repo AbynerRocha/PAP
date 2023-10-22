@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../../components/Input'
@@ -8,8 +8,9 @@ import validator from 'validator'
 import { Link, useRouter } from 'expo-router'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { AxiosError } from 'axios'
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { MotiView } from 'moti'
+
 
 type Inputs = {
   email: string
@@ -20,12 +21,13 @@ export default function Login() {
   const { control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<Inputs>({ defaultValues: { email: '', password: '' } })
   const [showingKeyboard, setShowingKeyboard] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showingPassword, setShowingPassword] = useState(false)
 
   const { signIn, user } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if(user !== null) {
+    if (user !== null) {
       router.replace('/')
       return
     }
@@ -42,39 +44,39 @@ export default function Login() {
     }
   }
 
-  function validateData({ email, password }: Inputs) {    
+  function validateData({ email, password }: Inputs) {
     return new Promise((resolve, reject) => {
       if (!validator.isEmail(email)) {
         reject({ name: 'email', message: 'O email inserido não é válido.' })
         return
-      }      
+      }
 
       signIn(email, password)
-      .then(() => {
-        router.replace('/')
+        .then(() => {
+          router.replace('/')
 
-        clearErrors()
-        resolve(true)
-      })
-      .catch((err: AxiosError<any>) => {
+          clearErrors()
+          resolve(true)
+        })
+        .catch((err: AxiosError<any>) => {
 
-        switch(err.response?.data.error) {
-          case 'MISSING_DATA': 
-            setError('root', { message: err.response?.data.message })
-          
-          case 'USER_NOT_FOUND': 
-            setError('email', { message: err.response?.data.message }, { shouldFocus: true })
-            break
-          case 'WRONG_PASSWORD':
-            setError('password', { message: err.response?.data.message }, { shouldFocus: true })
-            break
-          default:
-            setError('root', { message: 'Houve um erro desconhecido. Tente novamente mais tarde.'})
-            break
-        }
+          switch (err.response?.data.error) {
+            case 'MISSING_DATA':
+              setError('root', { message: err.response?.data.message })
 
-        reject()
-      })      
+            case 'USER_NOT_FOUND':
+              setError('email', { message: err.response?.data.message }, { shouldFocus: true })
+              break
+            case 'WRONG_PASSWORD':
+              setError('password', { message: err.response?.data.message }, { shouldFocus: true })
+              break
+            default:
+              setError('root', { message: 'Houve um erro desconhecido. Tente novamente mais tarde.' })
+              break
+          }
+
+          reject()
+        })
     })
   }
 
@@ -86,8 +88,8 @@ export default function Login() {
   }
 
   return (
-    <KeyboardAvoidingView className='flex-1' behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View className={twMerge('h-screen w-screen bg-neutral-50 space-y-5 items-center', (!showingKeyboard && ' justify-center transition duration-300 ease-linear'))}>
+    <KeyboardAvoidingView className='flex-1 bg-neutral-50' behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View className={twMerge('h-screen w-screen bg-neutral-50 space-y-5 items-center', (!showingKeyboard ? ' justify-center' : 'pt-10'))}>
         <View className='w-[76%] space-y-1'>
           <Text className='text-neutral-950 font-bold text-4xl'>Login</Text>
           <Text className='text-neutral-400 font-medium font-lg'>Insira os seus dados abaixo para ter acesso a aplicação</Text>
@@ -97,7 +99,7 @@ export default function Login() {
           <Controller
             name='email'
             control={control}
-            rules={{ required: { value: true, message: 'Este campo é obrigatório!'} }}
+            rules={{ required: { value: true, message: 'Este campo é obrigatório!' } }}
             render={({ field: { onChange, onBlur, value } }) => {
               return (<View className='w-[76%] items-center space-y-2 mb-5'>
                 <View className='w-full items-start '>
@@ -123,21 +125,26 @@ export default function Login() {
           <Controller
             name='password'
             control={control}
-            rules={{ required: { value: true, message: 'Este campo é obrigatório!'} }}
+            rules={{ required: { value: true, message: 'Este campo é obrigatório!' } }}
             render={({ field: { onChange, onBlur, value } }) => {
-              return (<View className='w-[76%] items-center space-y-1 mb-1'>
+              return (<View className='w-[76%] items-center space-y-1 mb-5'>
                 <View className='w-full items-start '>
                   <Text className='text-neutral-600'>Senha</Text>
                 </View>
-                <Input
-                  className='border-b border-b-blue-700 w-full p-2'
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  secureTextEntry
-                  value={value}
-                  placeholderTextColor='rgb(190 190 190)'
-                  placeholder='Digite aqui'
-                />
+                <View className='w-full h-fit flex-row border-b border-b-blue-700 items-center'>
+                  <Input
+                    className=' w-[85%] p-2'
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                    placeholderTextColor='rgb(190 190 190)'
+                    placeholder='Digite aqui'
+                    secureTextEntry={!showingPassword}
+                  />
+                  <Pressable className='p-2 items-center justify-center' onPress={() => setShowingPassword((v) => !v)}>
+                    <Ionicons className='w-full h-full' name={showingPassword ? 'eye-off' : 'eye'} color='black' size={24} />
+                  </Pressable>
+                </View>
                 <View className='w-full items-start'>
                   {errors.password && <Text className='text-sm text-red-600'>{errors.password.message}</Text>}
                 </View>
@@ -152,7 +159,7 @@ export default function Login() {
             <Button
               color='blue'
               textSize='lg'
-              onPress={handleSubmit((data) => onSubmit(data)) }
+              onPress={handleSubmit((data) => onSubmit(data))}
               isLoading={isLoading}
             >
               Entrar
@@ -160,11 +167,11 @@ export default function Login() {
           </View>
 
           {errors.root && (
-            <MotiView 
+            <MotiView
               from={{
                 opacity: 0
               }}
-              animate={{ 
+              animate={{
                 opacity: 1
               }}
               transition={{

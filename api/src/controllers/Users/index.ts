@@ -3,11 +3,6 @@ import { UserData } from "../../@types/User";
 import { User } from "../../database/schemas/User";
 import bcrypt from 'bcrypt'
 
-export async function getAllUsers() {
-    const user = await User.find()
-    return user
-}
-
 export async function thisUserExists(id: string | null, email?: string) {
     if(id) {
         const exists = await User.exists({ _id: id })
@@ -56,7 +51,7 @@ export function addUser(user: Omit<UserData, '_id'>) {
     })
 }
 
-export function delUser(id: string) {
+export function deleteUser(id: string) {
     return new Promise<boolean>(async (resolve, reject) => {
         const exists = await thisUserExists(id)
     
@@ -79,3 +74,17 @@ export function delUser(id: string) {
     })
 }
 
+type UpdateData = {
+    [K in keyof Omit<UserData, '_id'>]?: UserData[K]
+}
+
+export async function updateUser(id: Types.ObjectId, updateData: UpdateData) {
+    return new Promise((resolve, reject) => {
+        const updatedUser = User.findOneAndUpdate({ _id: id }, updateData)
+        .then((data) => {
+            data?.save()
+            resolve(true)
+        })
+        .catch((err) => reject(err))
+    })
+} 

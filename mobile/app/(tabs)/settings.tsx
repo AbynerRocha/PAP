@@ -11,15 +11,13 @@ export default function Settings() {
   const { user, signOut } = useAuth()
   const router = useRouter()
 
-  if (!user) return
-
   return (
     <View className='w-full h-full '>
       <View className='mb-2 mx-5'>
         <Text className='text-3xl font-bold'>Definições</Text>
       </View>
       <View className='h-0.5 w-full bg-neutral-100 mb-4' />
-      <View className='space-y-4 justify-center mx-5 mb-3'>
+      {user && <View className='space-y-4 justify-center mx-5 mb-3'>
         <View className='flex-row space-x-4 items-center'>
           <Avatar fallback={{ userName: user.name }} />
           <View className='flex-col w-[50%]'>
@@ -40,7 +38,7 @@ export default function Settings() {
           <Text className='text-sm text-neutral-50'>O seu email ainda não foi verificado.</Text>
           <Link className='text-sm text-neutral-50 font-semibold' href='/(auth)/verifyemail'>Clique aqui para verificar</Link>
         </View>}
-      </View>
+      </View>}
       <View className='h-0.5 w-full bg-neutral-100 mb-4' />
 
     </View>

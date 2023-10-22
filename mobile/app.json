@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "evotraining",
     "slug": "evotraining",
-    "scheme": "mobile",
+    "scheme": "evotraining",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,6 +20,17 @@
       "bundleIdentifier": "com.evotraining.app"
     },
     "android": {
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+
+            }
+          ]
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -40,6 +51,6 @@
         "projectId": "76149d8c-30de-40b4-b399-885201318e37"
       }
     },
-    "owner": "ghostgostoso"
+    "owner": "abrocha"
   }
 }

@@ -27,7 +27,6 @@ export default function App() {
 
   return (
     <View className='h-screen w-screen'>
-        
         <Header />
         <Navbar />
         {makeAnim &&

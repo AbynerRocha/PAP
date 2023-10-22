@@ -1,8 +1,7 @@
 import fastify from 'fastify'
 import './database'
-import { Users } from './routes/user'
+import { Users } from './routes/routes'
 import dotenv from 'dotenv'
-import { saveDataFromJSONToDB } from './controllers/Exercises'
 
 dotenv.config()
 
