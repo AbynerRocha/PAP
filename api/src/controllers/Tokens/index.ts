@@ -20,7 +20,7 @@ export function generateRefreshToken(userId: Types.ObjectId) {
 
 export async function validateRefreshToken(token: string) {
     const blToken = await TokensBlackList.findOne({ token })
-    if(blToken !== null) return null
+    if (blToken !== null) return null
 
     try {
         const decoded = jwt.verify(token, secretRefreshToken) as { sub: string };
@@ -48,10 +48,39 @@ export function generateAuthToken(userId: Types.ObjectId, accessLevel: number) {
 
 export async function validateAuthToken(token: string) {
     const blToken = await TokensBlackList.findOne({ token })
-    if(blToken !== null) return null
-    
+    if (blToken !== null) return null
+
     try {
         const decoded = jwt.verify(token, secretAuthToken) as { sub: string; accessLevel: number };
+        return decoded;
+    } catch (error) {
+        return null; // Token inválido ou expirado
+    }
+}
+
+// Tokens Links
+
+const secretLinkToken = process.env.SECRET_JWT_LINK ?? env.SECRET_JWT_LINK
+
+export async function generateLinkToken(type: 'reset-pass' | 'verify-email', userId?: string) {
+    var token
+    switch (type) {
+        case 'reset-pass':
+            token = jwt.sign({ type }, secretLinkToken, { expiresIn: '2h' })
+            break
+        case 'verify-email':
+            token = jwt.sign({ type, userId }, secretLinkToken, { expiresIn: '12h' })
+            break
+    }
+    return token
+}
+
+export async function validateLinkToken(token: string) {
+    const blToken = await TokensBlackList.findOne({ token })
+    if (blToken !== null) return null
+
+    try {
+        const decoded = jwt.verify(token, secretAuthToken) as { sub: string; type: 'reset-pass' | 'verify-email' };
         return decoded;
     } catch (error) {
         return null; // Token inválido ou expirado

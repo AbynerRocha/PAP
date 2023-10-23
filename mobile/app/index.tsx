@@ -12,7 +12,7 @@ export default function App() {
   const { getTabComponent } = useApp()
   const { isLoading } = useAuth()
   const [makeAnim, setMakeAnim] = useState(true)
-
+  
   useEffect(() => {
     setMakeAnim(false)
 

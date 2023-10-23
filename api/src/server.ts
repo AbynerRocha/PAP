@@ -1,6 +1,6 @@
 import fastify from 'fastify'
 import './database'
-import { Users } from './routes/routes'
+import { Tokens, Users } from './routes/routes'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -12,6 +12,7 @@ server.get('/', async (request, reply) => {
 })
 
 server.register(Users, { prefix: '/user'})
+server.register(Tokens, { prefix: '/token'})
 
 server.listen({ port: 8080 }, (err, address) => {
     if (err) {

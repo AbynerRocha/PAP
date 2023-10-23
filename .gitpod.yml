@@ -1,0 +1,7 @@
+
+tasks:
+  - name: start database
+    command: docker start mongodb
+
+  - name: start api
+    command: cd api && yarn start
