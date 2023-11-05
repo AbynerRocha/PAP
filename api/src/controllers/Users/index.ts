@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { UserData } from "../../@types/User";
 import { User } from "../../database/schemas/User";
-import bcrypt from 'bcrypt'
+import bcrypt, { hashSync } from 'bcrypt'
 
 export async function thisUserExists(id: string | null, email?: string) {
     if(id) {
@@ -80,7 +80,7 @@ type UpdateData = {
 
 export async function updateUser(id: Types.ObjectId, updateData: UpdateData) {
     return new Promise((resolve, reject) => {
-        const updatedUser = User.findOneAndUpdate({ _id: id }, updateData)
+        User.findOneAndUpdate({ _id: id }, updateData)
         .then((data) => {
             data?.save()
             resolve(true)
@@ -88,3 +88,15 @@ export async function updateUser(id: Types.ObjectId, updateData: UpdateData) {
         .catch((err) => reject(err))
     })
 } 
+
+export function updateUserPassword(id: Types.ObjectId, newPassword: string) {
+    return new Promise((resolve, reject) => {
+        const hashPassword = hashSync(newPassword, 10)
+        User.findOneAndUpdate({ _id: id }, { password: hashPassword })
+        .then((data) => {
+            data?.save()
+            resolve(true)
+        })
+        .catch((err) => reject(err))
+    })
+}

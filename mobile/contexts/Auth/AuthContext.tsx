@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import axios, { AxiosError } from 'axios'
 import { deleteUserDataFromStorage, getUserDataStoraged, saveUserDataToStorage } from "../../database/controller/user";
 import { UserData } from "../../@types/User";
+import { Api } from "../../utils/Api";
 
 export type AuthContextData = {
     user: UserData | null
@@ -14,7 +15,6 @@ export type AuthContextData = {
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
-export const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL!
 
 const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNode[] }) => {
     const [user, setUser] = useState<UserData | null>(null)
@@ -53,7 +53,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
 
         return new Promise(async (resolve, reject) => {
             try {
-                const req = await axios.post<Response>(backendUrl+'user/auth/login', { email, password })
+                const req = await Api.post('user/auth/login', { email, password })
                 const { user, authToken, refreshToken } = req.data
 
                 saveUserDataToStorage({ user, authToken, refreshToken })
@@ -71,10 +71,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
     function signOut() {
         return new Promise((resolve, reject) => {
             if(user === null) return reject()
-
-            const url = backendUrl+`user/auth/signout?rf=${refreshToken}&at=${authToken}`
             
-            axios.delete(url)
+            Api.delete(`user/auth/signout?rf=${refreshToken}&at=${authToken}`)
             .catch((err: AxiosError<any>) => {
                 console.log(err.response);
                 reject()

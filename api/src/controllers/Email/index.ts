@@ -1,89 +1,82 @@
 import nodemailer from 'nodemailer'
-import fs from  'fs'
+import fs from 'fs'
 import { join } from 'path'
-import { generateLinkToken } from '../Tokens'
+import { Resend } from 'resend'
 
-const from = '"EvoTraining" <no-reply@evotraining.com>'
-const scheme = 'exp://dbjqgqg.abrocha.8081.exp.direct/--/'
+const from = 'evotraining@resend.dev'
 
-const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-        user: '04b8fbeb8b8a3a',
-        pass: '9b0e597af392a2'
-    }
-})
-
-type Template = 'reset-pass' | 'verify-email'
+type Template = 'reset-pass' | 'verify-email' | {
+}
 
 type SendEmailProps = {
     to: string
     subject: string
     html?: string
     template?: Template
+    data: any
 }
 
-export function getTemplate(template: Template, token: string) {
-    var htmlTemplate
+export default class EmailController {
+    private resend: Resend
 
-    switch(template) {
-        case 'reset-pass':
-            const resetPassTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'data', 'email', 'recoverypass_template.html'), 'utf-8')
-            htmlTemplate = resetPassTemplate.replace('{{linkToReset}}', `${scheme}(auth)/recoverypass/${token}`)
-
-            break
-        case 'verify-email':
-            const verifyEmailTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'data', 'email', 'recoverypass_template.html'), 'utf-8')
-            htmlTemplate = verifyEmailTemplate.replace('{{linkToVerify}}', `${scheme}(auth)/verifyemail/${token}`)
-            break
-        default:
-            return null
+    constructor() {
+        this.resend = new Resend(process.env.RESEND_API_KEY)
     }
 
+    getTemplate(template: Template, data: { token: string, emailCode?: string }) {
+        var htmlTemplate
 
-    return htmlTemplate
-}
+        switch (template) {
+            case 'reset-pass':
+                const resetPassTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'data', 'email', 'recoverypass_template.html'), 'utf-8')
+                htmlTemplate = resetPassTemplate.replace('{{linkToReset}}', `https://evotraining.pt/redirect?tkn=${data.token}&ty=rkp`)
+                break
+            case 'verify-email':
+                if (!data.emailCode) throw new Error("Email code is required in 'verify-email' template")
 
-export function sendEmail({ to, subject, html, template }: SendEmailProps) {
-    return new Promise(async (resolve, reject) => {
-        if(template) {
-            const token = await generateLinkToken(template)
+                const verifyEmailTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'data', 'email', 'verifyemail_template.html'), 'utf-8')
+                htmlTemplate = verifyEmailTemplate.replace('{{linkToVerify}}', `https://evotraining.pt/redirect?tkn=${data.token}&ty=ve`)
+                htmlTemplate = verifyEmailTemplate.replace('{{code}}', data.emailCode)
+                break
+            default:
+                return null
+        }
 
-            const templateHTML = getTemplate(template, token)
-            
-            if(templateHTML === null) return reject('Template not found')
-            
-            transporter.sendMail({
+
+        return htmlTemplate
+    }
+
+    send({ subject, to, template, html = '', data }: SendEmailProps) {
+        return new Promise(async (resolve, reject) => {
+            if (template) {
+                if (!data) return reject('Required data')
+
+                const templateHTML = this.getTemplate(template, data)
+
+                if (templateHTML === null) return reject('Template not found')
+
+                this.resend.emails.send({
+                    from: 'evotraining@resend.dev',
+                    to,
+                    subject,
+                    html: templateHTML
+                })
+
+                resolve(true)
+                return
+            }
+
+            this.resend.emails.send({
                 from,
                 to,
                 subject,
-                html: templateHTML
+                html
             })
-            .catch((err) => {
-                reject(err)
-            })
-    
+                .catch((err) => {
+                    reject(err)
+                })
+
             resolve(true)
-            return
-        }
-
-        transporter.sendMail({
-            from,
-            to,
-            subject,
-            html
         })
-        .catch((err) => {
-            reject(err)
-        })
-
-        resolve(true)
-    })
+    }
 }
-
-sendEmail({
-    to: 'admin@evotraining.com',
-    subject: 'Troque a sua senha.',
-    template: 'reset-pass'
-})

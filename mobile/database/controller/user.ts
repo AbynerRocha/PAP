@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { KeysStorage, LocalStorage } from "../keys";
+import { LocalStorage } from "../keys";
 import { UserData } from "../../@types/User";
 
 export type UserLocalStorageData = {

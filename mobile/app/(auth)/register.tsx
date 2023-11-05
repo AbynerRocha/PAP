@@ -9,8 +9,9 @@ import { AnimatePresence, MotiView } from 'moti'
 import axios, { AxiosError } from 'axios'
 import { UserData } from '../../@types/User'
 import isEmail from 'validator/lib/isEmail'
-import { backendUrl, useAuth } from '../../contexts/Auth/AuthContext'
+import { useAuth } from '../../contexts/Auth/AuthContext'
 import { useRouter } from 'expo-router'
+import { Api } from '../../utils/Api'
 
 type Fields = {
   name: string
@@ -50,9 +51,7 @@ export default function Register() {
         authToken: string
       }
 
-      const registerUrl = backendUrl + 'user/auth/register'
-
-      axios.post<Response>(registerUrl, { name: data.name, email: data.email.trim(), password: data.password })
+      Api.post<Response>('user/auth/register', { name: data.name, email: data.email.trim(), password: data.password })
         .then((req) => req.data)
         .then(() => {
           signIn(data.email, data.password)
@@ -63,6 +62,8 @@ export default function Register() {
             .catch((err) => { throw err })
         })
         .catch((err: AxiosError<{ error: string, message: string }>) => {
+          
+          console.log(err.response);
           switch (err.response?.data.error) {
             case 'MISSING_DATA':
               setError('root', { message: err.response?.data.message })

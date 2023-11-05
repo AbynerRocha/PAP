@@ -2,17 +2,19 @@ import fastify from 'fastify'
 import './database'
 import { Tokens, Users } from './routes/routes'
 import dotenv from 'dotenv'
+import EmailController from './controllers/Email'
+import { Resend } from 'resend'
 
 dotenv.config()
 
 const server = fastify()
 
-server.get('/', async (request, reply) => {
-    return 'OK\n'
+server.get('/', async (req, rep) => {
+    return rep.status(200).send({ ok: true })
 })
 
-server.register(Users, { prefix: '/user'})
-server.register(Tokens, { prefix: '/token'})
+server.register(Users, { prefix: '/user' })
+server.register(Tokens, { prefix: '/token' })
 
 server.listen({ port: 8080 }, (err, address) => {
     if (err) {

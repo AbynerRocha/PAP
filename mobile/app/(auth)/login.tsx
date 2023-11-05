@@ -153,7 +153,7 @@ export default function Login() {
             }}
           />
           <View className='w-[76%] items-end mb-5'>
-            <Link href='' className='font-sm text-blue-900 text-right'>Esqueceu a sua senha?</Link>
+            <Link href='/(auth)/recoverypass' className='font-sm text-blue-900 text-right'>Esqueceu a sua senha?</Link>
           </View>
           <View className='w-full items-center'>
             <Button

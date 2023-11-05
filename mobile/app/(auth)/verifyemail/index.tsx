@@ -1,13 +1,14 @@
 import { View, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { MotiView } from 'moti'
-import { backendUrl, useAuth } from '../../contexts/Auth/AuthContext'
+import { useAuth } from '../../../contexts/Auth/AuthContext'
 import { Controller, useForm } from 'react-hook-form'
-import Input from '../../components/Input'
-import Button from '../../components/Button'
-import axios, { Axios, AxiosError } from 'axios'
+import Input from '../../../components/Input'
+import Button from '../../../components/Button'
+import { AxiosError } from 'axios'
 import { useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
+import { Api } from '../../../utils/Api'
 
 type Fields = {
   code: string
@@ -21,7 +22,7 @@ export default function VerifyEmail() {
 
   function handleValidate(code: string) {
     return new Promise((resolve, reject) => {
-      axios.post(backendUrl + 'user/auth/verify-email', { code, userId: user?._id }, { headers: { Authorization: authToken } })
+      Api.post('user/auth/verify-email', { code, userId: user?._id }, { headers: { Authorization: authToken } })
         .then(() => {
           setUser({ ...user!, verified: true })
 
@@ -91,7 +92,7 @@ export default function VerifyEmail() {
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  className='border rounded-lg border border-neutral-950 w-[80%] h-12 p-2 text-center'
+                  className='border rounded-lg border-neutral-950 w-[80%] h-12 p-2 text-center'
                   placeholder='Digite aqui (xxxxx)'
                 />
               </View>

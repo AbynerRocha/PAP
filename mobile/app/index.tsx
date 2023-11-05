@@ -7,12 +7,17 @@ import Navbar from '../components/Navbar'
 import { useAuth } from '../contexts/Auth/AuthContext'
 import Loading from './loading'
 import Modal from '../components/Modal'
+import { generateID, isFirstLaunch } from '../database/controller/device'
 
 export default function App() {
   const { getTabComponent } = useApp()
   const { isLoading } = useAuth()
   const [makeAnim, setMakeAnim] = useState(true)
-  
+
+  useEffect(() => {
+    checkIfIsFirstLaunch()
+  }, [])
+
   useEffect(() => {
     setMakeAnim(false)
 
@@ -24,6 +29,14 @@ export default function App() {
   const tab = getTabComponent()
 
   if (isLoading) return <Loading />
+
+  async function checkIfIsFirstLaunch() {
+    const firstLaunch = await isFirstLaunch()
+
+    if(firstLaunch) {
+      generateID()      
+    }
+  }
 
   return (
     <View className='h-screen w-screen'>

@@ -4,6 +4,7 @@ import Home from "../../app/(tabs)/home";
 import Charts from "../../app/(tabs)/charts";
 import Workouts from "../../app/(tabs)/workouts";
 import Settings from "../../app/(tabs)/settings";
+import { getId } from "../../database/controller/device";
 
 type BgTranslucentState = 'show' | 'hide'
 
@@ -11,8 +12,7 @@ type AppContextData = {
     tab: Tabs
     getTabComponent: () => React.ReactNode 
     setTabSelected: (tab: Tabs) => void
-    setBGTranslucent: (state: BgTranslucentState) => void
-    stateBgTranslucent: BgTranslucentState
+    getDeviceId: () => Promise<string>
 }
 
 
@@ -49,11 +49,15 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
     }
 
-    function setBGTranslucent(state: BgTranslucentState) {
-        setStateBgTranslucent(state)
+    async function getDeviceId() {
+        const deviceId = await getId()
+
+        if(deviceId === null) throw new Error('There is no device ID. Generate one')
+
+        return deviceId
     }
 
-    return <AppContext.Provider value={{ tab, getTabComponent, setTabSelected, setBGTranslucent, stateBgTranslucent }}>
+    return <AppContext.Provider value={{ tab, getTabComponent, setTabSelected, getDeviceId }}>
         {children}
     </AppContext.Provider>
 }

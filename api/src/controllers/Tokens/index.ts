@@ -62,16 +62,8 @@ export async function validateAuthToken(token: string) {
 
 const secretLinkToken = process.env.SECRET_JWT_LINK ?? env.SECRET_JWT_LINK
 
-export async function generateLinkToken(type: 'reset-pass' | 'verify-email', userId?: string) {
-    var token
-    switch (type) {
-        case 'reset-pass':
-            token = jwt.sign({ type }, secretLinkToken, { expiresIn: '2h' })
-            break
-        case 'verify-email':
-            token = jwt.sign({ type, userId }, secretLinkToken, { expiresIn: '12h' })
-            break
-    }
+export async function generateLinkToken(type: 'reset-pass' | 'verify-email' | 'request-rp', data: any) {
+    const token = jwt.sign({ type, data }, secretLinkToken, { expiresIn: (type === 'reset-pass' ? '2h' : '12h') })
     return token
 }
 
@@ -80,7 +72,7 @@ export async function validateLinkToken(token: string) {
     if (blToken !== null) return null
 
     try {
-        const decoded = jwt.verify(token, secretAuthToken) as { sub: string; type: 'reset-pass' | 'verify-email' };
+        const decoded = jwt.verify(token, secretLinkToken) as { sub: string; type: 'reset-pass' | 'verify-email', userId: Types.ObjectId };
         return decoded;
     } catch (error) {
         return null; // Token inválido ou expirado
