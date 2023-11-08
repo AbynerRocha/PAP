@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { MotiView } from 'moti'
 import { useAuth } from '../../../contexts/Auth/AuthContext'
@@ -9,16 +9,37 @@ import { AxiosError } from 'axios'
 import { useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import { Api } from '../../../utils/Api'
+import { useApp } from '../../../contexts/App/AppContext'
 
 type Fields = {
   code: string
 }
 
 export default function VerifyEmail() {
+  const router = useRouter()
   const { user, setUser, authToken } = useAuth()
+  const { getDeviceId } = useApp()
   const { control, setValue, formState: { errors }, setError, handleSubmit } = useForm<Fields>()
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [disabledBtn, setDisabledBtn] = useState(false)
+  const [timeToResend, setTimeToResend] = useState(30)
+
+  useEffect(() => {
+    if(disabledBtn === false) return 
+    var time = timeToResend
+    
+    const timer = setInterval(() => {
+      if(time === 0) {
+        clearInterval(timer)
+        setDisabledBtn(false)
+      } 
+      
+      time = time - 1
+      setTimeToResend(time)
+    }, 1000)
+
+  }, [disabledBtn])
+
 
   function handleValidate(code: string) {
     return new Promise((resolve, reject) => {
@@ -51,6 +72,23 @@ export default function VerifyEmail() {
 
     handleValidate(data.code)
     .finally(() => setIsLoading(false))
+  }
+
+  async function handleRequestSendEmail() {
+    return new Promise(async (resolve, reject) => {
+      setDisabledBtn(true)
+      const deviceId = await getDeviceId()
+  
+      Api.post('/user/email/r/verify-email', { userId: user?._id }, { headers: { 'device-id': deviceId }})
+      .then(() => {
+        setDisabledBtn(true)
+        
+        resolve(true)
+      })
+      .catch((err: AxiosError) => {
+        reject(err.response?.data)
+      })
+    })
   }
 
   return (
@@ -108,6 +146,22 @@ export default function VerifyEmail() {
         >
           Verificar
         </Button>
+
+        <View className='my-4'>
+          <Text className='text-neutral-950 text-center'>Não recebeu o email?</Text> 
+          <Pressable
+            disabled={disabledBtn}
+            onPress={() => {
+              setTimeToResend(60)
+
+              handleRequestSendEmail()
+              .catch((err) => console.log(err.response)
+              )
+            }}
+          >
+            <Text className='font-semibold text-neutral-950 text-center'>{disabledBtn ? timeToResend  + ' segundos' : 'Clique aqui para reenviar'}</Text>
+          </Pressable>
+        </View>
 
         {errors.root && (
             <MotiView 

@@ -4,11 +4,11 @@ import { User } from "../../database/schemas/User";
 import bcrypt, { hashSync } from 'bcrypt'
 
 export async function thisUserExists(id: string | null, email?: string) {
-    if(id) {
+    if (id) {
         const exists = await User.exists({ _id: id })
 
         return !!exists
-    } else if(email) {
+    } else if (email) {
         const exists = await User.exists({ email })
 
         return !!exists
@@ -31,7 +31,7 @@ export function addUser(user: Omit<UserData, '_id'>) {
         }
 
         const { password, ...userWithouPass } = user
-        
+
         const hashPass = bcrypt.hashSync(password, 10)
 
         const userRegistered = new User({ password: hashPass, ...userWithouPass })
@@ -54,8 +54,8 @@ export function addUser(user: Omit<UserData, '_id'>) {
 export function deleteUser(id: string) {
     return new Promise<boolean>(async (resolve, reject) => {
         const exists = await thisUserExists(id)
-    
-        if(!exists) {
+
+        if (!exists) {
             reject({
                 error: 'USER_NOT_FOUND',
                 status: 404,
@@ -65,12 +65,12 @@ export function deleteUser(id: string) {
         }
 
         User.deleteOne({ _id: id })
-        .then(() => resolve(true))
-        .catch((err) => reject({
-            error: err.message,
-            status: 500,
-            message: 'Não foi possivel realizar está ação.'
-        }))
+            .then(() => resolve(true))
+            .catch((err) => reject({
+                error: err.message,
+                status: 500,
+                message: 'Não foi possivel realizar está ação.'
+            }))
     })
 }
 
@@ -79,24 +79,29 @@ type UpdateData = {
 }
 
 export async function updateUser(id: Types.ObjectId, updateData: UpdateData) {
-    return new Promise((resolve, reject) => {
-        User.findOneAndUpdate({ _id: id }, updateData)
-        .then((data) => {
-            data?.save()
-            resolve(true)
-        })
-        .catch((err) => reject(err))
-    })
-} 
 
-export function updateUserPassword(id: Types.ObjectId, newPassword: string) {
     return new Promise((resolve, reject) => {
-        const hashPassword = hashSync(newPassword, 10)
-        User.findOneAndUpdate({ _id: id }, { password: hashPassword })
+        let hashPassword = ''
+
+        if (updateData.password) {
+            hashPassword = hashSync(updateData.password, 10)
+            console.log(hashPassword);
+            
+            User.findOneAndUpdate({ _id: id }, { password: hashPassword, ...updateData })
+                .then((data) => {
+                    data?.save().then((d) => resolve(d))
+                    .catch((err) => reject(err))
+                })
+                .catch((err) => reject(err))
+            return
+        }
+
+        User.findOneAndUpdate({ _id: id }, { ...updateData })
         .then((data) => {
             data?.save()
             resolve(true)
         })
         .catch((err) => reject(err))
+
     })
 }

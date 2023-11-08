@@ -6,7 +6,7 @@ import { Api } from "../../utils/Api";
 
 export type AuthContextData = {
     user: UserData | null
-    setUser: (user: UserData) => void
+    setUser: (data: UserData) => void
     refreshToken: string
     authToken: string
     signIn: (email: string, password: string) => Promise<any>
@@ -30,8 +30,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
         return new Promise(async (resolve, reject) => {
             try {
                 const userData = await getUserDataStoraged()
-                
-                if(userData === null) return reject() 
+
+                if (userData === null) return reject()
 
                 setUser(userData.user)
                 setRefreshToken(refreshToken)
@@ -70,13 +70,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode | React.ReactNod
 
     function signOut() {
         return new Promise((resolve, reject) => {
-            if(user === null) return reject()
-            
+            if (user === null) return reject()
+
             Api.delete(`user/auth/signout?rf=${refreshToken}&at=${authToken}`)
-            .catch((err: AxiosError<any>) => {
-                console.log(err.response);
-                reject()
-            })
+                .catch((err: AxiosError<any>) => {
+                    reject()
+                })
 
             deleteUserDataFromStorage()
             setUser(null)

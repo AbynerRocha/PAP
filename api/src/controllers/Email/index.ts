@@ -3,7 +3,7 @@ import fs from 'fs'
 import { join } from 'path'
 import { Resend } from 'resend'
 
-const from = 'evotraining@resend.dev'
+const from = 'EvoTraining <no-reply@evotraining.pt>'
 
 type Template = 'reset-pass' | 'verify-email' | {
 }
@@ -35,8 +35,7 @@ export default class EmailController {
                 if (!data.emailCode) throw new Error("Email code is required in 'verify-email' template")
 
                 const verifyEmailTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'data', 'email', 'verifyemail_template.html'), 'utf-8')
-                htmlTemplate = verifyEmailTemplate.replace('{{linkToVerify}}', `https://evotraining.pt/redirect?tkn=${data.token}&ty=ve`)
-                htmlTemplate = verifyEmailTemplate.replace('{{code}}', data.emailCode)
+                htmlTemplate = verifyEmailTemplate.replace('{{linkToVerify}}', `https://evotraining.pt/redirect?tkn=${data.token}&ty=ve`).replace('{{code}}', data.emailCode)
                 break
             default:
                 return null
@@ -56,7 +55,7 @@ export default class EmailController {
                 if (templateHTML === null) return reject('Template not found')
 
                 this.resend.emails.send({
-                    from: 'evotraining@resend.dev',
+                    from,
                     to,
                     subject,
                     html: templateHTML

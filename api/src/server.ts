@@ -1,6 +1,6 @@
 import fastify from 'fastify'
 import './database'
-import { Tokens, Users } from './routes/routes'
+import { Exercises, Tokens, Users } from './routes/routes'
 import dotenv from 'dotenv'
 import EmailController from './controllers/Email'
 import { Resend } from 'resend'
@@ -15,6 +15,7 @@ server.get('/', async (req, rep) => {
 
 server.register(Users, { prefix: '/user' })
 server.register(Tokens, { prefix: '/token' })
+server.register(Exercises, { prefix: '/exercise' })
 
 server.listen({ port: 8080 }, (err, address) => {
     if (err) {

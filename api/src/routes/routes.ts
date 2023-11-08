@@ -36,4 +36,21 @@ async function Tokens(app: FastifyInstance, _opts: FastifyPluginOptions, done: a
     }
 }
 
-export { Users, Tokens }
+async function Exercises(app: FastifyInstance, _opts: FastifyPluginOptions, done: any) {
+    const path = join(__dirname, 'exercises')
+    const routes = fs.readdirSync(path)
+    
+    for (const paths of routes) {
+        const routePath = join(path, paths)
+        const routeFiles = fs.readdirSync(routePath)
+
+        for(const file of routeFiles) {
+            const filePath = join(routePath,file)
+            const route = require(filePath)
+            
+            app.route(route)
+        }
+    }
+}
+
+export { Users, Tokens, Exercises }

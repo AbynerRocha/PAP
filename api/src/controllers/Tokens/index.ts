@@ -72,7 +72,7 @@ export async function validateLinkToken(token: string) {
     if (blToken !== null) return null
 
     try {
-        const decoded = jwt.verify(token, secretLinkToken) as { sub: string; type: 'reset-pass' | 'verify-email', userId: Types.ObjectId };
+        const decoded = jwt.verify(token, secretLinkToken) as { sub: string; type: 'reset-pass' | 'verify-email', data: Types.ObjectId };
         return decoded;
     } catch (error) {
         return null; // Token inválido ou expirado

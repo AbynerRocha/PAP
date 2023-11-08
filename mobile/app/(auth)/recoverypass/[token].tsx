@@ -86,13 +86,11 @@ export default function RecoveryPassword() {
           setSuccess(true)
           setTimeout(() => {
             setTabSelected('settings')
-            router.replace('/')
+            router.replace('/(auth)/login')
           }, 3000)
           resolve(true)
         })
         .catch((err: AxiosError<any>) => {
-          console.log(err.response?.headers);
-          
           setError('root', { message: err.response?.data.message })
           reject()
         })
