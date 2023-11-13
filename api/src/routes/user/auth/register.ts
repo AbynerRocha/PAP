@@ -41,7 +41,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     name,
     email,
     password,
-    accountType: 1,
+    accessLevel: 1,
     createdAt: new Date(),
     verified: false,
     emailCode: emailVerifyCode

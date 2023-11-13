@@ -1,4 +1,5 @@
 import { Schema, Types, model } from "mongoose";
+import { User } from "./User";
 
 const ExerciseSchema = new Schema({
     name: { type: String, required: true },

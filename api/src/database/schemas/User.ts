@@ -7,7 +7,7 @@ const userSchema = new Schema<UserData>({
     email: { type: String, required: true }, 
     password: { type: String, required: true },
     avatar: { type: String, required: false },
-    accountType: { type: Number, required: true, default: 1 },
+    accessLevel: { type: Number, required: true, default: 1 },
     createdAt: { type: Date, defualt: Date.now() },
     verified: { type: Boolean, default: false },
     emailCode: { type: String }

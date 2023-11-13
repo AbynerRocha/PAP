@@ -1,12 +1,14 @@
 import { Schema, Types } from "mongoose"
 
+export type AccessLevel = 1 | 2 | 3
+
 export type UserData = {
     _id: Types.ObjectId
     name: string
     email: string
     password: string
     avatar?: string
-    accountType: 1 | 2 | 3
+    accessLevel: AccessLevel
     createdAt: Date
     verified?: boolean
     emailCode?: string

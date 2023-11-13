@@ -21,23 +21,25 @@ async function handler(req: FastifyRequest<{ Body: { email: string; password: st
     })
 
     const exists = await thisUserExists(null, email)
-    const userTryingLogin = await User.findOne({ email })
+    let userPassword = await User.findOne({ email }).select('password')
 
-    if (!exists || userTryingLogin === null) return rep.status(404).send({
+    if (!exists || userPassword === null) return rep.status(404).send({
         error: 'USER_NOT_FOUND',
         message: 'Utilizador inexistente'
     })
 
-    if (!compareSync(password, userTryingLogin.password)) return rep.status(401).send({
+    if (!compareSync(password, userPassword.password)) return rep.status(401).send({
         error: 'WRONG_PASSWORD',
         message: 'Senha incorreta.'
     })
 
-    const authToken = generateAuthToken(userTryingLogin.id, userTryingLogin.accountType)
-    const refreshToken = generateRefreshToken(userTryingLogin.id)
+    const userData = await User.findOne({ email }).select('-password')
+
+    const authToken = generateAuthToken(userData?.id, userData!.accessLevel)
+    const refreshToken = generateRefreshToken(userData?.id)
 
     return rep.status(200).send({
-        user: userTryingLogin,
+        user: userData,
         refreshToken,
         authToken
     })

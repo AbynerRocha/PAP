@@ -2,12 +2,13 @@ import fastify from 'fastify'
 import './database'
 import { Exercises, Tokens, Users } from './routes/routes'
 import dotenv from 'dotenv'
-import EmailController from './controllers/Email'
-import { Resend } from 'resend'
+import cors from '@fastify/cors'
 
 dotenv.config()
 
 const server = fastify()
+
+server.register(cors)
 
 server.get('/', async (req, rep) => {
     return rep.status(200).send({ ok: true })

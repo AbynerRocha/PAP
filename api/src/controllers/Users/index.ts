@@ -43,7 +43,7 @@ export function addUser(user: Omit<UserData, '_id'>) {
                 email: userRegistered.email,
                 avatar: userRegistered?.avatar,
                 createdAt: userRegistered.createdAt,
-                accountType: userRegistered.accountType
+                accessLevel: userRegistered.accessLevel
             }
 
             resolve(dataToReturn)

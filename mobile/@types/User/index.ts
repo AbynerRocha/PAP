@@ -4,7 +4,7 @@ export type UserData = {
     name: string
     email: string
     avatar?: string
-    accountType: 1 | 2 | 3
+    accessLevel: 1 | 2 | 3
     createdAt: Date
     verified: boolean
 }

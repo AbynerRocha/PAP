@@ -23,8 +23,8 @@ export async function validateRefreshToken(token: string) {
     if (blToken !== null) return null
 
     try {
-        const decoded = jwt.verify(token, secretRefreshToken) as { sub: string };
-        return decoded.sub;
+        const decoded = jwt.verify(token, secretRefreshToken) as { sub: string, userId: Types.ObjectId };
+        return decoded;
     } catch (error) {
         return null; // Token inválido ou expirado
     }
@@ -51,7 +51,7 @@ export async function validateAuthToken(token: string) {
     if (blToken !== null) return null
 
     try {
-        const decoded = jwt.verify(token, secretAuthToken) as { sub: string; accessLevel: number };
+        const decoded = jwt.verify(token, secretAuthToken) as { sub: string; userId: Types.ObjectId, accessLevel: number };
         return decoded;
     } catch (error) {
         return null; // Token inválido ou expirado
@@ -72,7 +72,7 @@ export async function validateLinkToken(token: string) {
     if (blToken !== null) return null
 
     try {
-        const decoded = jwt.verify(token, secretLinkToken) as { sub: string; type: 'reset-pass' | 'verify-email', data: Types.ObjectId };
+        const decoded = jwt.verify(token, secretLinkToken) as { sub: string; type: 'reset-pass' | 'verify-email', data: any };
         return decoded;
     } catch (error) {
         return null; // Token inválido ou expirado
