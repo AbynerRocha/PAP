@@ -22,7 +22,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     if(exercisesFound === null) return rep.status(404).send({
         error: 'NOT_FOUND',
-        message: 'Não foi possivel encontrar exercícios deste muscúlo.'
+        message: 'Não foi possivel encontrar exercícios deste Músculo.'
     })
 
     return rep.status(200).send({

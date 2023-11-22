@@ -32,8 +32,17 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     const exercise = new ExerciseController()
 
-    exercise.create({ name, difficulty, image, muscle, createdBy })
-    .then(() => {
+    Exercise.create({
+        name,
+        muscle,
+        image,
+        createdBy,
+        createdAt: new Date()
+    }).then((data) => {
+        data?.save()
+        .then((d) => console.log(d))
+        .catch((err) => err)
+
         return rep.status(201).send()
     })
     .catch((err) => {
@@ -41,7 +50,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
             error: err.name,
             message: 'Não foi possivel realizar está ação neste momento.'
         })
-    })
+    })   
 }
 
 export { method, url, handler }
