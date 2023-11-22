@@ -1,5 +1,5 @@
 import { Schema, Types, model } from "mongoose";
-import { User } from "./User";
+import { User, userSchema } from "./User";
 
 const ExerciseSchema = new Schema({
     name: { type: String, required: true },
@@ -7,7 +7,7 @@ const ExerciseSchema = new Schema({
     difficulty: { type: Number, required: true, min: 1, max: 5 },
     image: { type: String, required: true },
     createdAt: { type: String, default: new Date() },
-    createdBy: { type: String, required: true }
+    createdBy: { type: userSchema, required: true }
 })
 
 const Exercise = model('exercises', ExerciseSchema)

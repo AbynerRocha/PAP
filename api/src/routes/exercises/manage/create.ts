@@ -30,22 +30,21 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         message: `Este exercicio '${exists.name}' já existe!`
     })
 
-    const exercise = new ExerciseController()
-
     Exercise.create({
         name,
         muscle,
         image,
         createdBy,
+        difficulty,
         createdAt: new Date()
     }).then((data) => {
         data?.save()
-        .then((d) => console.log(d))
-        .catch((err) => err)
 
         return rep.status(201).send()
     })
     .catch((err) => {
+        console.log(err);
+        
         return rep.status(500).send({
             error: err.name,
             message: 'Não foi possivel realizar está ação neste momento.'

@@ -2,10 +2,10 @@
 import { Schema, model } from 'mongoose'
 import { UserData } from '../../@types/User'
 
-const userSchema = new Schema<UserData>({
+export const userSchema = new Schema<UserData>({
     name: { type: String, required: true }, 
     email: { type: String, required: true }, 
-    password: { type: String, required: true },
+    password: { type: String },
     avatar: { type: String, required: false },
     accessLevel: { type: Number, required: true, default: 1 },
     createdAt: { type: Date, defualt: Date.now() },

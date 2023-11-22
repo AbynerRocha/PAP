@@ -85,7 +85,6 @@ export async function updateUser(id: Types.ObjectId, updateData: UpdateData) {
 
         if (updateData.password) {
             hashPassword = hashSync(updateData.password, 10)
-            console.log(hashPassword);
             
             User.findOneAndUpdate({ _id: id }, { password: hashPassword, ...updateData })
                 .then((data) => {
