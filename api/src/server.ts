@@ -1,6 +1,6 @@
 import fastify from 'fastify'
 import './database'
-import { Exercises, Tokens, Users } from './routes/routes'
+import routes from './routes/routes'
 import dotenv from 'dotenv'
 import cors from '@fastify/cors'
 
@@ -14,9 +14,7 @@ server.get('/', async (req, rep) => {
     return rep.status(200).send({ ok: true })
 })
 
-server.register(Users, { prefix: '/user' })
-server.register(Tokens, { prefix: '/token' })
-server.register(Exercises, { prefix: '/exercise' })
+routes.map((route) => server.register(route.plugin, { prefix: route.prefix }))
 
 server.listen({ port: 8080 }, (err, address) => {
     if (err) {

@@ -18,8 +18,10 @@ type WorkoutsPreviewData = {
 
 export default function Workouts() {
   const [workouts, setWorkouts] = useState<WorkoutsPreviewData[]>([
-    { name: 'Teste 1', author: { name: 'Pedro Ribeiro' }, dificultyRate: 3, saves: 10011111110, numberOfExercises: 12 }
+    { name: 'Teste 1', author: { name: 'Pedro Ribeiro' }, dificultyRate: 3, saves: 10000, numberOfExercises: 12 }
   ])
+
+  const formatter = Intl.NumberFormat('pt', { notation: 'compact' })
 
   const [filterApplied, setFilterApplied] = useState<number>(0)
 
@@ -75,53 +77,10 @@ export default function Workouts() {
         </View>
       </View>
 
-      <View className='flex-1 items-center mt-4'>
-        {workouts.map((workout, idx) => {
-          return (
-            <View key={idx} className='w-[88%] flex-row space-x-5 rounded-2xl bg-neutral-100 h-28 p-3 items-start'>
-              <View className='h-full w-fit justify-center'>
-                <View className='bg-neutral-300 rounded-full w-14 h-14' />
-              </View>
-
-              <View className='w-full h-full'>
-                <View>
-                  <Text className='text-lg font-semibold'>{workout.name}</Text>
-                  <Text className='text-xs font-medium text-neutral-300'>{workout.numberOfExercises} exercícios</Text>
-                </View>
-
-                <View className='flex-1 flex-row items-end'>
-                  <View className='space-y-1'>
-                    <Text className='text-neutral-300 text-xs font-semibold'>Nivel de dificuldade</Text>
-                    <View className='flex-row space-x-1'>
-                      <FontAwesome5 name="dumbbell" size={13} color="#000000" />
-                      <FontAwesome5 name="dumbbell" size={13} color="#A3A3A3" />
-                      <FontAwesome5 name="dumbbell" size={13} color="#A3A3A3" />
-                      <FontAwesome5 name="dumbbell" size={13} color="#A3A3A3" />
-                      <FontAwesome5 name="dumbbell" size={13} color="#A3A3A3" />
-                    </View>
-                  </View>
-                  <View className='flex-col w-[35%] space-y-2 items-end'>
-                    <View className='items-start justify-start mb-3'>
-                      <View className='h-8 w-8 rounded-full bg-blue-200 items-center justify-center'>
-                      <FontAwesome name="star" size={16} color="black" />
-                      </View>
-                    </View>
-                    <View className='space-y-1 w-14 h-9'>
-                      <View className='flex-row space-x-1 items-center'>
-                        <FontAwesome name="cloud-download" size={15} color="#A3A3A3" />
-                        <Text className='text-gray-400 text-[11px]'>{formatNumber(workout.saves)}</Text>
-                      </View>
-                      <View className='flex-row space-x-1 items-center'>
-                        <MaterialCommunityIcons name="gender-male-female" size={15} color="#A3A3A3" />
-                        <Text className='text-gray-400 text-[11px]'>Unisex</Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-          )
-        })}
+      <View className='h-[84%] w-full'>
+        <Pressable className='absolute bottom-1 right-0 bg-blue-800 rounded-full h-16 w-16 mr-3 items-center justify-center shadow-md shadow-black/50'>
+          <FontAwesome name='plus' color='white' size={20} />
+        </Pressable>
       </View>
     </View>
   )

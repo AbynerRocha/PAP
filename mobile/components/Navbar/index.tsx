@@ -2,22 +2,30 @@ import { View, Text, ScrollView, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { useApp } from '../../contexts/App/AppContext'
+import { useRouter } from 'expo-router'
 
 export type Tabs = 'home' | 'workout' | 'evolution' | 'settings'
+
+type TabsData = { 
+  name: string; 
+  key: 'home' | 'workout' | 'evolution' | 'settings'
+  route: string 
+}
 
 type NavbarProps = {
   onSelectTab?: (component: React.ReactNode) => void
 }
 
 export default function Navbar({ onSelectTab }: NavbarProps) {
-  const [tabSelected, setTab] = useState<'home' | 'workout' | 'evolution' | 'settings'>('home')
+  const [tabSelected, setTab] = useState<Tabs>('home')
   const { setTabSelected, tab } = useApp()
+  const router = useRouter()
 
-  const tabs: { name: string; key: 'home' | 'workout' | 'evolution' | 'settings' }[] = [
-    { name: 'Inicio', key: 'home' },
-    { name: 'Treinos', key: 'workout' },
-    { name: 'Evolução', key: 'evolution' },
-    { name: 'Definições', key: 'settings' },
+  const tabs: TabsData[] = [
+    { name: 'Inicio', key: 'home', route: '/' },
+    { name: 'Treinos', key: 'workout', route: '/(tabs)/workouts' },
+    { name: 'Evolução', key: 'evolution', route: '/(tabs)/charts' },
+    { name: 'Definições', key: 'settings', route: '/(tabs)/settings' },
   ]
 
   useEffect(() => {
@@ -32,6 +40,8 @@ export default function Navbar({ onSelectTab }: NavbarProps) {
             key={tab.key}
             className={twMerge('px-4 py-1 h-9 items-center justify-center', (tabSelected === tab.key && 'bg-blue-800 rounded-3xl'), (idx === arr.length-1 && 'mr-8'))}
             onPress={() => {
+              router.push(tab.route)
+
               setTab(tab.key)
               setTabSelected(tab.key)
             }}

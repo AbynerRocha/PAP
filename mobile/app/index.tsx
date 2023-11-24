@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/Auth/AuthContext'
 import Loading from './loading'
 import Modal from '../components/Modal'
 import { generateID, isFirstLaunch } from '../database/controller/device'
+import Home from './(tabs)/home'
 
 export default function App() {
   const { getTabComponent } = useApp()
@@ -38,27 +39,5 @@ export default function App() {
     }
   }
 
-  return (
-    <View className='h-screen w-screen'>
-        <Header />
-        <Navbar />
-        {makeAnim &&
-          <AnimatePresence exitBeforeEnter>
-            <MotiView
-              className='h-full w-full mt-7'
-              from={{
-                opacity: 0
-              }}
-              animate={{
-                opacity: 1
-              }}
-            >
-              {makeAnim && tab}
-            </MotiView>
-
-          </AnimatePresence>
-        }
-        <Modal.Background/>
-    </View>
-  )
+  return <Home/>
 }
