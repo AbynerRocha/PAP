@@ -15,8 +15,6 @@ export default function Layout() {
         <AuthProvider>
           <View className={Platform.OS === 'android' ? 'mt-8 h-screen w-screen' : 'h-screen w-screen'}>
             <StatusBar barStyle='dark-content' backgroundColor='white' />
-            <Header />
-            <Navbar />
             <Slot />
           </View>
         </AuthProvider>

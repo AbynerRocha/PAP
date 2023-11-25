@@ -22,7 +22,7 @@ export default function Navbar({ onSelectTab }: NavbarProps) {
   const router = useRouter()
 
   const tabs: TabsData[] = [
-    { name: 'Inicio', key: 'home', route: '/' },
+    { name: 'Inicio', key: 'home', route: '/(tabs)/home' },
     { name: 'Treinos', key: 'workout', route: '/(tabs)/workouts' },
     { name: 'Evolução', key: 'evolution', route: '/(tabs)/charts' },
     { name: 'Definições', key: 'settings', route: '/(tabs)/settings' },

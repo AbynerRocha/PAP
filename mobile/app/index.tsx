@@ -9,25 +9,15 @@ import Loading from './loading'
 import Modal from '../components/Modal'
 import { generateID, isFirstLaunch } from '../database/controller/device'
 import Home from './(tabs)/home'
+import { Redirect } from 'expo-router'
 
 export default function App() {
-  const { getTabComponent } = useApp()
+  const { getTabRoute} = useApp()
   const { isLoading } = useAuth()
-  const [makeAnim, setMakeAnim] = useState(true)
 
   useEffect(() => {
     checkIfIsFirstLaunch()
   }, [])
-
-  useEffect(() => {
-    setMakeAnim(false)
-
-    setTimeout(() => {
-      setMakeAnim(true)
-    }, 100)
-  }, [getTabComponent])
-
-  const tab = getTabComponent()
 
   if (isLoading) return <Loading />
 
@@ -39,5 +29,5 @@ export default function App() {
     }
   }
 
-  return <Home/>
+  return <Redirect href={getTabRoute()} />
 }

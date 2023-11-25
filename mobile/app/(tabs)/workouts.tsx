@@ -4,6 +4,7 @@ import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-
 import { ScrollView } from 'react-native-gesture-handler'
 import formatNumber from '../../utils/formatNumber'
 import { twMerge } from 'tailwind-merge'
+import { Link } from 'expo-router'
 
 type WorkoutsPreviewData = {
   name: string
@@ -78,9 +79,11 @@ export default function Workouts() {
       </View>
 
       <View className='h-[84%] w-full'>
-        <Pressable className='absolute bottom-1 right-0 bg-blue-800 rounded-full h-16 w-16 mr-3 items-center justify-center shadow-md shadow-black/50'>
-          <FontAwesome name='plus' color='white' size={20} />
-        </Pressable>
+        <Link href='/workout/create' className='absolute bottom-1 right-0 mr-3'>
+          <View  className='bg-blue-800 rounded-full h-16 w-16  items-center justify-center shadow-md shadow-black/50'>
+            <FontAwesome name='plus' color='white' size={20} />
+          </View>
+        </Link>
       </View>
     </View>
   )

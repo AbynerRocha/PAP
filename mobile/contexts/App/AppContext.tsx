@@ -10,7 +10,7 @@ type BgTranslucentState = 'show' | 'hide'
 
 type AppContextData = {
     tab: Tabs
-    getTabComponent: () => React.ReactNode 
+    getTabRoute: () => string 
     setTabSelected: (tab: Tabs) => void
     getDeviceId: () => Promise<string>
 }
@@ -22,18 +22,18 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     const [tab, setTab] = useState<Tabs>('home')
     const [stateBgTranslucent, setStateBgTranslucent] = useState<BgTranslucentState>('hide')
 
-    function getTabComponent() {
+    function getTabRoute() {
         switch(tab) {
             case 'home':
-                return <Home/>
+                return '/(tabs)/home'
             case 'evolution':
-                return <Charts />
+                return '/(tabs)/charts'
             case 'workout': 
-                return <Workouts />
+                return '/(tabs)/workouts'
             case 'settings': 
-                return <Settings/>
+                return '/(tabs)/settings'
             default:
-                return <Home/>
+                return '/(tabs)/home'
         }
     }
 
@@ -57,7 +57,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         return deviceId
     }
 
-    return <AppContext.Provider value={{ tab, getTabComponent, setTabSelected, getDeviceId }}>
+    return <AppContext.Provider value={{ tab, getTabRoute, setTabSelected, getDeviceId }}>
         {children}
     </AppContext.Provider>
 }
