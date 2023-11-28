@@ -35,9 +35,31 @@ export default function CreateWorkout() {
     ])
     const [filters, setFielters] = useState<{ name: string, muscle: { name: string, value: string }[] }>({
       name: '',
-      muscle: [muscles[0]]
+      muscle: []
     })
+    
     useEffect(() => fetchExercises(), [])
+
+    function getFilteredExercises() {
+      let filteredMuscles: ExerciseData[] = []
+      if(!fetchedExercises || !filters) return
+
+      for(const exercise of fetchedExercises) {
+        if(filteredMuscles.includes(exercise)) return 
+
+        if(filters.name !== '' && exercise.name.match(`.*${filters.name}*.`)) {
+          filteredMuscles.push(exercise)
+        }
+
+        for(const muscle of filters.muscle) {
+          if(exercise.muscle === muscle.value) {
+            filteredMuscles.push(exercise)
+          }
+        }
+      }
+
+      return filteredMuscles
+    }
 
     function fetchExercises() {
       setIsFetching(true)
@@ -93,7 +115,7 @@ export default function CreateWorkout() {
 
                   muscleFilters.muscle.push(muscle)
 
-                  setFielters((f) => ({ name: f.name, muscle: [...f.muscle, muscle] }))
+                  setFielters((f) => ({ name: f.name, muscle: [...f.muscle] }))
               }}
             >
               <Text className={twMerge('font-medium', (filtered ? 'text-neutral-50' : 'text-neutral-950'))}>{muscle.name.length > 10 ? muscle.name.slice(0, 10)+'...' : muscle.name}</Text>
@@ -122,7 +144,7 @@ export default function CreateWorkout() {
             </View>
           </View>
         })
-      : fetchedExercises?.filter((e) => e.name === filters.name || filters.muscle.map((m) => m.value === e.muscle)).map((exercise, idx) => {
+      : getFilteredExercises()?.map((exercise, idx) => {
         return <View
           key={idx}
           className='p-3 h-20 w-full bg-neutral-100 border border-neutral-300 rounded-lg flex-row items-center space-x-2'

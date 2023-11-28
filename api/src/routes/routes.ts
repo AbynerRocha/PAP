@@ -33,6 +33,10 @@ const routes = [
         plugin: (app: FastifyInstance, _opts: FastifyPluginOptions, done: any) => loadRoutes('exercises', app, _opts, done),
         prefix: '/exercise'
     },
+    {
+        plugin: (app: FastifyInstance, _opts: FastifyPluginOptions, done: any) => loadRoutes('muscles', app, _opts, done),
+        prefix: '/muscle'
+    },
 ]
 
 export default routes
