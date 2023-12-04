@@ -3,7 +3,7 @@ import { ExerciseData } from "../../../@types/Exercise/Index"
 import { Exercise } from "../../../database/schemas/Exercises"
 import ExerciseController from "../../../controllers/Exercises"
 
-const url = '/create'
+const url = '/'
 const method = 'POST'
 
 type Request = {

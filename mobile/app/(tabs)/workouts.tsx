@@ -5,6 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import formatNumber from '../../utils/formatNumber'
 import { twMerge } from 'tailwind-merge'
 import { Link } from 'expo-router'
+import { useAuth } from '../../contexts/Auth/AuthContext'
 
 type WorkoutsPreviewData = {
   name: string
@@ -21,6 +22,8 @@ export default function Workouts() {
   const [workouts, setWorkouts] = useState<WorkoutsPreviewData[]>([
     { name: 'Teste 1', author: { name: 'Pedro Ribeiro' }, dificultyRate: 3, saves: 10000, numberOfExercises: 12 }
   ])
+
+  const { user } = useAuth()
 
   const formatter = Intl.NumberFormat('pt', { notation: 'compact' })
 
@@ -78,13 +81,13 @@ export default function Workouts() {
         </View>
       </View>
 
-      <View className='h-[84%] w-full'>
-        <Link href='/workout/create' className='absolute bottom-1 right-0 mr-3'>
+      {user && <View className='h-[84%] w-full'>
+        <Link href='/workout/create' className='absolute bottom-2 right-0 mr-3'>
           <View  className='bg-blue-800 rounded-full h-16 w-16  items-center justify-center shadow-md shadow-black/50'>
             <FontAwesome name='plus' color='white' size={20} />
           </View>
         </Link>
-      </View>
+      </View>}
     </View>
   )
 }

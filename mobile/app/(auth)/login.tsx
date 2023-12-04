@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator, Pressable } from 'react-native'
+import { View, Text, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator, Pressable, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../../components/Input'
@@ -9,7 +9,7 @@ import { Link, useRouter } from 'expo-router'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { AxiosError } from 'axios'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-import { MotiView } from 'moti'
+import { MotiText, MotiView, useDynamicAnimation } from 'moti'
 
 
 type Inputs = {
@@ -24,6 +24,10 @@ export default function Login() {
   const [showingPassword, setShowingPassword] = useState(false)
 
   const { signIn, user } = useAuth()
+
+  const titleAnim = useDynamicAnimation(() => ({
+    scale: 1
+  }))
   const router = useRouter()
 
   useEffect(() => {
@@ -39,8 +43,22 @@ export default function Login() {
   function handleKeyboard(state: 'show' | 'hide') {
     if (state === 'show') {
       setShowingKeyboard(true)
+
+      titleAnim.animateTo({
+        scale: [{ value: 0.8, rubberBandEffect: false, rubberBandFactor: 0 }],
+        marginLeft: [{ value: -25, rubberBandEffect: false, rubberBandFactor: 0  }]
+      })
     } else {
       setShowingKeyboard(false)
+      titleAnim.animateTo((current) => ({ 
+        ...current, 
+        scale: [
+          { value: 1, rubberBandEffect: false, rubberBandFactor: 0  }
+        ], 
+        marginLeft: [
+          {value: 0, rubberBandEffect: false, rubberBandFactor: 0 }
+        ] 
+      }))
     }
   }
 
@@ -90,9 +108,21 @@ export default function Login() {
   return (
     <KeyboardAvoidingView className='flex-1 bg-neutral-50' behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View className={twMerge('h-screen w-screen bg-neutral-50 space-y-5 items-center', (!showingKeyboard ? ' justify-center' : 'pt-10'))}>
-        <View className='w-[76%] space-y-1'>
-          <Text className='text-neutral-950 font-bold text-4xl'>Login</Text>
-          <Text className='text-neutral-400 font-medium font-lg'>Insira os seus dados abaixo para ter acesso a aplicação</Text>
+        <View className='w-[76%]'>
+          <MotiView 
+            className='w-full space-y-1'
+            transition={{ type: 'timing' }}
+            state={titleAnim} 
+          >
+            <Text 
+              className='text-neutral-950 font-bold text-4xl'
+            >
+              Login
+            </Text>
+            <View className='w-[76%]'>
+              <Text className='text-neutral-400 font-medium font-lg'>Insira os seus dados abaixo para ter acesso a aplicação</Text>
+            </View>
+          </MotiView>
         </View>
         <View className='h-[2px] w-[80%] bg-neutral-200' />
         <View className='w-full items-center'>

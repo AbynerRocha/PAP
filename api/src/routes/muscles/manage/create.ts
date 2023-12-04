@@ -3,7 +3,7 @@ import { UserData } from "../../../@types/User"
 import { Muscle } from "../../../database/schemas/Muscles"
 import { MongooseError } from "mongoose"
 
-export const url = '/create'
+export const url = '/'
 export const method = 'POST'
 
 type Request = {

@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify"
 import { Exercise } from "../../../database/schemas/Exercises"
 
-const url = '/delete'
+const url = '/'
 const method = 'DELETE'
 
 type Request = {
