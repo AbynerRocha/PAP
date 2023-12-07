@@ -42,11 +42,11 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         filters = { ...filters, muscle: req.query.muscle }
     }
 
-    const exercises = await Exercise.find(filters, {}, { skip: (page > 1 ? 10 * page : 0), limit: 25 })
+    const exercises = await Exercise.find(filters, {}, { skip: (page > 1 ? 25 * page : 0), limit: 25 })
     const data = []
 
     for (const exercise of exercises) {
-        const creator = await User.findById(exercise.createdBy)
+        const creator = await User.findById(exercise.createdBy).select('-password')
         const muscle = await Muscle.findById(exercise.muscle)
 
 
