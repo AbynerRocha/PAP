@@ -1,7 +1,12 @@
-type Workout = {
+import { ExerciseData } from "../Exercise"
+import { UserData } from "../User"
+
+type WorkoutData = {
     name: string
-    toDate: Date
-    exercises: Exercise
+    saves: number
+    createdAt: Date
+    createdBy: UserData
+    exercises: ExerciseData[]
 }
 
 type Exercise = {
@@ -30,7 +35,7 @@ type ExerciseRecordUser = {
 
 
 export {
-    Workout,
+    WorkoutData,
     Exercise,
     Execution,
     ExerciseRecordUser

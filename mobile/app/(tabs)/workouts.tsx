@@ -1,11 +1,13 @@
-import { View, Text, TextInput, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
-import { ScrollView } from 'react-native-gesture-handler'
 import formatNumber from '../../utils/formatNumber'
 import { twMerge } from 'tailwind-merge'
 import { Link } from 'expo-router'
 import { useAuth } from '../../contexts/Auth/AuthContext'
+import { Api } from '../../utils/Api'
+import { AxiosResponse } from 'axios'
+import { WorkoutData } from '../../@types/Workout'
 
 type WorkoutsPreviewData = {
   name: string
@@ -19,17 +21,26 @@ type WorkoutsPreviewData = {
 }
 
 export default function Workouts() {
-  const [workouts, setWorkouts] = useState<WorkoutsPreviewData[]>([
-    { name: 'Teste 1', author: { name: 'Pedro Ribeiro' }, dificultyRate: 3, saves: 10000, numberOfExercises: 12 }
-  ])
-
   const { user } = useAuth()
-
   const formatter = Intl.NumberFormat('pt', { notation: 'compact' })
 
+  const [page, setPage] = useState(1)
+  const [workouts, setWorkouts] = useState<WorkoutData[]>([])
+  const [filters, setFilters] = useState([
+    { name: 'Criados por ti', value: 1 },
+    { name: 'Salvos', value: 2 },
+    { name: 'Populares', value: 3 }
+  ])
   const [filterApplied, setFilterApplied] = useState<number>(0)
+  const [isFetching, setIsFetching] = useState(true)
+
+  useEffect(() => {
+    fetchWorkouts()
+  }, [])
 
   function handleSelectFilter(filterId: number) {
+    if (filterId === 1) fetchWorkouts()
+
     if (filterId === filterApplied) {
       setFilterApplied(0)
       return
@@ -37,6 +48,21 @@ export default function Workouts() {
 
     setFilterApplied(filterId)
   }
+
+  function fetchWorkouts() {
+    Api.get(`/workout?p=${page}`)
+      .then((res: AxiosResponse<{ workouts: WorkoutData[] }>) => {
+        const workouts = res.data.workouts
+
+        setWorkouts(workouts)
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setIsFetching(false))
+  }
+
+  if (isFetching) return <View className='flex-1 items-center justify-center'>
+    <ActivityIndicator size='large' color='black' />
+  </View>
 
   return (
     <View className='flex-1'>
@@ -52,38 +78,38 @@ export default function Workouts() {
           </Pressable>
         </View>
         <View className='w-full h-10 items-center justify-center' >
-          <ScrollView horizontal className='flex-row space-x-2'>
-            <Pressable
-              onPress={() => handleSelectFilter(1)}
-              className={twMerge('ml-9 px-6 items-center justify-center h-7 rounded-full', (filterApplied === 1 && 'bg-blue-800'))}
-            >
-              <Text className={twMerge('text-xs font-semibold text-neutral-950', (filterApplied === 1 && 'text-neutral-50'))}>Populares</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => handleSelectFilter(2)}
-              className={twMerge('px-6 items-center justify-center h-7 rounded-full', (filterApplied === 2 && 'bg-blue-800'))}
-            >
-              <Text className={twMerge('text-xs font-semibold text-neutral-950', (filterApplied === 2 && 'text-neutral-50'))}>Salvados</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => handleSelectFilter(3)}
-              className={twMerge('px-6 items-center justify-center h-7 rounded-full', (filterApplied === 3 && 'bg-blue-800'))}
-            >
-              <Text className={twMerge('text-xs font-semibold text-neutral-950', (filterApplied === 3 && 'text-neutral-50'))}>Para homens</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => handleSelectFilter(4)}
-              className={twMerge('mr-8 px-6 items-center justify-center h-7 rounded-full', (filterApplied === 4 && 'bg-blue-800'))}
-            >
-              <Text className={twMerge('text-xs font-semibold text-neutral-950', (filterApplied === 4 && 'text-neutral-50'))}>Para mulheres</Text>
-            </Pressable>
+          <ScrollView horizontal className='flex-row space-x-2 '>
+            {filters.map((filter, idx) => {
+              return <Pressable
+                key={idx}
+                onPress={() => handleSelectFilter(filter.value)}
+                className={twMerge('ml-9 px-6 items-center justify-center h-7 rounded-full', (filterApplied === filter.value && 'bg-blue-800'))}
+              >
+                <Text className={twMerge('text-xs font-semibold text-neutral-950', (filterApplied === filter.value && 'text-neutral-50'))}>{filter.name}</Text>
+              </Pressable>
+            })}
           </ScrollView>
         </View>
       </View>
 
-      {user && <View className='h-[84%] w-full'>
+      <View className='flex-1'>
+      <ScrollView className='flex-col space-y-3'>
+
+        {workouts.length > 0 && workouts.map((workout, idx) => {
+          return <View key={idx} className='w-fit h-16 mx-3 p-2 rounded-lg border border-neutral-300' >
+            <View className='h-full w-full justify-center'>
+              <Text className='font-semibold'>{workout.name}</Text>
+              <Text></Text>
+            </View>
+          </View>
+        })}
+      </ScrollView>
+      </View>
+
+
+      {user && <View>
         <Link href='/workout/create' className='absolute bottom-2 right-0 mr-3'>
-          <View  className='bg-blue-800 rounded-full h-16 w-16  items-center justify-center shadow-md shadow-black/50'>
+          <View className='bg-blue-800 rounded-full h-16 w-16  items-center justify-center shadow-md shadow-black/50'>
             <FontAwesome name='plus' color='white' size={20} />
           </View>
         </Link>

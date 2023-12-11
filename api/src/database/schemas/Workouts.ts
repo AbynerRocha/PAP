@@ -4,8 +4,9 @@ import { ExerciseSchema } from "./Exercises";
 
 export const WorkoutSchema = new Schema({
     name: { type: String, required: true },
-    createdBy: { type: userSchema, required: true },
-    exercises: { type: Array<typeof ExerciseSchema>, required: true },
+    createdAt: { type: Date, default: new Date() },
+    createdBy: { type: String, required: true },
+    exercises: { type: [ExerciseSchema], required: true },
     saves: { type: Number, default: 0 }
 })
 

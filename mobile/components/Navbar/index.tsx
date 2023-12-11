@@ -4,11 +4,11 @@ import { twMerge } from 'tailwind-merge'
 import { useApp } from '../../contexts/App/AppContext'
 import { useRouter } from 'expo-router'
 
-export type Tabs = 'home' | 'workout' | 'evolution' | 'settings'
+export type Tabs = 'home' | 'workout' | 'evolution' | 'settings' | 'user_workouts'
 
 type TabsData = { 
   name: string; 
-  key: 'home' | 'workout' | 'evolution' | 'settings'
+  key: Tabs
   route: string 
 }
 
@@ -24,6 +24,7 @@ export default function Navbar({ onSelectTab }: NavbarProps) {
   const tabs: TabsData[] = [
     { name: 'Inicio', key: 'home', route: '/(tabs)/home' },
     { name: 'Treinos', key: 'workout', route: '/(tabs)/workouts' },
+    { name: 'Meus Treinos', key: 'user_workouts', route: '/(tabs)/user_workouts' },
     { name: 'Evolução', key: 'evolution', route: '/(tabs)/charts' },
     { name: 'Definições', key: 'settings', route: '/(tabs)/settings' },
   ]

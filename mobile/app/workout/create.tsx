@@ -9,6 +9,9 @@ import { ExerciseData } from '../../@types/Exercise';
 import ExercisesList from './exerciseslist';
 import DragList, { DragListRenderItemInfo } from 'react-native-draglist'
 import { twMerge } from 'tailwind-merge';
+import { Api } from '../../utils/Api';
+import { useAuth } from '../../contexts/Auth/AuthContext';
+import { AxiosError } from 'axios';
 
 type Fields = {
   name: string
@@ -18,16 +21,39 @@ type Fields = {
 export default function CreateWorkout() {
   const { formState: { errors }, control, setError, handleSubmit } = useForm<Fields>()
   const router = useRouter()
+  const { user } = useAuth()
+
   const [showExerciseList, setShowExerciseList] = useState(false)
   const [exercises, setExercises] = useState<ExerciseData[]>([])
-
+  const [isLoading, setIsLoading] = useState(false)
 
   async function onReordered(fromIndex: number, toIndex: number) {
-    const copy = [...exercises]; // Don't modify react data in-place
+    const copy = [...exercises];
     const removed = copy.splice(fromIndex, 1);
 
-    copy.splice(toIndex, 0, removed[0]); // Now insert at the new pos
+    copy.splice(toIndex, 0, removed[0]); 
     setExercises(copy);
+  }
+
+  function handleCreate({ name }: Fields) {
+    setIsLoading(true)
+
+    if(exercises.length < 2) {
+      setError('root', { message: 'Você precisa adicionar ao menos 2 exercícios.'})
+      return 
+    }
+
+    Api.post('/workout', {
+      name,
+      createdBy: user?._id,
+      exercises
+    }).then((res) => {
+      router.push(`/workout/${res.data.workoutId}`)
+    })
+    .catch((err: AxiosError<any>) => {
+      setError('root', { message: err.response?.data.message })
+    })
+    .finally(() => setIsLoading(false))
   }
 
   return showExerciseList ? <ExercisesList
@@ -55,6 +81,7 @@ export default function CreateWorkout() {
 
         <Controller
           control={control}
+          rules={{ required: { value: true, message: 'Este campo é obrigatório.' }}}
           name='name'
           render={({ field: { value, name, onBlur, onChange } }) => {
             return (
@@ -68,14 +95,12 @@ export default function CreateWorkout() {
                   placeholderTextColor='rgb(163 163 163)'
                   className='bg-transparent border border-neutral-300 p-3 rounded-lg text-md'
                 />
-                {errors.name && <span className='text-red-500 text-sm mt-2'>{errors.name.message}</span>}
+                {errors.name && <Text className='text-red-500 text-sm mt-2'>{errors.name.message}</Text>}
+                {errors.root && <Text className='text-red-500 text-sm mt-2'>{errors.root.message}</Text>}
               </View>
             )
           }}
         />
-        <View className='w-full items-end justify-center mt-3'>
-
-        </View>
       </View>
 
       <View
@@ -132,7 +157,9 @@ export default function CreateWorkout() {
             color='green'
             size='sm'
             textStyle='font-bold'
+            isLoading={isLoading}
             className='w-52 h-12 shadow-md shadow-black/50'
+            onPress={handleSubmit(handleCreate)}
           >
             Criar
           </Button>

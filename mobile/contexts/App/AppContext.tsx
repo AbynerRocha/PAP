@@ -1,9 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
 import { Tabs } from "../../components/Navbar";
-import Home from "../../app/(tabs)/home";
-import Charts from "../../app/(tabs)/charts";
-import Workouts from "../../app/(tabs)/workouts";
-import Settings from "../../app/(tabs)/settings";
 import { getId } from "../../database/controller/device";
 
 type BgTranslucentState = 'show' | 'hide'
@@ -20,8 +16,7 @@ const AppContext = createContext<AppContextData>({} as AppContextData)
 
 function AppProvider({ children }: { children: React.ReactNode }) {
     const [tab, setTab] = useState<Tabs>('home')
-    const [stateBgTranslucent, setStateBgTranslucent] = useState<BgTranslucentState>('hide')
-
+    
     function getTabRoute() {
         switch(tab) {
             case 'home':
