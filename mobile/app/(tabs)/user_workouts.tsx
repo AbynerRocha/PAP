@@ -5,9 +5,10 @@ import { Api } from '../../utils/Api'
 import { WorkoutData } from '../../@types/Workout'
 import { AxiosResponse } from 'axios'
 import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
-import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { Actionsheet, useDisclose } from 'native-base'
+import { useRouter } from 'expo-router'
 
 type Response = {
   workouts: WorkoutData[]
@@ -22,7 +23,7 @@ export default function UserWorkouts() {
 
   const { isOpen, onOpen, onClose } = useDisclose()
 
-  const { showActionSheetWithOptions } = useActionSheet()
+  const router = useRouter()
 
   useEffect(() => {
     Api.get(`/workout?p=${page}&cb=${user?._id}`)
@@ -48,7 +49,6 @@ export default function UserWorkouts() {
               tempDifficulty = tempDifficulty - 1
               maxDifficulty = maxDifficulty - 1
             } else {
-
               JSX.push(<FontAwesome5 key={maxDifficulty} name="dumbbell" size={13} color="rgb(212 212 212)" />)
               maxDifficulty = maxDifficulty - 1
             }
@@ -58,11 +58,10 @@ export default function UserWorkouts() {
         }
 
         return <Pressable
-        onLongPress={() => {
-          setWorkoutSelected(workout)
+          onLongPress={() => {
             Vibration.vibrate(350)
+            setWorkoutSelected(workout)
 
-            
             onOpen()
           }}
           key={idx}
@@ -88,15 +87,28 @@ export default function UserWorkouts() {
       setWorkoutSelected(undefined)
       onClose()
     }}>
-      {workoutSelected}
       <Actionsheet.Content>
         <View>
-          <Text>Editar </Text>
+          <Text className='text-lg font-medium'>Gerir {workoutSelected?.name}</Text>
         </View>
-        <Actionsheet.Item startIcon={<Ionicons name='md-pencil-sharp' size={18} color='gray' />}>
+        <View className='w-full h-0.5 bg-neutral-200 my-2'/>
+        <Actionsheet.Item 
+          startIcon={<MaterialIcons name="open-in-new" size={19} color="gray" />} 
+          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          onPress={() => router.push(`/workout/${workoutSelected?._id}`)}
+        >
+          <Text className='font-medium'>Ver</Text>
+        </Actionsheet.Item>
+        <View className='w-full h-0.5 bg-neutral-200 my-2'/>
+        <Actionsheet.Item 
+          startIcon={<Ionicons name='md-pencil-sharp' size={18} color='gray' />} 
+          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          onPress={() => router.push(`/workout/edit/${workoutSelected?._id}`)}
+        >
           <Text className='font-medium'>Editar</Text>
         </Actionsheet.Item>
-        <Actionsheet.Item startIcon={<Ionicons name='md-trash' size={18} color='red' />}>
+        <View className='w-full h-0.5 bg-neutral-200 my-2'/>
+        <Actionsheet.Item startIcon={<Ionicons name='md-trash' size={18} color='red' />} className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'>
           <Text className='text-red-500 text-md font-medium'>Remover</Text>
         </Actionsheet.Item>
       </Actionsheet.Content>
