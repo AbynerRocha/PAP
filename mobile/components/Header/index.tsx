@@ -17,6 +17,9 @@ export default function Header() {
             {user ? <>
                 <Pressable
                     className='w-14 h-14 rounded-full bg-neutral-200 items-center justify-center ml-4 mt-5'
+                    onLongPress={() => {
+                        router.push('/dev/test')
+                    }}
                 >
                     <Avatar fallback={{ userName: user.name }} />
                 </Pressable>
