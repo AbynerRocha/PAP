@@ -1,6 +1,6 @@
 
 
-export const LocalStorage = {
+export const LocalStorageKeys = {
     USER: '@user',
     WORKOUT: {
         WORKOUTS_SAVED: '@w_saved.user',

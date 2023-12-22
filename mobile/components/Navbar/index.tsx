@@ -4,30 +4,30 @@ import { twMerge } from 'tailwind-merge'
 import { useApp } from '../../contexts/App/AppContext'
 import { useRouter } from 'expo-router'
 
-export type Tabs = 'home' | 'workout' | 'evolution' | 'settings' | 'user_workouts'
+export type Tabs = 'home' | 'workout' | 'evolution' | 'settings' | 'user_workouts' | 'home_offline' | 'charts_offline' |'user_offline_workouts'
 
-type TabsData = { 
-  name: string; 
+export type TabsData = {
+  name: string;
   key: Tabs
-  route: string 
+  route: string
 }
 
 type NavbarProps = {
-  onSelectTab?: (component: React.ReactNode) => void
+  isOffline?: boolean
 }
 
-export default function Navbar({ onSelectTab }: NavbarProps) {
+export default function Navbar({ isOffline }: NavbarProps) {
   const [tabSelected, setTab] = useState<Tabs>('home')
-  const { setTabSelected, tab } = useApp()
-  const router = useRouter()
-
-  const tabs: TabsData[] = [
+  const [tabs, setTabs] = useState<TabsData[]>([
     { name: 'Inicio', key: 'home', route: '/(tabs)/home' },
     { name: 'Treinos', key: 'workout', route: '/(tabs)/workouts' },
     { name: 'Meus Treinos', key: 'user_workouts', route: '/(tabs)/user_workouts' },
     { name: 'Evolução', key: 'evolution', route: '/(tabs)/charts' },
     { name: 'Definições', key: 'settings', route: '/(tabs)/settings' },
-  ]
+  ])
+
+  const { setTabSelected, tab } = useApp()
+  const router = useRouter()
 
   useEffect(() => {
     setTab(tab)
@@ -39,12 +39,15 @@ export default function Navbar({ onSelectTab }: NavbarProps) {
         {tabs.map((tab, idx, arr) => {
           return <Pressable
             key={tab.key}
-            className={twMerge('px-4 py-1 h-9 items-center justify-center', (tabSelected === tab.key && 'bg-blue-800 rounded-3xl'), (idx === arr.length-1 && 'mr-8'))}
+            className={twMerge('px-4 py-1 h-9 items-center justify-center', (tabSelected === tab.key && 'bg-blue-800 rounded-3xl'), (idx === arr.length - 1 && 'mr-8'))}
             onPress={() => {
               router.push(tab.route)
 
               setTab(tab.key)
-              setTabSelected(tab.key)
+              setTabSelected({
+                key: tab.key,
+                route: tab.route
+              })
             }}
           >
             <Text className={twMerge('text-md font-semibold', (tabSelected === tab.key ? 'text-neutral-50' : 'text-neutral-950'))}>{tab.name}</Text>

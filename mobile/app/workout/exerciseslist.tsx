@@ -80,7 +80,6 @@ export default function ExercisesList({ onExercisesChange, exercises, onStateCha
 
         if(exercises.length > 0) {
           const filtered = exerciseFetched.filter((e) => { return exercises.indexOf(e) === -1 })
-          console.log(exercises);
           
           setFetchedExercises(filtered)
           return

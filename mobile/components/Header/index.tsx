@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, Vibration } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/Auth/AuthContext';
@@ -9,7 +9,7 @@ import { useApp } from '../../contexts/App/AppContext';
 export default function Header() {
     const userHour = new Date().getHours()
     const { user } = useAuth()
-    const { setTabSelected } = useApp()
+    const { tab, setTabSelected } = useApp()
     const router = useRouter()
 
     return (
@@ -18,7 +18,9 @@ export default function Header() {
                 <Pressable
                     className='w-14 h-14 rounded-full bg-neutral-200 items-center justify-center ml-4 mt-5'
                     onLongPress={() => {
-                        router.push('/dev/test')
+                        Vibration.vibrate(250)
+                        router.push(tab.includes('offline') ? '/(tabs)/home' : '/offline')
+
                     }}
                 >
                     <Avatar fallback={{ userName: user.name }} />
@@ -33,7 +35,7 @@ export default function Header() {
                         <Text className='text-neutral-900 text-xl font-bold'>{user.name.includes(" ") ? user.name.split(' ')[0] : user.name}</Text>
                         {user.verified === false && <Pressable
                             onPress={() => {
-                                setTabSelected('settings')
+                                setTabSelected({ key: 'settings', route: '/(tabs)/settings' })
                             }}
                         >
                             <Ionicons name="alert-circle" size={20} color="red" />

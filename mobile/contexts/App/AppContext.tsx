@@ -1,13 +1,19 @@
 import React, { createContext, useContext, useState } from "react";
 import { Tabs } from "../../components/Navbar";
 import { getId } from "../../database/controller/device";
+import { NativeBaseProvider } from "native-base";
+import { TamaguiProvider } from "tamagui";
+import tamaguiConfig from "../../tamagui.config";
 
-type BgTranslucentState = 'show' | 'hide'
+type TabData = {
+    key: Tabs
+    route: string
+}
 
 type AppContextData = {
     tab: Tabs
-    getTabRoute: () => string 
-    setTabSelected: (tab: Tabs) => void
+    getTabRoute: () => string
+    setTabSelected: (tab: TabData) => void
     getDeviceId: () => Promise<string>
 }
 
@@ -15,31 +21,20 @@ type AppContextData = {
 const AppContext = createContext<AppContextData>({} as AppContextData)
 
 function AppProvider({ children }: { children: React.ReactNode }) {
-    const [tab, setTab] = useState<Tabs>('home')
-    
+    const [tab, setTab] = useState<TabData>({ key: 'home', route: '/(tabs)/home' })
+
     function getTabRoute() {
-        switch(tab) {
-            case 'home':
-                return '/(tabs)/home'
-            case 'evolution':
-                return '/(tabs)/charts'
-            case 'workout': 
-                return '/(tabs)/workouts'
-            case 'settings': 
-                return '/(tabs)/settings'
-            default:
-                return '/(tabs)/home'
-        }
+        return tab.route
     }
 
-    function setTabSelected(tabs: Tabs) {
-        setTab(tabs)
+    function setTabSelected(tab: TabData) {
+        setTab(tab)
     }
 
     function disableNav() {
-        
+
     }
-    
+
     function enableNav() {
 
     }
@@ -47,13 +42,17 @@ function AppProvider({ children }: { children: React.ReactNode }) {
     async function getDeviceId() {
         const deviceId = await getId()
 
-        if(deviceId === null) throw new Error('There is no device ID. Generate one')
+        if (deviceId === null) throw new Error('There is no device ID. Generate one')
 
         return deviceId
     }
 
-    return <AppContext.Provider value={{ tab, getTabRoute, setTabSelected, getDeviceId }}>
-        {children}
+    return <AppContext.Provider value={{ tab: tab.key, getTabRoute, setTabSelected, getDeviceId }}>
+        <NativeBaseProvider>
+            <TamaguiProvider config={tamaguiConfig}>
+                {children}
+            </TamaguiProvider>
+        </NativeBaseProvider>
     </AppContext.Provider>
 }
 

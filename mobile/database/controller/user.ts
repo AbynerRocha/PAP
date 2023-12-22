@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { LocalStorage } from "../keys";
+import { LocalStorageKeys } from "../keys";
 import { UserData } from "../../@types/User";
 
 export type UserLocalStorageData = {
@@ -8,7 +8,7 @@ export type UserLocalStorageData = {
     authToken: string
 }
 
-const userKey = LocalStorage.USER
+const userKey = LocalStorageKeys.USER
 
 export async function haveAnyDataStorage(key: string) {
     try {

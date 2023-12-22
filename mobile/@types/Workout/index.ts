@@ -7,16 +7,11 @@ type WorkoutData = {
     saves: number
     createdAt: Date
     createdBy: UserData
-    exercises: ExerciseData[]
+    exercises: ExerciseInfo[]
+    lastEdit?: Date 
 }
 
-type Exercise = {
-    name: string
-    date: Date
-    weekDay: number   
-    execution: Execution
-    recordData: ExerciseRecordUser
-}
+type ExerciseInfo = { exercise: ExerciseData, reps: number, restTime: number }
 
 type Execution = {
     serie: { 
@@ -37,7 +32,7 @@ type ExerciseRecordUser = {
 
 export {
     WorkoutData,
-    Exercise,
+    ExerciseInfo,
     Execution,
     ExerciseRecordUser
 }

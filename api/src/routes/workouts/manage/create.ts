@@ -25,8 +25,6 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     })
 
     const { name, createdBy, exercises } = req.body
-    
-    console.log(exercises)
 
     const thisWorkoutExists = await Workout.find({ name })
 
@@ -42,9 +40,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         return rep.status(500).send({ error: err.name, message: 'Não foi possivel realizar esta ação neste momento.'})
     })
 
-    console.log(workout)
-
-    return rep.status(201).send({ workoutId: workout._id })
+    return rep.status(201).send({ workout })
 }
 
 export { url, method, handler }

@@ -12,11 +12,18 @@ import { twMerge } from 'tailwind-merge';
 import { Api } from '../../utils/Api';
 import { useAuth } from '../../contexts/Auth/AuthContext';
 import { AxiosError } from 'axios';
+import { Divider, Menu } from 'native-base';
+import { WorkoutLocalStoraged } from '../../database/controller/workout';
 
 type Fields = {
   name: string
 }
 
+type WorkoutExecutionData = {
+  exercise: ExerciseData
+  reps: number
+  restTime: number
+}
 
 export default function CreateWorkout() {
   const { formState: { errors }, control, setError, handleSubmit } = useForm<Fields>()
@@ -26,34 +33,49 @@ export default function CreateWorkout() {
   const [showExerciseList, setShowExerciseList] = useState(false)
   const [exercises, setExercises] = useState<ExerciseData[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [workoutExecutionInfo, setWorkoutExecutionInfo] = useState<WorkoutExecutionData[]>([])
+  const [exerciseSelected, setExerciseSelected] = useState<ExerciseData>()
+  const [showMenu, setShowMenu] = useState(false)
+
+  useEffect(() => {
+    setWorkoutExecutionInfo([])
+
+    for (const exercise of exercises) {
+      setWorkoutExecutionInfo((v) => [...v, { exercise, reps: 10, restTime: 60 }])
+    }
+  }, [showExerciseList])
 
   async function onReordered(fromIndex: number, toIndex: number) {
     const copy = [...exercises];
     const removed = copy.splice(fromIndex, 1);
 
-    copy.splice(toIndex, 0, removed[0]); 
+    copy.splice(toIndex, 0, removed[0]);
     setExercises(copy);
   }
 
   function handleCreate({ name }: Fields) {
     setIsLoading(true)
 
-    if(exercises.length < 2) {
-      setError('root', { message: 'Você precisa adicionar ao menos 2 exercícios.'})
-      return 
+    if (exercises.length < 2) {
+      setError('root', { message: 'Você precisa adicionar ao menos 2 exercícios.' })
+      return
     }
 
     Api.post('/workout', {
       name,
       createdBy: user?._id,
-      exercises
+      exercises: workoutExecutionInfo
     }).then((res) => {
-      router.push(`/workout/${res.data.workoutId}`)
+      router.push(`/workout/${res.data.workout._id}`)
+
+      const storage = new WorkoutLocalStoraged()
+
+      storage.save(res.data.workout)
     })
-    .catch((err: AxiosError<any>) => {
-      setError('root', { message: err.response?.data.message })
-    })
-    .finally(() => setIsLoading(false))
+      .catch((err: AxiosError<any>) => {
+        setError('root', { message: err.response?.data.message })
+      })
+      .finally(() => setIsLoading(false))
   }
 
   return showExerciseList ? <ExercisesList
@@ -81,7 +103,7 @@ export default function CreateWorkout() {
 
         <Controller
           control={control}
-          rules={{ required: { value: true, message: 'Este campo é obrigatório.' }}}
+          rules={{ required: { value: true, message: 'Este campo é obrigatório.' } }}
           name='name'
           render={({ field: { value, name, onBlur, onChange } }) => {
             return (
@@ -107,32 +129,91 @@ export default function CreateWorkout() {
         className='w-full h-[1px] bg-neutral-300'
       />
       <View
-        className='flex-1 w-full s'
+        className='flex-1 w-full'
       >
+
         <DragList
           data={exercises}
           onReordered={onReordered}
           keyExtractor={(data: ExerciseData) => data._id}
           renderItem={(data: DragListRenderItemInfo<ExerciseData>) => {
             return (
-              <Pressable
-                key={data.index}
-                className={twMerge('text-lg text-center p-3 flex-row rounded-md my-2 mx-3 border border-neutral-300 items-center', (data.isActive && 'opacity-50'))}
-                onPressIn={data.onDragStart}
-                onPressOut={data.onDragEnd}
+              <Menu
+                onOpen={() => {
+                  setExerciseSelected(data.item)
+                }}
+                onClose={() => {
+                  setExerciseSelected(undefined)
+                }}
+                closeOnSelect={true}
+                trigger={(triggerProps => {
+                  return <Pressable
+                    {...triggerProps}
+                    key={data.index}
+                    className={twMerge('text-lg text-center p-3 flex-row rounded-md my-2 mx-3 border border-neutral-300 items-center', (data.isActive && 'opacity-50'))}
+                    onLongPress={data.onDragStart}
+                    onPressOut={data.isActive ? data.onDragEnd : () => { }}
+                  >
+                    <View className='flex-1 flex-row space-x-2 items-center'>
+                      <Image
+                        source={{ uri: data.item.image }}
+                        width={40}
+                        height={40}
+                      />
+                      <Text className='text-md font-medium'>{data.item.name}</Text>
+                    </View>
+                    <View>
+                      <MaterialCommunityIcons name='drag-vertical' size={24} color='rgb(212 212 212)' />
+                    </View>
+                  </Pressable>
+                })}
               >
-                <View className='flex-1 flex-row space-x-2 items-center'>
-                  <Image
-                    source={{ uri: data.item.image }}
-                    width={40}
-                    height={40}
-                  />
-                  <Text className='text-md font-medium'>{data.item.name}</Text>
+                <View className='flex-row justify-around space-x-2 p-2'>
+                  <View className='justify-center items-center space-y-1'>
+                    <Text className='text-xs'>Número de Reps.</Text>
+                    <Input
+                      defaultValue={workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)?.reps.toString()}
+                      className='bg-transparent border border-neutral-300 mx-3 w-12 h-12 text-center text-lg font-semibold'
+                      onChangeText={(value) => {
+                        const exerciseData = workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)
+                        const newReps = parseInt(value)
+
+                        if (!exerciseData || newReps === exerciseData?.reps) return
+
+                        const data = workoutExecutionInfo.filter(w => w.exercise._id !== exerciseSelected?._id)
+
+                        setWorkoutExecutionInfo([...data, { ...exerciseData, reps: newReps }])
+                      }}
+                    />
+                  </View>
+
+
+
+                  <View className='justify-center items-center space-y-1'>
+                    <Text className='text-xs mb-1'>Tempo de Descanso</Text>
+                    <View className='flex-row items-end mx-3'>
+                      <Input
+                        defaultValue={workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)?.restTime.toString()}
+                        keyboardType='numeric'
+                        className='bg-transparent border border-neutral-300  w-12 h-12 text-center text-lg font-semibold'
+                        onChangeText={(value) => {
+                          if(value === '') return
+
+                          const exerciseData = workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)
+                          const newRestTime = parseInt(value)
+  
+                          if (!exerciseData || newRestTime === exerciseData?.restTime) return
+  
+                          const data = workoutExecutionInfo.filter(w => w.exercise._id !== exerciseSelected?._id)
+  
+                          setWorkoutExecutionInfo([...data, { ...exerciseData, restTime: newRestTime }])
+                        }}
+                      />
+                      <Text className='text-xs ml-1'>seg.</Text>
+                    </View>
+                  </View>
                 </View>
-                <View>
-                  <MaterialCommunityIcons name='drag-vertical' size={24} color='rgb(212 212 212)' />
-                </View>
-              </Pressable>
+              </Menu>
             )
           }}
         />

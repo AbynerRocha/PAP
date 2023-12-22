@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ScrollView, View, Text, Pressable, Vibration, Alert, ActivityIndicator } from 'react-native'
+import { ScrollView, View, Text, Pressable, Vibration, Alert, ActivityIndicator, Share } from 'react-native'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { Api } from '../../utils/Api'
 import { WorkoutData } from '../../@types/Workout'
 import { AxiosError, AxiosResponse } from 'axios'
 import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
-import { FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons';
-import { Actionsheet, AlertDialog, useDisclose } from 'native-base'
+import { FontAwesome5, MaterialIcons, Ionicons, Feather } from '@expo/vector-icons';
+import { Actionsheet, AlertDialog, useClipboard, useDisclose, useToast } from 'native-base'
 import { useRouter } from 'expo-router'
 import Button from '../../components/Button'
-import { Feather } from '@expo/vector-icons'
+import QRCode from 'react-native-qrcode-svg';
+import config from '../../app.json'
 
 type Response = {
   workouts: WorkoutData[]
@@ -27,10 +28,15 @@ export default function UserWorkouts() {
 
   const actionSheet = useDisclose()
   const alertDialog = useDisclose()
+  const dialogQrCode = useDisclose()
+  const actionSheetShare = useDisclose()
 
   const cancelAlertDialogRef = useRef(null)
-
+  const cancelQRCodeDialogRef = useRef(null)
   const router = useRouter()
+
+  const clipboard = useClipboard()
+  const toast = useToast()
 
   useEffect(() => {
     fetchWorkout()
@@ -44,7 +50,6 @@ export default function UserWorkouts() {
         setWorkouts(res.data.workouts)
       })
       .catch((err: AxiosError<any>) => {
-        console.log(err.request)
         switch (err.response?.data) {
           case 'NOT_FOUND':
             setError({ type: 'root', message: 'Sem exercícios' })
@@ -138,7 +143,6 @@ export default function UserWorkouts() {
         <View>
           <Text className='text-lg font-medium'>Gerir {workoutSelected?.name}</Text>
         </View>
-        <View className='w-full h-0.5 bg-neutral-200 my-2' />
         <Actionsheet.Item
           startIcon={<MaterialIcons name="open-in-new" size={19} color="gray" />}
           className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
@@ -154,6 +158,15 @@ export default function UserWorkouts() {
         >
           <Text className='font-medium'>Editar</Text>
         </Actionsheet.Item>
+
+        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <Actionsheet.Item
+          startIcon={<Feather name='share' size={18} color='gray' />}
+          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          onPressIn={() => actionSheetShare.onOpen()}
+        >
+          <Text className='font-medium'>Partilhar</Text>
+        </Actionsheet.Item>
         <View className='w-full h-0.5 bg-neutral-200 my-2' />
         <Actionsheet.Item
           startIcon={<Ionicons name='md-trash' size={18} color='red' />}
@@ -165,6 +178,57 @@ export default function UserWorkouts() {
           }}
         >
           <Text className='text-red-500 text-md font-medium'>Remover</Text>
+        </Actionsheet.Item>
+      </Actionsheet.Content>
+    </Actionsheet>
+
+    <Actionsheet
+      isOpen={actionSheetShare.isOpen}
+      onClose={actionSheetShare.onClose}
+    >
+      <Actionsheet.Content>
+        <View>
+          <Text className='text-lg font-medium'>Partilhar {workoutSelected?.name}</Text>
+        </View>
+        <Actionsheet.Item
+          startIcon={<Ionicons name='qr-code' size={18} color='gray' />}
+          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          onPressIn={() => dialogQrCode.onOpen()}
+        >
+          <Text>QR-Code</Text>
+        </Actionsheet.Item>
+        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <Actionsheet.Item
+          startIcon={<Ionicons name='clipboard-outline' size={18} color='gray' />}
+          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          onPressIn={() => {
+            const url = `https://evotraining.pt/redirect?ty=wrkot&tkn=${workoutSelected?._id}`
+
+            clipboard.onCopy(url)
+
+            Vibration.vibrate(200)
+
+            toast.show({
+              description: 'Copiado com sucesso.'
+            })
+          }}
+        >
+          <Text>Copiar URL</Text>
+        </Actionsheet.Item>
+        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <Actionsheet.Item
+          startIcon={<Feather name='more-horizontal' size={18} color='gray' />}
+          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          onPressIn={() => {
+            const url = `https://evotraining.pt/redirect?ty=wrkot&tkn=${workoutSelected?._id}`
+
+            Share.share({
+              message: url,
+              url
+            })
+          }}
+        >
+          <Text>Outros</Text>
         </Actionsheet.Item>
       </Actionsheet.Content>
     </Actionsheet>
@@ -198,5 +262,24 @@ export default function UserWorkouts() {
         </AlertDialog.Footer>
       </AlertDialog.Content>
     </AlertDialog>
+
+    <AlertDialog leastDestructiveRef={cancelQRCodeDialogRef} isOpen={dialogQrCode.isOpen} onClose={dialogQrCode.onClose}>
+      <AlertDialog.Content className='flex-col p-2'>
+        <AlertDialog.CloseButton />
+        <AlertDialog.Header className=''>
+        </AlertDialog.Header>
+        <AlertDialog.Body className='items-center justify-center'>
+          <View>
+            <QRCode
+              color='black'
+              value={`exp://dbjqgqg.abrocha.8081.exp.direct/--/workout/${workoutSelected?._id}`}
+              size={170}
+            />
+          </View>
+        </AlertDialog.Body>
+      </AlertDialog.Content>
+    </AlertDialog>
+
+    
   </View>
 }

@@ -7,9 +7,9 @@ const button = tv({
   base: 'rounded-xl items-center justify-center',
   variants: {
     color: {
-      blue: 'bg-blue-800',
-      green: 'bg-green-500',
-      red: 'bg-red-600'
+      blue: 'bg-blue-800 active:bg-blue-700',
+      green: 'bg-green-500 active:bg-green-400',
+      red: 'bg-red-600 active:bg-red-500'
     },
     size: {
       sm: 'py-3 px-5 w-24 h-12',
