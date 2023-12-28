@@ -20,7 +20,7 @@ type Fields = {
 }
 
 type WorkoutExecutionData = {
-  exercise: ExerciseData
+  exercise: string
   reps: number
   restTime: number
 }
@@ -41,7 +41,7 @@ export default function CreateWorkout() {
     setWorkoutExecutionInfo([])
 
     for (const exercise of exercises) {
-      setWorkoutExecutionInfo((v) => [...v, { exercise, reps: 10, restTime: 60 }])
+      setWorkoutExecutionInfo((v) => [...v, { exercise: exercise._id!, reps: 10, restTime: 60 }])
     }
   }, [showExerciseList])
 
@@ -172,15 +172,15 @@ export default function CreateWorkout() {
                   <View className='justify-center items-center space-y-1'>
                     <Text className='text-xs'>Número de Reps.</Text>
                     <Input
-                      defaultValue={workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)?.reps.toString()}
+                      defaultValue={workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)?.reps.toString()}
                       className='bg-transparent border border-neutral-300 mx-3 w-12 h-12 text-center text-lg font-semibold'
                       onChangeText={(value) => {
-                        const exerciseData = workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)
+                        const exerciseData = workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)
                         const newReps = parseInt(value)
 
                         if (!exerciseData || newReps === exerciseData?.reps) return
 
-                        const data = workoutExecutionInfo.filter(w => w.exercise._id !== exerciseSelected?._id)
+                        const data = workoutExecutionInfo.filter(w => w.exercise !== exerciseSelected?._id)
 
                         setWorkoutExecutionInfo([...data, { ...exerciseData, reps: newReps }])
                       }}
@@ -193,18 +193,18 @@ export default function CreateWorkout() {
                     <Text className='text-xs mb-1'>Tempo de Descanso</Text>
                     <View className='flex-row items-end mx-3'>
                       <Input
-                        defaultValue={workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)?.restTime.toString()}
+                        defaultValue={workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)?.restTime.toString()}
                         keyboardType='numeric'
                         className='bg-transparent border border-neutral-300  w-12 h-12 text-center text-lg font-semibold'
                         onChangeText={(value) => {
                           if(value === '') return
 
-                          const exerciseData = workoutExecutionInfo.find(w => w.exercise._id === exerciseSelected?._id)
+                          const exerciseData = workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)
                           const newRestTime = parseInt(value)
   
                           if (!exerciseData || newRestTime === exerciseData?.restTime) return
   
-                          const data = workoutExecutionInfo.filter(w => w.exercise._id !== exerciseSelected?._id)
+                          const data = workoutExecutionInfo.filter(w => w.exercise !== exerciseSelected?._id)
   
                           setWorkoutExecutionInfo([...data, { ...exerciseData, restTime: newRestTime }])
                         }}

@@ -1,13 +1,17 @@
-import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native'
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
+import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import formatNumber from '../../utils/formatNumber'
 import { twMerge } from 'tailwind-merge'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { Api } from '../../utils/Api'
 import { AxiosResponse } from 'axios'
 import { WorkoutData } from '../../@types/Workout'
+import WorkoutDifficulty from '../../components/WorkoutDifficulty'
+import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
+import Loading from '../loading'
+import { useQuery } from 'react-query'
 
 type WorkoutsPreviewData = {
   name: string
@@ -23,6 +27,7 @@ type WorkoutsPreviewData = {
 export default function Workouts() {
   const { user } = useAuth()
   const formatter = Intl.NumberFormat('pt', { notation: 'compact' })
+  const router = useRouter()
 
   const [page, setPage] = useState(1)
   const [workouts, setWorkouts] = useState<WorkoutData[]>([])
@@ -32,11 +37,17 @@ export default function Workouts() {
     { name: 'Populares', value: 3 }
   ])
   const [filterApplied, setFilterApplied] = useState<number>(0)
-  const [isFetching, setIsFetching] = useState(true)
+
+  const { data, isFetching, isLoading, error } = useQuery({
+    queryKey: '@getAllWorkouts',
+    queryFn: fetchWorkouts
+  })
 
   useEffect(() => {
-    fetchWorkouts()
-  }, [])
+    if(!data) return 
+
+    setWorkouts(data)
+  }, [data])
 
   function handleSelectFilter(filterId: number) {
     if (filterId === 1) fetchWorkouts()
@@ -49,20 +60,16 @@ export default function Workouts() {
     setFilterApplied(filterId)
   }
 
-  function fetchWorkouts() {
-    Api.get(`/workout?p=${page}`)
-      .then((res: AxiosResponse<{ workouts: WorkoutData[] }>) => {
-        const workouts = res.data.workouts
+  async function fetchWorkouts() {
+    const res = await Api.get(`/workout?p=${page}`)
+      .then((res: AxiosResponse<{ workouts: WorkoutData[] }>) => res.data.workouts)
+      .catch((err) => { throw err })
 
-        setWorkouts(workouts)
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setIsFetching(false))
+
+    return res
   }
 
-  if (isFetching) return <View className='flex-1 items-center justify-center'>
-    <ActivityIndicator size='large' color='black' />
-  </View>
+  if (isFetching || isLoading) return <Loading/>
 
   return (
     <View className='flex-1'>
@@ -93,22 +100,36 @@ export default function Workouts() {
       </View>
 
       <View className='flex-1'>
-      <ScrollView className='flex-col space-y-3'>
+        <FlatList
+          data={workouts}
+          keyExtractor={(item) => item._id}
+          renderItem={({ index, item }) => {
+            return <Pressable
+              className='m-3 h-20 p-2 rounded-lg border border-neutral-300'
+              onPressIn={() => router.push(`/workout/${item._id}`)}
+            >
+              <View className='w-full h-full justify-between'>
+                <Text className='font-semibold'>{item.name}</Text>
+                <View className='flex-row space-x-1 justify-between'>
+                  <WorkoutDifficulty
+                    className='flex-row space-x-1'
+                    difficulty={calcWorkoutDifficulty(item.exercises)}
+                  />
 
-        {workouts.length > 0 && workouts.map((workout, idx) => {
-          return <View key={idx} className='w-fit h-16 mx-3 p-2 rounded-lg border border-neutral-300' >
-            <View className='h-full w-full justify-center'>
-              <Text className='font-semibold'>{workout.name}</Text>
-              <Text></Text>
-            </View>
-          </View>
-        })}
-      </ScrollView>
+                  <View className='flex-row items-center space-x-1'>
+                    <Ionicons name="cloud-download-outline" size={13} color="rgb(160 160 160)" />
+                    <Text className='text-xs text-neutral-400'>{formatter.format(item.saves + 10000)}</Text>
+                  </View>
+                </View>
+              </View>
+            </Pressable>
+          }}
+        />
       </View>
 
 
       {user && <View>
-        <Link href='/workout/create' className='absolute bottom-2 right-0 mr-3'>
+        <Link href='/workout/create' className='absolute bottom-10 right-0 mr-3'>
           <View className='bg-blue-800 rounded-full h-16 w-16  items-center justify-center shadow-md shadow-black/50'>
             <FontAwesome name='plus' color='white' size={20} />
           </View>

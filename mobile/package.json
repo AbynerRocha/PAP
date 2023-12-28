@@ -59,7 +59,8 @@
     "tamagui": "^1.79.12",
     "uuid": "^9.0.1",
     "validator": "^13.11.0",
-    "victory-native": "^36.6.12"
+    "victory-native": "^36.6.12",
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

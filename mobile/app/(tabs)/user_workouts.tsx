@@ -5,12 +5,13 @@ import { Api } from '../../utils/Api'
 import { WorkoutData } from '../../@types/Workout'
 import { AxiosError, AxiosResponse } from 'axios'
 import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
-import { FontAwesome5, MaterialIcons, Ionicons, Feather } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons, Ionicons, Feather } from '@expo/vector-icons';
 import { Actionsheet, AlertDialog, useClipboard, useDisclose, useToast } from 'native-base'
-import { useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import Button from '../../components/Button'
 import QRCode from 'react-native-qrcode-svg';
 import config from '../../app.json'
+import WorkoutDifficulty from '../../components/WorkoutDifficulty'
 
 type Response = {
   workouts: WorkoutData[]
@@ -88,25 +89,7 @@ export default function UserWorkouts() {
       {workouts.map((workout, idx) => {
         const difficulty = calcWorkoutDifficulty(workout.exercises)
 
-        function renderDifficulty() {
-          let maxDifficulty = 5
-          let tempDifficulty = difficulty
 
-          const JSX: React.ReactNode[] = []
-
-          while (maxDifficulty != 0) {
-            if (tempDifficulty > 0) {
-              JSX.push(<FontAwesome5 key={maxDifficulty} name="dumbbell" size={13} color="black" />)
-              tempDifficulty = tempDifficulty - 1
-              maxDifficulty = maxDifficulty - 1
-            } else {
-              JSX.push(<FontAwesome5 key={maxDifficulty} name="dumbbell" size={13} color="rgb(212 212 212)" />)
-              maxDifficulty = maxDifficulty - 1
-            }
-          }
-
-          return JSX
-        }
 
         return <Pressable
           onLongPress={() => {
@@ -121,9 +104,10 @@ export default function UserWorkouts() {
           <View className='w-full h-full justify-between'>
             <Text className='font-semibold'>{workout.name}</Text>
             <View className='flex-row space-x-1 justify-between'>
-              <View className='flex-row space-x-1'>
-                {renderDifficulty()}
-              </View>
+              <WorkoutDifficulty
+                className='flex-row space-x-1'
+                difficulty={difficulty}
+              />
 
               <View className='flex-row items-center space-x-1'>
                 <Ionicons name="cloud-download-outline" size={13} color="rgb(160 160 160)" />
@@ -134,6 +118,14 @@ export default function UserWorkouts() {
         </Pressable>
       })}
     </ScrollView>
+
+    {user && <View>
+        <Link href='/workout/create' className='absolute bottom-10 right-0 mr-3'>
+          <View className='bg-blue-800 rounded-full h-16 w-16  items-center justify-center shadow-md shadow-black/50'>
+            <FontAwesome name='plus' color='white' size={20} />
+          </View>
+        </Link>
+      </View>}
 
     <Actionsheet isOpen={actionSheet.isOpen} onClose={() => {
       setWorkoutSelected(undefined)
@@ -280,6 +272,6 @@ export default function UserWorkouts() {
       </AlertDialog.Content>
     </AlertDialog>
 
-    
+
   </View>
 }

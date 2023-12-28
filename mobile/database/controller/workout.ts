@@ -40,7 +40,7 @@ class History {
         try {
             const data = await AsyncStorage.getItem(this.key)
 
-            if (data === null) throw new Error('There is no data saved')
+            if (data === null) return null
 
             const history: HistoryLocalStorageData[] = JSON.parse(data)
 
@@ -73,23 +73,23 @@ class WorkoutLocalStoraged {
 
             workouts.push(workout)
 
-            AsyncStorage.setItem(this.key, JSON.stringify(history))
+            AsyncStorage.setItem(this.key, JSON.stringify(workouts))
             return true
         } catch (error: any) {
             throw new Error(error)
         }
     }
 
-    async remove(workout: WorkoutData) {
+    async remove(workoutId: string) {
         try {
             const data = await AsyncStorage.getItem(this.key)
 
             if (data === null) throw new Error('There is no data saved')
 
             const workouts: WorkoutLocalStorageData[] = JSON.parse(data)
+            const filtered = workouts.filter(w => w._id !== workoutId)
 
-            const filtered = workouts.filter(w => w !== workout)
-
+            AsyncStorage.removeItem(this.key)
             AsyncStorage.setItem(this.key, JSON.stringify(filtered))
             return true
         } catch (error: any) {
@@ -101,7 +101,7 @@ class WorkoutLocalStoraged {
         try {
             const data = await AsyncStorage.getItem(this.key)
 
-            if (data === null) throw new Error('There is no data saved')
+            if (data === null) return null 
 
             const workouts: WorkoutLocalStorageData[] = JSON.parse(data)
 

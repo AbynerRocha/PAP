@@ -14,7 +14,7 @@ export default function Layout() {
     <QueryClientProvider client={clientQuery}>
       <AppProvider>
         <AuthProvider>
-          <View className={Platform.OS === 'android' ? 'mt-8 h-screen w-screen' : 'h-screen w-screen'}>
+          <View className={Platform.OS === 'android' ? 'mt-8 h-full w-full' : 'h-full w-full'}>
             <StatusBar barStyle='dark-content' backgroundColor='white' />
             <Slot />
           </View>
