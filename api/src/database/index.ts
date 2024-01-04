@@ -1,11 +1,22 @@
 import mongoose, { Schema } from "mongoose"
-import env from "../env";
+import dotenv from 'dotenv'
 
-const connectUrl = process.env.CONNECT_URL_MONGODB ?? env.CONNECT_URL_MONGODB
+dotenv.config({
+    path: __dirname+'/../../.env'
+})
 
-mongoose.connect(connectUrl)
+const connectUrl = process.env.CONNECT_URL_MONGODB
 
-const db = mongoose.connection
+function connect() {
+    if(!connectUrl) throw new Error('There is not a connect url.')
+    mongoose.connect(connectUrl)
+    
+    const db = mongoose.connection
+
+    return db
+}
+
+const db = connect()
 
 db.on('error', async () => {
     console.error.bind(console, '[X] An error occurred when connecting to the database')

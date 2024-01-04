@@ -9,7 +9,7 @@ type Request = {
     Body: {
         id: string,
         name: string,
-        exercises: { exercise: ExerciseData, reps: number, restTime: number }[]
+        exercises: { exercise: string, series: { reps: number, restTime: number }[] }[]
     }
 }
 

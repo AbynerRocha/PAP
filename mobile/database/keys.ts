@@ -9,6 +9,7 @@ export const LocalStorageKeys = {
             EXERCISES: '@start_wrk_exercises'
         }
     },
+    STATS: '@workout_{{id}}',
     DEVICE: {
         FIRST_LAUNCH: '@f_launch',
         ID: '@device_id'

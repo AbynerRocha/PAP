@@ -29,7 +29,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
         for(const exerciseData of workout.exercises) {
             const data = await Exercise.findById(exerciseData.exercise)
-            exercises.push({ exercise: data, reps: exerciseData.reps, restTime: exerciseData.restTime })
+            exercises.push({ exercise: data, series: exerciseData.series })
         }
 
         let workoutData = {
@@ -74,7 +74,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
         for(const exerciseData of workout.exercises) {
             const data = await Exercise.findById(exerciseData.exercise)
-            exercises.push({ exercise: data, reps: exerciseData.reps, restTime: exerciseData.restTime })
+            exercises.push({ exercise: data, series: exerciseData.series })
         }
 
         let workoutData = {

@@ -14,6 +14,7 @@ import { useAuth } from '../../contexts/Auth/AuthContext';
 import { AxiosError } from 'axios';
 import { Divider, Menu } from 'native-base';
 import { WorkoutLocalStoraged } from '../../database/controller/workout';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 type Fields = {
   name: string
@@ -22,7 +23,16 @@ type Fields = {
 type WorkoutExecutionData = {
   exercise: string
   reps: number
+  series: number
   restTime: number
+}
+
+type SeriesData = {
+  exercise: string
+  series: {
+    reps: number
+    restTime: number
+  }[]
 }
 
 export default function CreateWorkout() {
@@ -36,12 +46,11 @@ export default function CreateWorkout() {
   const [workoutExecutionInfo, setWorkoutExecutionInfo] = useState<WorkoutExecutionData[]>([])
   const [exerciseSelected, setExerciseSelected] = useState<ExerciseData>()
   const [showMenu, setShowMenu] = useState(false)
+  const [series, setSeries] = useState<SeriesData[]>([])
 
   useEffect(() => {
-    setWorkoutExecutionInfo([])
-
     for (const exercise of exercises) {
-      setWorkoutExecutionInfo((v) => [...v, { exercise: exercise._id!, reps: 10, restTime: 60 }])
+      setSeries((v) => [...v, { exercise: exercise._id!, series: [{ reps: 10, restTime: 60 }] }])
     }
   }, [showExerciseList])
 
@@ -64,7 +73,7 @@ export default function CreateWorkout() {
     Api.post('/workout', {
       name,
       createdBy: user?._id,
-      exercises: workoutExecutionInfo
+      exercises: series
     }).then((res) => {
       router.push(`/workout/${res.data.workout._id}`)
 
@@ -146,6 +155,7 @@ export default function CreateWorkout() {
                   setExerciseSelected(undefined)
                 }}
                 closeOnSelect={true}
+                className='max-h-60'
                 trigger={(triggerProps => {
                   return <Pressable
                     {...triggerProps}
@@ -168,51 +178,110 @@ export default function CreateWorkout() {
                   </Pressable>
                 })}
               >
-                <View className='flex-row justify-around space-x-2 p-2'>
-                  <View className='justify-center items-center space-y-1'>
-                    <Text className='text-xs'>Número de Reps.</Text>
-                    <Input
-                      defaultValue={workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)?.reps.toString()}
-                      className='bg-transparent border border-neutral-300 mx-3 w-12 h-12 text-center text-lg font-semibold'
-                      onChangeText={(value) => {
-                        const exerciseData = workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)
-                        const newReps = parseInt(value)
+                {series.find(sr => sr.exercise === data.item._id)?.series.map((serieData, idx, array) => {
 
-                        if (!exerciseData || newReps === exerciseData?.reps) return
+                  return <ScrollView key={idx}>
+                    <View className='flex-col items-center'>
+                      <View className='flex-row items-center justify-around space-x-2 pl-5 pr-3 py-2'>
+                        <View className='justify-center items-center space-y-1'>
+                          <Text className='text-xs'>N. de Reps</Text>
+                          <Input
+                            defaultValue={serieData.reps.toString()}
+                            className='bg-transparent border border-neutral-300 mx-3 w-12 h-12 text-center text-lg font-semibold rounded-md'
+                            onChangeText={(value) => {
+                              const newReps = parseInt(value)
+                              
+                              if (!newReps || newReps === serieData?.reps) return
 
-                        const data = workoutExecutionInfo.filter(w => w.exercise !== exerciseSelected?._id)
+                              let dataToChange = array
 
-                        setWorkoutExecutionInfo([...data, { ...exerciseData, reps: newReps }])
-                      }}
-                    />
-                  </View>
+                              const toAdd = series.filter(sr => sr.exercise !== data.item._id)
 
+                              dataToChange[idx] = {
+                                reps: newReps,
+                                restTime: array[idx].restTime
+                              }
 
+                              setSeries([...toAdd, { exercise: data.item._id!, series: [...dataToChange] }])
 
-                  <View className='justify-center items-center space-y-1'>
-                    <Text className='text-xs mb-1'>Tempo de Descanso</Text>
-                    <View className='flex-row items-end mx-3'>
-                      <Input
-                        defaultValue={workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)?.restTime.toString()}
-                        keyboardType='numeric'
-                        className='bg-transparent border border-neutral-300  w-12 h-12 text-center text-lg font-semibold'
-                        onChangeText={(value) => {
-                          if(value === '') return
+                            }}
+                          />
+                        </View>
+                        <View className='justify-center items-center space-y-1'>
+                          <Text className='text-xs mb-1'>Tempo de Descanso</Text>
+                          <View className='flex-row items-end mx-3'>
+                            <Input
+                              defaultValue={serieData.restTime.toString()}
+                              keyboardType='numeric'
+                              className='bg-transparent border border-neutral-300  w-12 h-12 text-center text-lg font-semibold rounded-md'
+                              onChangeText={(value) => {
+                                if (value === '') return
 
-                          const exerciseData = workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)
-                          const newRestTime = parseInt(value)
-  
-                          if (!exerciseData || newRestTime === exerciseData?.restTime) return
-  
-                          const data = workoutExecutionInfo.filter(w => w.exercise !== exerciseSelected?._id)
-  
-                          setWorkoutExecutionInfo([...data, { ...exerciseData, restTime: newRestTime }])
-                        }}
-                      />
-                      <Text className='text-xs ml-1'>seg.</Text>
+                                const exerciseData = workoutExecutionInfo.find(w => w.exercise === exerciseSelected?._id)
+                                const newRestTime = parseInt(value)
+
+                                if (!exerciseData || newRestTime === exerciseData?.restTime) return
+
+                                const data = workoutExecutionInfo.filter(w => w.exercise !== exerciseSelected?._id)
+
+                                setWorkoutExecutionInfo([...data, { ...exerciseData, restTime: newRestTime }])
+                              }}
+                            />
+                            <Text className='text-xs ml-1'>seg.</Text>
+                          </View>
+                        </View>
+
+                        {array.length > 1 && <Pressable
+                          className='h-full w-8 justify-center items-center'
+                          onPressIn={() => {
+                            const filteredData = array.filter(v => v !== array[idx])
+                            const toAdd = series.filter(sr => sr.exercise !== data.item._id)
+
+                            setSeries([...toAdd, { exercise: data.item._id!, series: filteredData }])
+                          }}
+                        >
+                          <Feather name='x-circle' color='red' size={18} />
+                        </Pressable>}
+                      </View>
+                      {idx !== array.length - 1 && <View className='w-full h-0.5 bg-neutral-200 my-2' />}
                     </View>
+
+
+                  </ScrollView>
+                })}
+
+                <View className='w-full h-0.5 bg-neutral-200 my-2' />
+                <Pressable
+                  className='h-8 w-full'
+                  onPress={() => {
+                    const seriesData = series.find(sr => sr.exercise === data.item._id)
+
+                    if (!seriesData) return
+
+                    if (seriesData.series.length >= 10) {
+                      return
+                    }
+
+                    const toAdd = series.filter(sr => sr.exercise !== data.item._id)
+
+                    setSeries([...toAdd, {
+                      exercise: seriesData.exercise,
+                      series: [
+                        ...seriesData.series,
+                        {
+                          reps: 10,
+                          restTime: 60
+                        }
+                      ]
+                    }])
+                  }}
+
+                >
+                  <View className='w-full h-full space-x-2 flex-row items-center justify-center'>
+                    <Feather size={16} name='plus-circle' color='rgb(163 163 163)' />
+                    <Text className='text-neutral-400'>Adicionar {series.find(sr => sr.exercise === data.item._id)?.series.length + '/10'}</Text>
                   </View>
-                </View>
+                </Pressable>
               </Menu>
             )
           }}

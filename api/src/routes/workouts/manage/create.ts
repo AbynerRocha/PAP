@@ -9,7 +9,7 @@ type Request = {
     Body: {
         name: string,
         createdBy: string
-        exercises: ExerciseData[]
+        exercises: { exercise: string, series: { reps: number, restTime: number }[] }[]
     }
 }
 
@@ -34,7 +34,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         thisWorkoutExists
     })
 
-    const workout = await Workout.create({ name, createdBy, createdAt: new Date(),exercises, saves: 0 })
+    const workout = await Workout.create({ name, createdBy, createdAt: new Date(), exercises, saves: 0 })
     .catch((err) => {
         console.log(err);
         return rep.status(500).send({ error: err.name, message: 'Não foi possivel realizar esta ação neste momento.'})

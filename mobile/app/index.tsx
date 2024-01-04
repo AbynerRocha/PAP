@@ -16,7 +16,6 @@ export default function App() {
     checkIfIsFirstLaunch()
   }, [])
 
-  
 
   if (isLoading) return <Loading />
 

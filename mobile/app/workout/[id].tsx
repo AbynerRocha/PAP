@@ -138,7 +138,7 @@ export default function Workout() {
         </View>
 
         <View className='flex-1 w-full'>
-          {data?.exercises.map(({ exercise, reps }, index) => {
+          {data?.exercises.map(({ exercise, series }, index) => {
             return <View
               key={index}
               className='border border-neutral-300 rounded-lg mx-3 p-3 my-2 h-20 items-center flex-row space-x-2'
@@ -151,8 +151,9 @@ export default function Workout() {
                   height={50}
                 />
               </View>
-              <View>
-                <Text>{exercise.name}</Text>
+              <View className='flex-col space-x-1 items-start'>
+                <Text className='text-neutral-900 font-medium text-md ml-1'>{exercise.name}</Text>
+                <Text className='text-neutral-400 text-xs'>{series.length} series</Text>
               </View>
             </View>
           })}

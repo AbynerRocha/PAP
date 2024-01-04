@@ -25,9 +25,7 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            {
-
-            }
+            {}
           ]
         }
       ],

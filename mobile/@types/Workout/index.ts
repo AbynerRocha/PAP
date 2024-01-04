@@ -8,31 +8,25 @@ type WorkoutData = {
     createdAt: Date
     createdBy: UserData
     exercises: ExerciseInfo[]
-    lastEdit?: Date 
+    lastEdit?: Date
 }
 
-type ExerciseInfo = { exercise: ExerciseData, reps: number, restTime: number }
-
-type Execution = {
-    serie: { 
-        reps: number
-        weight: number
-    }[],
-    restTime: number // time
+type ExerciseInfo = {
+    exercise: ExerciseData,
+    series: {
+        reps: number,
+        restTime: number
+    }[]
 }
 
 type ExerciseRecordUser = {
-    PR: number
-    weightData: {
-        date: Date,
-        weight: number
-    }[]
+    weight: number
+    date: Date
 }
 
 
 export {
     WorkoutData,
     ExerciseInfo,
-    Execution,
     ExerciseRecordUser
 }

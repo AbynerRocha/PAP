@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { WorkoutData } from "../../@types/Workout";
+import { ExerciseRecordUser, WorkoutData } from "../../@types/Workout";
 import { LocalStorageKeys } from "../keys";
 
 export type WorkoutLocalStorageData = WorkoutData & {}
@@ -69,7 +69,7 @@ class WorkoutLocalStoraged {
 
             const workouts: WorkoutLocalStorageData[] = JSON.parse(data)
 
-            if(workouts.find(w => w._id === workout._id)) throw new Error('Este exercício já está salvo.')
+            if (workouts.find(w => w._id === workout._id)) throw new Error('Este exercício já está salvo.')
 
             workouts.push(workout)
 
@@ -101,7 +101,7 @@ class WorkoutLocalStoraged {
         try {
             const data = await AsyncStorage.getItem(this.key)
 
-            if (data === null) return null 
+            if (data === null) return null
 
             const workouts: WorkoutLocalStorageData[] = JSON.parse(data)
 
@@ -112,4 +112,42 @@ class WorkoutLocalStoraged {
     }
 }
 
-export { History, WorkoutLocalStoraged }
+class UserExerciseStats {
+    private key: string
+
+    constructor(exerciseId: string) {
+        this.key = LocalStorageKeys.STATS.replace('{{id}}', exerciseId)
+    }
+
+
+    public async get() {
+        try {
+            const storaged = await AsyncStorage.getItem(this.key)
+
+            if (storaged === null) return null
+
+            const data: ExerciseRecordUser[] = JSON.parse(storaged)
+
+            return data
+        } catch (error) {
+            return null
+        }
+    }
+
+    public async add(data: ExerciseRecordUser) {
+        try {
+            const storaged = await this.get()
+
+            if (storaged === null) {
+                AsyncStorage.setItem(this.key, JSON.stringify([{ ...data }]))
+                return
+            }
+
+            AsyncStorage.setItem(this.key, JSON.stringify([...storaged, { ...data }]))
+        } catch (error) {
+            return null
+        }
+    }
+}
+
+export { History, WorkoutLocalStoraged, UserExerciseStats }
