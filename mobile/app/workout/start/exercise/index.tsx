@@ -61,15 +61,6 @@ export default function StartExercise() {
     const exerciseIdx = exercises.findIndex(ex => ex === toDoExercise)
 
     if (exerciseIdx - (exercises.length - 1) === 0 && serie.number === numberOfSeries) {
-
-      workoutStats.forEach((value) => {
-        const UserStats = new UserExerciseStats(value.exerciseId)
-
-        for(const serieData of value.series) {
-          UserStats.add({ weight: serieData.weight, date: new Date() })
-        }
-      })
-      
       router.replace('/workout/end')
       return
     }
@@ -91,6 +82,7 @@ export default function StartExercise() {
     }
 
     const exerciseSeries = workoutStats.find(stats => stats.exerciseId === toDoExercise.exercise._id)?.series
+    const UserStats = new UserExerciseStats(toDoExercise.exercise._id!)
 
     if (!exerciseSeries) {
       const toAdd: Stats = {
@@ -100,6 +92,11 @@ export default function StartExercise() {
           weight
         }]
       }
+
+      UserStats.add({
+        date: new Date(),
+        weight
+      })
 
       setWorkoutStats((v) => [...v, toAdd])
 
@@ -115,6 +112,11 @@ export default function StartExercise() {
         weight
       }]
     }
+
+    UserStats.add({
+      date: new Date(),
+      weight
+    })
 
     setWorkoutStats((v) => [...v, toAdd])
 

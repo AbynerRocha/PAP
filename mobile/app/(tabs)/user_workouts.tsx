@@ -256,10 +256,8 @@ export default function UserWorkouts() {
     </AlertDialog>
 
     <AlertDialog leastDestructiveRef={cancelQRCodeDialogRef} isOpen={dialogQrCode.isOpen} onClose={dialogQrCode.onClose}>
-      <AlertDialog.Content className='flex-col p-2'>
+      <AlertDialog.Content className='flex-col p-3 items-center justify-center'>
         <AlertDialog.CloseButton />
-        <AlertDialog.Header className=''>
-        </AlertDialog.Header>
         <AlertDialog.Body className='items-center justify-center'>
           <View>
             <QRCode

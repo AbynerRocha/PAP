@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ExerciseRecordUser, WorkoutData } from "../../@types/Workout";
 import { LocalStorageKeys } from "../keys";
+import { realm } from "../realm";
+import WorkoutSchema from "../models/Workouts";
 
 export type WorkoutLocalStorageData = WorkoutData & {}
 
@@ -59,25 +61,36 @@ class WorkoutLocalStoraged {
     }
 
     async save(workout: WorkoutData) {
-        try {
-            const data = await AsyncStorage.getItem(this.key)
+        // try {
+        //     const data = await AsyncStorage.getItem(this.key)
 
-            if (data === null) {
-                AsyncStorage.setItem(this.key, JSON.stringify([workout]))
-                return
-            }
+        //     if (data === null) {
+        //         AsyncStorage.setItem(this.key, JSON.stringify([workout]))
+        //         return
+        //     }
 
-            const workouts: WorkoutLocalStorageData[] = JSON.parse(data)
+        //     const workouts: WorkoutLocalStorageData[] = JSON.parse(data)
 
-            if (workouts.find(w => w._id === workout._id)) throw new Error('Este exercício já está salvo.')
+        //     if (workouts.find(w => w._id === workout._id)) throw new Error('Este exercício já está salvo.')
 
-            workouts.push(workout)
+        //     workouts.push(workout)
 
-            AsyncStorage.setItem(this.key, JSON.stringify(workouts))
-            return true
-        } catch (error: any) {
-            throw new Error(error)
-        }
+        //     AsyncStorage.setItem(this.key, JSON.stringify({ workouts }))
+        //     return true
+        // } catch (error: any) {
+        //     throw new Error(error)
+        // }
+
+        realm.write(() => {
+            realm.create<WorkoutSchema>('workout', {
+                _id: workout._id,
+                name: workout.name,
+                createdAt: workout.createdAt,
+                createdBy: workout.createdBy,
+                exercises: workout.exercises,
+                saves: workout.saves,
+            })
+        })
     }
 
     async remove(workoutId: string) {
@@ -116,7 +129,7 @@ class UserExerciseStats {
     private key: string
 
     constructor(exerciseId: string) {
-        this.key = LocalStorageKeys.STATS.replace('{{id}}', exerciseId)
+        this.key = exerciseId
     }
 
 
@@ -143,6 +156,7 @@ class UserExerciseStats {
                 return
             }
 
+            AsyncStorage.removeItem(this.key)
             AsyncStorage.setItem(this.key, JSON.stringify([...storaged, { ...data }]))
         } catch (error) {
             return null

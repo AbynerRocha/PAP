@@ -1,5 +1,5 @@
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import formatNumber from '../../utils/formatNumber'
 import { twMerge } from 'tailwind-merge'
@@ -12,6 +12,7 @@ import WorkoutDifficulty from '../../components/WorkoutDifficulty'
 import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
 import Loading from '../loading'
 import { useQuery } from 'react-query'
+import { WorkoutLocalStoraged } from '../../database/controller/workout'
 
 type WorkoutsPreviewData = {
   name: string
@@ -31,11 +32,12 @@ export default function Workouts() {
 
   const [page, setPage] = useState(1)
   const [workouts, setWorkouts] = useState<WorkoutData[]>([])
+  const [oldWorkouts, setOldWorkouts] = useState<WorkoutData[]>([])
   const [filters, setFilters] = useState([
-    { name: 'Criados por ti', value: 1 },
-    { name: 'Salvos', value: 2 },
-    { name: 'Populares', value: 3 }
+    { name: 'Salvos', value: 1 },
+    { name: 'Populares', value: 2 }
   ])
+  
   const [filterApplied, setFilterApplied] = useState<number>(0)
 
   const { data, isFetching, isLoading, error } = useQuery({
@@ -43,11 +45,35 @@ export default function Workouts() {
     queryFn: fetchWorkouts
   })
 
+  const filteredData = useMemo(() => {
+    switch(filterApplied) {
+      case 0: {
+        if(!data) return
+
+        setWorkouts(data)
+        break
+      }
+      case 1: {
+        const Storaged = new WorkoutLocalStoraged()
+
+        Storaged.get().then((value) => {
+          console.log(value)
+          if(!value) return 
+
+          // setWorkouts(value)
+        })
+        break
+      }
+    }
+  }, [filterApplied])
+
   useEffect(() => {
     if(!data) return 
 
     setWorkouts(data)
+    setOldWorkouts(data)
   }, [data])
+
 
   function handleSelectFilter(filterId: number) {
     if (filterId === 1) fetchWorkouts()
@@ -85,7 +111,7 @@ export default function Workouts() {
           </Pressable>
         </View>
         <View className='w-full h-10 items-center justify-center' >
-          <ScrollView horizontal className='flex-row space-x-2 '>
+          <ScrollView horizontal className='flex-row space-x-2'>
             {filters.map((filter, idx) => {
               return <Pressable
                 key={idx}

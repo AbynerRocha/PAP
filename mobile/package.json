@@ -54,6 +54,7 @@
     "react-native-uuid": "^2.0.1",
     "react-query": "^3.39.3",
     "react-redux": "^9.0.2",
+    "realm": "^12.5.1",
     "redux": "^5.0.0",
     "tailwind-merge": "^1.14.0",
     "tailwind-variants": "^0.1.14",
