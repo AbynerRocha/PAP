@@ -1,6 +1,7 @@
 
 import { Schema, model } from 'mongoose'
 import { UserData } from '../../@types/User'
+import { WorkoutSchema } from './Workouts'
 
 export const userSchema = new Schema<UserData>({
     name: { type: String, required: true }, 
@@ -15,4 +16,27 @@ export const userSchema = new Schema<UserData>({
 
 const User = model('users', userSchema)
 
-export { User }
+const UserSavedWorkoutsSchema = new Schema({
+    userId: String,
+    workout: String
+})
+
+const UserSavedWorkouts = model('user_saved_workouts', UserSavedWorkoutsSchema)
+
+const ExerciseStatsSchema = new Schema({
+    userId: String,
+    data: {
+        type: [{
+            exercise: String,
+            stats: [{
+                date: { type: Date, default: new Date() },
+                reps: Number,
+                weight: Number
+            }]
+        }]
+    }
+})
+
+const UserExerciseStats = model('user_exercise_stats', ExerciseStatsSchema)
+
+export { User, UserSavedWorkouts, UserExerciseStats }
