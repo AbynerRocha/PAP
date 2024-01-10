@@ -13,6 +13,8 @@ import { clientQuery } from '../../utils/queryClient'
 import { WorkoutLocalStoraged } from '../../database/controller/workout'
 import { MotiPressable } from 'moti/interactions'
 import { MotiView, useAnimationState, useDynamicAnimation } from 'moti'
+import WorkoutService from '../../services/workouts'
+import { useAuth } from '../../contexts/Auth/AuthContext'
 
 type Params = {
   id: string
@@ -20,6 +22,7 @@ type Params = {
 
 export default function Workout() {
   const { id } = useLocalSearchParams<Params>()
+  const { user } = useAuth()
   const [data, setData] = useState<WorkoutData>()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -46,18 +49,9 @@ export default function Workout() {
     const res = await Api.get<{ workout: WorkoutData }>(`/workout?id=${id}`)
     const fetchedData = res.data.workout
 
-    const savedWorkouts = await localStoraged.get()
-
-    
-    if (savedWorkouts === null) {
-      setSaved(false)
-    } else {
-      const savedData = savedWorkouts.find(w => w._id === fetchedData._id)
-
-      if (savedData) {
-        setSaved(true)
-      }
-    }
+    WorkoutService.isSaved(user?._id!, fetchedData._id)
+    .then(() => setSaved(true))
+    .catch(() => setSaved(false))
 
     return fetchedData
   }
@@ -69,13 +63,12 @@ export default function Workout() {
     if(!data) return 
 
     if(saved) {
-      localStoraged.remove(data._id).then(() => {
-        setSaved(false)
-      })
+      WorkoutService.unSave(user?._id!, data._id)
+      .then(() => setSaved(false))
       return 
     }
 
-    localStoraged.save(data)
+    WorkoutService.save(user?._id!, data._id)
     .then(() => setSaved(true))
   }
 

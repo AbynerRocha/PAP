@@ -32,11 +32,11 @@ export default function StartWorkout() {
   }
 
   function handleStart() {
-    if(!data?.exercises) return 
+    if(!data?.exercises) return
 
     setExercisesData(data?.exercises)
 
-    router.replace('/workout/start/exercise')
+    router.replace('/workout/start/exercise/'+id)
   }
 
   if (isFetching || isLoading) return <Loading />

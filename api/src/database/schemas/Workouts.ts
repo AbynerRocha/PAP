@@ -1,6 +1,4 @@
 import { Schema, Types, model } from "mongoose";
-import { userSchema } from "./User";
-import { ExerciseSchema } from "./Exercises";
 
 export const WorkoutSchema = new Schema({
     name: { type: String, required: true },

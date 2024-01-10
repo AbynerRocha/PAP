@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ExerciseInfo, ExerciseRecordUser, WorkoutData } from "../../@types/Workout";
 import { LocalStorageKeys } from "../keys";
-import WorkoutSchema from "../models/Workouts";
 import { ExercisesLocalStoraged } from "./exercises";
 
 export type WorkoutLocalStorageData = WorkoutData & {}
@@ -11,47 +10,6 @@ export type HistoryLocalStorageData = {
     workout: WorkoutData
 }
 
-class History {
-    private key: string;
-
-    constructor() {
-        this.key = LocalStorageKeys.WORKOUT.HISTORY
-    }
-
-    async add(workout: WorkoutData, date: Date) {
-        try {
-            const data = await AsyncStorage.getItem(this.key)
-
-            if (data === null) {
-                AsyncStorage.setItem(this.key, JSON.stringify([{ workout, date }]))
-                return
-            }
-
-            const history: HistoryLocalStorageData[] = JSON.parse(data)
-
-            history.push({ workout, date })
-
-            AsyncStorage.setItem(this.key, JSON.stringify(history))
-            return true
-        } catch (error: any) {
-            throw new Error(error)
-        }
-    }
-
-    async get() {
-        try {
-            const data = await AsyncStorage.getItem(this.key)
-
-            if (data === null) return null
-
-            const history: HistoryLocalStorageData[] = JSON.parse(data)
-
-            return history
-        } catch (error: any) {
-            throw new Error(error)
-        }
-    }
-}
 
 class WorkoutLocalStoraged {
     private key: string
@@ -187,4 +145,4 @@ class UserExerciseStats {
     }
 }
 
-export { History, WorkoutLocalStoraged, UserExerciseStats }
+export {  WorkoutLocalStoraged, UserExerciseStats }

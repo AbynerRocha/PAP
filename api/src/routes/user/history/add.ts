@@ -1,9 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify"
-import { WorkoutSchema } from "../../../database/schemas/Workouts"
-import WorkoutData from "../../../@types/Workout"
-import { UserSavedWorkouts } from "../../../database/schemas/User"
+import { UserWorkoutsHistory } from "../../../database/schemas/User"
 
-const url = '/saved-workouts'
+const url = '/workout-history'
 const method = 'POST'
 
 type Request = {
@@ -25,14 +23,17 @@ function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     })
 
     const { userId, workoutId } = req.body
-
-    UserSavedWorkouts.create({
-        userId,
-        workout: workoutId 
+    
+    UserWorkoutsHistory.create({
+        user: userId,
+        workout: workoutId,
+        date: new Date()
+    }).then((data) => {
+        data?.save()
+        
+        return rep.status(201).send()
     })
-    .catch((err) => rep.status(500).send({ err: err.name, message: 'Não foi possivel realizar esta ação.' }))
-
-    return rep.status(200).send()
+    .catch((err) => rep.status(500).send({ error: err.name, message: 'Não foi possivel realizar está ação.' }))
 }
 
 export { url, method, handler }

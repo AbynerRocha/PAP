@@ -9,6 +9,9 @@ import { Modal } from 'native-base'
 import { CountdownCircleTimer, useCountdown } from 'react-native-countdown-circle-timer'
 import { MotiView } from 'moti'
 import { UserExerciseStats } from '../../../../database/controller/workout'
+import { History } from '../../../../services/workouts'
+import { useAuth } from '../../../../contexts/Auth/AuthContext'
+import { useApp } from '../../../../contexts/App/AppContext'
 
 type Params = {
   exercises: string
@@ -23,6 +26,10 @@ type Stats = {
 }
 
 export default function StartExercise() {
+  const { user } = useAuth()
+  const { id: workoutId } = useLocalSearchParams<{ id: string }>()
+  const { setTabSelected} = useApp()
+
   const [exercises, setExercises] = useState<ExerciseInfo[]>(useExercisesStore((state) => state.exercises))
   const [toDoExercise, setToDoExercise] = useState(exercises[0])
   const [isShowingModalTimer, setIsShowingModalTimer] = useState(false)
@@ -35,6 +42,12 @@ export default function StartExercise() {
   const numberOfSeries = toDoExercise.series.length
 
   const router = useRouter()
+
+  if(!workoutId) {
+    setTabSelected({ key: 'workout', route: '/(tabs)/workouts' })
+    router.replace('/(tabs)/workouts')
+    return
+  }
 
   function renderTopBalls() {
     const toDoExerciseIdx = exercises.findIndex(ex => ex === toDoExercise)
@@ -61,6 +74,8 @@ export default function StartExercise() {
     const exerciseIdx = exercises.findIndex(ex => ex === toDoExercise)
 
     if (exerciseIdx - (exercises.length - 1) === 0 && serie.number === numberOfSeries) {
+      History.add(user?._id!, workoutId!)
+
       router.replace('/workout/end')
       return
     }

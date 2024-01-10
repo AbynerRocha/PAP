@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify"
 import { UserSavedWorkouts } from "../../../database/schemas/User"
 import { Workout } from "../../../database/schemas/Workouts"
 
-const url = '/savedworkouts'
+const url = '/saved-workouts'
 const method = 'DELETE'
 
 type Request = {
@@ -22,10 +22,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     const workout = await Workout.findById(workoutId)
 
-    UserSavedWorkouts.findOneAndDelete({
-        userId,
-        workout
-    })
+    UserSavedWorkouts.findOneAndDelete({ userId, workout: workoutId })
     .catch((err) => rep.status(500).send({ err: err.name, message: 'Não foi possivel realizar esta ação.' }))
 
 

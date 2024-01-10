@@ -1,6 +1,6 @@
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, ScrollView } from 'react-native'
 import React from 'react'
-import { MaterialIcons } from "@expo/vector-icons"
+import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons"
 import Avatar from '../../components/Avatar'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { MotiView } from 'moti'
@@ -10,6 +10,11 @@ import Button from '../../components/Button'
 export default function Settings() {
   const { user, signOut } = useAuth()
   const router = useRouter()
+
+  const options = [
+    { name: 'Histórico de Treinos', route: '/settings/history', icon: <FontAwesome5 name='history' size={20} color='gray' />  }
+  ]
+
 
   return (
     <View className='w-full h-full '>
@@ -40,7 +45,20 @@ export default function Settings() {
         </View>}
       </View>}
       <View className='h-0.5 w-full bg-neutral-100 mb-4' />
-
+      <ScrollView className='flex-1'>
+        {options.map((opt, idx, array) => {
+          return <View key={idx}>
+            <Pressable 
+              className='w-[90%] h-12 flex-row space-x-3 mx-5 items-center'
+              onPress={() => router.push(opt.route)}
+            >
+              {opt.icon}
+              <Text className='text-lg font-medium'>{opt.name}</Text>
+            </Pressable>
+            {idx !== array.length-1 && <View className='h-0.5 w-full bg-neutral-100 mb-4' />}
+          </View>
+        })}
+      </ScrollView>
     </View>
   )
 }

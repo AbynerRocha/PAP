@@ -1,6 +1,6 @@
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, FlatList } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
-import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import { FontAwesome, Ionicons, Feather } from '@expo/vector-icons'
 import formatNumber from '../../utils/formatNumber'
 import { twMerge } from 'tailwind-merge'
 import { Link, useRouter } from 'expo-router'
@@ -37,7 +37,7 @@ export default function Workouts() {
     { name: 'Salvos', value: 1 },
     { name: 'Populares', value: 2 }
   ])
-  
+
   const [filterApplied, setFilterApplied] = useState<number>(0)
 
   const { data, isFetching, isLoading, error } = useQuery({
@@ -46,9 +46,9 @@ export default function Workouts() {
   })
 
   const filteredData = useMemo(() => {
-    switch(filterApplied) {
+    switch (filterApplied) {
       case 0: {
-        if(!data) return
+        if (!data) return
 
         setWorkouts(data)
         break
@@ -58,7 +58,7 @@ export default function Workouts() {
 
         Storaged.get().then((value) => {
           console.log(value)
-          if(!value) return 
+          if (!value) return
 
           // setWorkouts(value)
         })
@@ -68,7 +68,7 @@ export default function Workouts() {
   }, [filterApplied])
 
   useEffect(() => {
-    if(!data) return 
+    if (!data) return
 
     setWorkouts(data)
     setOldWorkouts(data)
@@ -95,7 +95,12 @@ export default function Workouts() {
     return res
   }
 
-  if (isFetching || isLoading) return <Loading/>
+  if (isFetching || isLoading) return <Loading />
+
+  if (error) return <View className='h-[80%] w-full items-center justify-center bg-neutral-50 flex flex-col space-y-2'>
+    <Feather name='x-circle' color='red' size={50} />
+    <Text className='text-md text-red-500'>Não foi possivel realizar esta ação neste momento</Text>
+  </View>
 
   return (
     <View className='flex-1'>

@@ -1,3 +1,4 @@
+import { WorkoutData } from "../Workout"
 
 export type UserData = {
     _id: string
@@ -9,3 +10,7 @@ export type UserData = {
     verified: boolean
 }
 
+export type HistoryData = {
+    workout: WorkoutData,
+    date: Date
+}

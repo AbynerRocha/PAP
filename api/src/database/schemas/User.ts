@@ -14,14 +14,10 @@ export const userSchema = new Schema<UserData>({
     emailCode: { type: String }
 })
 
-const User = model('users', userSchema)
-
 const UserSavedWorkoutsSchema = new Schema({
     userId: String,
     workout: String
 })
-
-const UserSavedWorkouts = model('user_saved_workouts', UserSavedWorkoutsSchema)
 
 const ExerciseStatsSchema = new Schema({
     userId: String,
@@ -37,6 +33,15 @@ const ExerciseStatsSchema = new Schema({
     }
 })
 
-const UserExerciseStats = model('user_exercise_stats', ExerciseStatsSchema)
+const UserWorkoutsHistorySchema = new Schema({
+    user: String,
+    workout: String,
+    date: { type: Date, default: new Date() }
+})
 
-export { User, UserSavedWorkouts, UserExerciseStats }
+const User = model('users', userSchema)
+const UserExerciseStats = model('user_exercise_stats', ExerciseStatsSchema)
+const UserSavedWorkouts = model('user_saved_workouts', UserSavedWorkoutsSchema)
+const UserWorkoutsHistory = model('user_workouts_history', UserWorkoutsHistorySchema)
+
+export { User, UserSavedWorkouts, UserExerciseStats, UserWorkoutsHistory }
