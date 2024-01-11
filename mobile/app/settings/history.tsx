@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { History } from '../../services/workouts'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { useQuery } from 'react-query'
@@ -8,6 +8,7 @@ import { Feather } from '@expo/vector-icons'
 
 export default function WorkoutHistory() {
   const { user } = useAuth()
+  const [isShowing, setIsShowing] 
 
   const { data, isFetching, isLoading, error } = useQuery({
     queryKey: '@fetchHistory',
@@ -27,17 +28,29 @@ export default function WorkoutHistory() {
     <Text className='text-md text-red-500'>Não foi possivel realizar esta ação neste momento</Text>
   </View>
 
+  useEffect(() => {
+    for(let i = 0; i < data.length; i++) {
+
+    }
+  }, [])
+  
+
   return (
     <View className='p-3'>
       <Text className='text-4xl font-bold'>Histórico</Text>
       <View className='my-4' />
       <ScrollView className=''>
         {data.map((history, idx) => {
-          return <View key={idx}>
-            <View>
-              <Text>{history.workout.name}</Text>
-              <Text>Feito em: {new Date(history.date).toLocaleDateString('pt-PT')}</Text>
+          return <View key={idx} className='flex-row space-x-1'>
+            <View className='flex-row items-center justify-between w-[92%]'>
+              <Text className='text-xl'>{history.workout.name}</Text>
+              <Text className='text-right'>{new Date(history.date).toLocaleDateString('pt-PT')}</Text>
             </View>
+            <View>
+              <Feather name='chevron-down' size={28} />
+            </View>
+
+            {}
           </View>
         })}
       </ScrollView>
