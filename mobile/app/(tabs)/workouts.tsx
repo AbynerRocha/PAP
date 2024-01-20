@@ -13,6 +13,7 @@ import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
 import Loading from '../loading'
 import { useQuery } from 'react-query'
 import { WorkoutLocalStoraged } from '../../database/controller/workout'
+import ErrorPage from '../error'
 
 type WorkoutsPreviewData = {
   name: string
@@ -97,10 +98,7 @@ export default function Workouts() {
 
   if (isFetching || isLoading) return <Loading />
 
-  if (error) return <View className='h-[80%] w-full items-center justify-center bg-neutral-50 flex flex-col space-y-2'>
-    <Feather name='x-circle' color='red' size={50} />
-    <Text className='text-md text-red-500'>Não foi possivel realizar esta ação neste momento</Text>
-  </View>
+  if (error) return <ErrorPage message='Não foi possivel realizar esta ação neste momento.' />
 
   return (
     <View className='flex-1'>

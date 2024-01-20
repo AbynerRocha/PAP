@@ -9,20 +9,35 @@ const method = 'GET'
 type Request = {
     Querystring: {
         uid: string
+        p?: number
     }
 }
 
-function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
+async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     if(!req.query.uid) return rep.status(400).send({
         error: 'MISSING_DATA',
         message: 'Não foi possivel realizar esta ação.'
     })
 
     const { uid: userId } = req.query
+    const page = req.query.p ? req.query.p : 1
+
+    const limit = 25
+    const totalHistory = await UserWorkoutsHistory.countDocuments({ user: userId })
+    const numberOfPages = Math.ceil(totalHistory / limit)
     
+    if (page > numberOfPages) return rep.status(400).send({
+        error: 'PAGE_NOT_FOUND',
+        message: `A página ${page} não existe.`,
+        numberOfPages
+    })
+
+    const nextPage = page < numberOfPages ? page + 1 : null
+    const skipResults = page > 0 ? (page - 1) * limit : 0
+
     UserWorkoutsHistory.find({
         user: userId
-    })
+    }, {}, { skip: skipResults, limit })
     .then(async (data) => {
         let history: any[] = []
 
@@ -35,7 +50,7 @@ function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
             })
         }
 
-        return rep.status(200).send({ history })
+        return rep.status(200).send({ history, nextPage })
     })
     .catch((err) => {
         return rep.status(500).send({

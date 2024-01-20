@@ -7,9 +7,10 @@ type Props = {
   className?: string
   invertColor?: boolean
   colors?: string[]
+  size?: number
 }
 
-export default function WorkoutDifficulty({ className, difficulty, invertColor=false, colors = ['black', 'rgb(212 212 212)']}: Props) {
+export default function WorkoutDifficulty({ className, difficulty, invertColor=false, colors = ['black', 'rgb(212 212 212)'], size=13 }: Props) {
   if(colors.length !== 2) throw new Error('The color param only can be an array with 2 elements')
 
   function renderDifficulty() {
@@ -22,11 +23,11 @@ export default function WorkoutDifficulty({ className, difficulty, invertColor=f
 
     while (maxDifficulty != 0) {
       if (tempDifficulty > 0) {
-        JSX.push(<FontAwesome5 key={maxDifficulty} name="dumbbell" size={13} color={invertColor ? color2 : color1} />)
+        JSX.push(<FontAwesome5 key={maxDifficulty} name="dumbbell" size={size} color={invertColor ? color2 : color1} />)
         tempDifficulty = tempDifficulty - 1
         maxDifficulty = maxDifficulty - 1
       } else {
-        JSX.push(<FontAwesome5 key={maxDifficulty} name="dumbbell" size={13} color={invertColor ? color1 : color2} />)
+        JSX.push(<FontAwesome5 key={maxDifficulty} name="dumbbell" size={size} color={invertColor ? color1 : color2} />)
         maxDifficulty = maxDifficulty - 1
       }
     }

@@ -22,10 +22,13 @@ export default function Home() {
           <View className='bg-blue-800 rounded-2xl h-full w-54 p-3 items-center justify-center'>
             <Text className='text-neutral-100 font-medium italic text-xl'>Plano de Treino Full-Body</Text>
           </View>
-          <View className='w-20 h-full bg-blue-800 rounded-2xl p-3 items-center space-y-2'>
+          <Pressable 
+            className='w-20 h-full bg-blue-800 rounded-2xl p-3 items-center space-y-2'
+            onPress={() => router.push('/calendar/create')}
+          >
             <Text className='text-neutral-50 font-semibold'>Criar</Text>
             <Feather name='edit' size={28} color='white' />
-          </View>
+          </Pressable>
         </View>
       </View>
       

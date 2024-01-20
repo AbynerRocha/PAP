@@ -5,7 +5,7 @@ import { User } from "../../../database/schemas/User"
 import { AccessLevel } from "../../../@types/User"
 import { Muscle } from "../../../database/schemas/Muscles"
 
-const url = ''
+const url = '/'
 const method = 'GET'
 
 type Request = {
@@ -20,6 +20,8 @@ type Request = {
         'refresh-token': string
     }
 }
+
+
 
 async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     if (req.query.id) {
@@ -42,7 +44,20 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         filters = { ...filters, muscle: req.query.muscle }
     }
 
-    const exercises = await Exercise.find(filters, {}, { skip: (page > 1 ? 25 * page : 0), limit: 25 })
+    const limit = 25
+    const totalExercises = await Exercise.countDocuments(filters)
+    const numberOfPages = Math.ceil(totalExercises / limit)
+    
+    if(page > numberOfPages) return rep.status(400).send({
+        error: 'PAGE_NOT_FOUND',
+        message: `A página ${page} não existe.`,
+        numberOfPages
+    })
+    
+    const nextPage = page < numberOfPages ? page + 1 : null
+    const skipResults = (page - 1) * limit
+
+    const exercises = await Exercise.find(filters, {}, { skip: skipResults, limit })
     const data = []
 
     for (const exercise of exercises) {
@@ -63,7 +78,9 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         data.push(exerciseData)
     }
 
-    return rep.status(200).send({ exercises: data })
+
+
+    return rep.status(200).send({ exercises: data, numberOfPages, nextPage })
 }
 
 export { url, method, handler }

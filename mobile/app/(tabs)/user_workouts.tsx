@@ -12,6 +12,7 @@ import Button from '../../components/Button'
 import QRCode from 'react-native-qrcode-svg';
 import config from '../../app.json'
 import WorkoutDifficulty from '../../components/WorkoutDifficulty'
+import ErrorPage from '../error'
 
 type Response = {
   workouts: WorkoutData[]
@@ -79,10 +80,7 @@ export default function UserWorkouts() {
     <ActivityIndicator size='large' color='black' />
   </View>
 
-  if (error.type === 'root') return <View className='h-[80%] w-full items-center justify-center bg-neutral-50 flex flex-col space-y-2'>
-    <Feather name='x-circle' color='red' size={50} />
-    <Text className='text-md text-red-500'>{error.message}</Text>
-  </View>
+  if (error.type === 'root') return <ErrorPage message='Não foi possivel realizar esta ação neste momento.' />
 
   return <View className='flex-1'>
     <ScrollView className='flex-1'>

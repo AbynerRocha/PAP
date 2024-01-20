@@ -63,7 +63,20 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     const page = req.query.p
 
-    const workouts = await Workout.find(filters, {}, { skip: (page > 1 ? 25 * page : 0), limit: 25 })
+    const limit = 25
+    const totalWorkouts = await Workout.countDocuments(filters)
+    const numberOfPages = Math.ceil(totalWorkouts / limit)
+    
+    if(page > numberOfPages) return rep.status(400).send({
+        error: 'PAGE_NOT_FOUND',
+        message: `A página ${page} não existe.`,
+        numberOfPages
+    })
+    
+    const nextPage = page < numberOfPages ? page + 1 : null
+    const skipResults = page > 0 ? (page - 1) * limit : 0
+
+    const workouts = await Workout.find(filters, {}, { skip: skipResults, limit })
 
     const data = []
 
@@ -90,7 +103,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         data.push(workoutData)
     }
 
-    return rep.status(200).send({ workouts: data })
+    return rep.status(200).send({ workouts: data, nextPage })
 }
 
 export { url, method, handler }

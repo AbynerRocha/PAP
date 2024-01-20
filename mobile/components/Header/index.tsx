@@ -19,7 +19,7 @@ export default function Header() {
                     className='w-14 h-14 rounded-full bg-neutral-200 items-center justify-center ml-4 mt-5'
                     onLongPress={() => {
                         Vibration.vibrate(250)
-                        router.push('/workout/end')
+                        router.push('/dev/test')
 
                     }}
                 >
