@@ -42,7 +42,8 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     return rep.status(200).send({
         exercises: exercisesFound,
-        nextPage
+        nextPage,
+        numberOfPages
     })
 }
 

@@ -1,72 +1,78 @@
-import { View, Text, Pressable, Image } from 'react-native'
+import { View, Text, Image, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router'
-import { Api } from '../../../utils/Api'
-import { ExerciseInfo, WorkoutData } from '../../../@types/Workout'
-import Input from '../../../components/Input'
 import { Controller, useForm } from 'react-hook-form'
+import Input from '../../../components/Input'
+import { MaterialIcons, Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import Button from '../../../components/Button';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ExerciseData } from '../../../@types/Exercise';
+import ExercisesList from '../exerciseslist';
 import DragList, { DragListRenderItemInfo } from 'react-native-draglist'
-import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import Button from '../../../components/Button'
-import { AxiosError } from 'axios'
-import { MotiView, useAnimationState } from 'moti'
-import { twMerge } from 'tailwind-merge'
-import { Accordion, Menu } from 'native-base'
-
-type Params = {
-  id: string
-}
+import { twMerge } from 'tailwind-merge';
+import { Api } from '../../../utils/Api';
+import { useAuth } from '../../../contexts/Auth/AuthContext';
+import { AxiosError } from 'axios';
+import { Menu } from 'native-base';
+import { WorkoutData } from '../../../@types/Workout';
 
 type Fields = {
   name: string
 }
 
-export default function Workout() {
-  const { id } = useLocalSearchParams<Params>()
+type WorkoutExecutionData = {
+  exercise: string
+  reps: number
+  series: number
+  restTime: number
+}
+
+type SeriesData = {
+  exercise: string
+  series: {
+    reps: number
+    restTime: number
+  }[]
+}
+
+export default function EditWorkout() {
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const { formState: { errors }, control, setError, handleSubmit, setValue } = useForm<Fields>()
   const router = useRouter()
-  const { control, formState: { errors }, handleSubmit } = useForm<Fields>()
+  const { user } = useAuth()
 
-  const [data, setData] = useState<WorkoutData>()
-  const [exercises, setExercises] = useState<ExerciseInfo[]>([])
-  const [updated, setUpdated] = useState<ExerciseInfo[]>([])
-  const [exerciseSelected, setExerciseSelected] = useState<ExerciseInfo>()
+  const [showExerciseList, setShowExerciseList] = useState(false)
+  const [exercises, setExercises] = useState<ExerciseData[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [newName, setNewName] = useState('')
-  const [error, setError] = useState('')
-
-  const notificationErrorAnim = useAnimationState({
-    hide: {
-      opacity: 0,
-      bottom: -200
-    },
-    show: {
-      opacity: 1,
-      bottom: 0
-    }
-  }, {
-    from: 'hide',
-    to: 'show'
-  })
+  const [workoutExecutionInfo, setWorkoutExecutionInfo] = useState<WorkoutExecutionData[]>([])
+  const [exerciseSelected, setExerciseSelected] = useState<ExerciseData>()
+  const [showMenu, setShowMenu] = useState(false)
+  const [series, setSeries] = useState<SeriesData[]>([])
+  const [isPrivate, setIsPrivate] = useState(false)
 
   useEffect(() => {
     Api.get(`/workout?id=${id}`)
       .then((res) => {
-        setData(res.data.workout)
-        setExercises(res.data.workout.exercises)
-        setUpdated(res.data.workout.exercises)
-        setNewName(res.data.workout.name)
+        const workoutData = res.data.workout as WorkoutData
+
+        workoutData.exercises.forEach(({ exercise, series }) => {
+          if (!exercise || !series) return
+
+          setSeries((v) => [...v, { exercise: exercise._id!, series }])
+          setExercises((v) => [...v, { ...exercise }])
+        })
+
+        setValue('name', workoutData.name)
+        setIsPrivate(workoutData.isPrivate)
       })
   }, [])
 
   useEffect(() => {
-    if (error === '') return
+    for (const exercise of exercises) {
+      setSeries((v) => [...v, { exercise: exercise._id!, series: [{ reps: 10, restTime: 60 }] }])
+    }
+  }, [showExerciseList])
 
-    notificationErrorAnim.transitionTo('show')
-
-    setTimeout(() => clearError(), 5000)
-  }, [error])
-
-  function onReordered(fromIndex: number, toIndex: number) {
+  async function onReordered(fromIndex: number, toIndex: number) {
     const copy = [...exercises];
     const removed = copy.splice(fromIndex, 1);
 
@@ -74,98 +80,120 @@ export default function Workout() {
     setExercises(copy);
   }
 
-  function handleEdit() {
-    if (newName === '') {
-      setError("O campo 'Nome' é obrigatório.")
+  function handleEdit({ name }: Fields) {
+    setIsLoading(true)
+
+    if (exercises.length < 2) {
+      setError('root', { message: 'Você precisa adicionar ao menos 2 exercícios.' })
       return
     }
 
-    setIsLoading(true)
-
     Api.put('/workout', {
-      id: data?._id,
-      name: newName,
-      exercises
+      name,
+      createdBy: user?._id,
+      lastEdit: new Date(),
+      exercises: series,
+      isPrivate
+    }).then((res) => {
+      router.push(`/workout/${res.data.workout._id}`)
     })
-      .then(() => {
-        router.push(`/workout/${data?._id}`)
-      })
       .catch((err: AxiosError<any>) => {
-        console.log(err)
+        setError('root', { message: err.response?.data.message })
       })
       .finally(() => setIsLoading(false))
   }
 
-  function handleChangeInfo({ exercise, reps, restTime }: ExerciseInfo, index: number) {
-    const data = exercises.filter(w => w.exercise._id !== exercise?._id)
-    const newData = [...data, { exercise, reps, restTime }]
+  return showExerciseList ? <ExercisesList
+    onStateChange={setShowExerciseList}
+  /> : (
+    <View className='h-screen w-screen'>
 
-    setUpdated(newData)
-
-    // onReordered(exercises.findIndex(w => w.exercise._id === exercise?._id), index)
-  }
-
-  function clearError() {
-    notificationErrorAnim.transitionTo('hide')
-
-    setTimeout(() => setError(''), 500)
-  }
-
-  return (
-    <View className='flex-1'>
-      <View className='flex-row items-center'>
-        <Pressable className='ml-3' onPress={() => router.replace('/(tabs)/user_workouts')}>
-          <Feather name='chevron-left' size={30} />
-        </Pressable>
-        <View className='flex-1'>
-          <Text className='mt-4 text-xl font-semibold text-center mr-5'>Editar {data && data.name.length > 18 ? data?.name.slice(0, 18) + '...' : data?.name}</Text>
+      <View className='px-3 pt-2 mb-4 mt-3'>
+        <View className='flex-row w-full mb-3'>
+          <Pressable
+            onPress={() => router.back()}
+          >
+            <Ionicons name='chevron-back' color='black' size={30} />
+          </Pressable>
+          <View className='flex-1 items-center justify-center -ml-4'>
+            <Text
+              className='text-2xl italic font-bold text-center'
+            >
+              Editar Treino
+            </Text>
+          </View>
         </View>
-      </View>
-      <View>
-        <View className='justify-center flex-col mx-3 mt-3 space-y-2'>
-          <Text className='text-xs text-neutral-700'>Nome</Text>
-          <Input
-            placeholder='Digite aqui'
-            className='bg-transparent border border-neutral-300 p-3 rounded-lg text-neutral-700'
-            defaultValue={data?.name}
-            onChangeText={setNewName}
-          />
-        </View>
-      </View>
-      <Accordion></Accordion>
 
-      <View className='w-full h-0.5 bg-neutral-200 mt-3' />
+        <Controller
+          control={control}
+          rules={{ required: { value: true, message: 'Este campo é obrigatório.' } }}
+          name='name'
+          render={({ field: { value, name, onBlur, onChange } }) => {
+            return (
+              <View className='space-y-2'>
+                <Text className='text-sm text-neutral-500'>Nome</Text>
+                <View className='flex-row w-full h-fit items-center space-x-2'>
 
-      <View className='w-full h-[80%]'>
-          <DragList
-            data={updated}
-            onReordered={onReordered}
-            keyExtractor={(data: ExerciseInfo) => data.exercise._id}
-            renderItem={({ item, index, onDragEnd, onDragStart, isActive }: DragListRenderItemInfo<ExerciseInfo>) => {
-              return (
-                <Menu
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    placeholder='Digite aqui'
+                    placeholderTextColor='rgb(163 163 163)'
+                    className='bg-transparent border border-neutral-300 p-3 rounded-lg text-md w-[82%]'
+                  />
+                  <Pressable
+                    className='items-center justify-center border border-neutral-300 h-14 w-14  rounded-lg'
+                    onPress={() => setIsPrivate((v) => !v)}
+                  >
+                    <MaterialIcons name={isPrivate ? 'public-off' : 'public'} size={24} color='black' />
+                  </Pressable>
+                </View>
+                {errors.name && <Text className='text-red-500 text-sm mt-2'>{errors.name.message}</Text>}
+                {errors.root && <Text className='text-red-500 text-sm mt-2'>{errors.root.message}</Text>}
+              </View>
+            )
+          }}
+        />
+      </View>
+
+      <View
+        className='w-full h-[1px] bg-neutral-300'
+      />
+      <View
+        className='flex-1 w-full'
+      >
+
+        <DragList
+          data={exercises}
+          onReordered={onReordered}
+          keyExtractor={(data: ExerciseData) => data._id}
+          renderItem={(data: DragListRenderItemInfo<ExerciseData>) => {
+            return (
+              <Menu
                 onOpen={() => {
-                  setExerciseSelected(item)
+                  setExerciseSelected(data.item)
                 }}
                 onClose={() => {
                   setExerciseSelected(undefined)
                 }}
                 closeOnSelect={true}
+                className='max-h-60'
                 trigger={(triggerProps => {
                   return <Pressable
                     {...triggerProps}
-                    key={index}
-                    className={twMerge('text-lg text-center p-3 flex-row rounded-md my-2 mx-3 border border-neutral-300 items-center', (isActive && 'opacity-50'))}
-                    onLongPress={onDragStart}
-                    onPressOut={isActive ? onDragEnd : () => { }}
+                    key={data.index}
+                    className={twMerge('text-lg text-center p-3 flex-row rounded-md my-2 mx-3 border border-neutral-300 items-center', (data.isActive && 'opacity-50'))}
+                    onLongPress={data.onDragStart}
+                    onPressOut={data.isActive ? data.onDragEnd : () => { }}
                   >
                     <View className='flex-1 flex-row space-x-2 items-center'>
                       <Image
-                        source={{ uri: item.exercise.image }}
+                        source={{ uri: data.item.image }}
                         width={40}
                         height={40}
                       />
-                      <Text className='text-md font-medium'>{item.exercise.name}</Text>
+                      <Text className='text-md font-medium'>{data.item.name}</Text>
                     </View>
                     <View>
                       <MaterialCommunityIcons name='drag-vertical' size={24} color='rgb(212 212 212)' />
@@ -173,68 +201,147 @@ export default function Workout() {
                   </Pressable>
                 })}
               >
-                <View className='flex-row justify-around space-x-2 p-2'>
-                  <View className='justify-center items-center space-y-1'>
-                    <Text className='text-xs'>Número de Reps.</Text>
-                    <Input
-                      keyboardType='numeric'
-                      defaultValue={item.reps.toString()}
-                      className='bg-transparent border border-neutral-300 mx-3 rounded-lg w-12 h-12 text-center text-lg font-semibold'
-                      onChangeText={(value) => handleChangeInfo({ exercise: item.exercise, reps: parseInt(value), restTime: item.restTime }, index)}
-                    />
-                  </View>
+                {series.find(sr => sr.exercise === data.item._id)?.series.map((serieData, idx, array) => {
 
-                  <View className='justify-center items-center space-y-1'>
-                    <Text className='text-xs mb-1'>Tempo de Descanso</Text>
-                    <View className='flex-row items-end mx-3'>
-                      <Input
-                        defaultValue={item.restTime.toString()}
-                        keyboardType='numeric'
-                        className='bg-transparent border border-neutral-300 rounded-lg w-12 h-12 text-center text-lg font-semibold'
-                        onChangeText={(value) => handleChangeInfo({ exercise: item.exercise, reps: item.reps, restTime: parseInt(value) }, index)}
-                      />
-                      <Text className='text-xs ml-1'>seg.</Text>
+                  return <ScrollView key={idx}>
+                    <View className='flex-col items-center'>
+                      <View className='flex-row items-center justify-around space-x-2 pl-5 pr-3 py-2'>
+                        <View className='justify-center items-center space-y-1'>
+                          <Text className='text-xs'>N. de Reps</Text>
+                          <Input
+                            defaultValue={serieData.reps.toString()}
+                            className='bg-transparent border border-neutral-300 mx-3 w-12 h-12 text-center text-lg font-semibold rounded-md'
+                            onChangeText={(value) => {
+                              const newReps = parseInt(value)
+
+                              if (!newReps || newReps === serieData?.reps) return
+
+                              let dataToChange = array
+
+                              const toAdd = series.filter(sr => sr.exercise !== data.item._id)
+
+                              dataToChange[idx] = {
+                                reps: newReps,
+                                restTime: array[idx].restTime
+                              }
+
+                              setSeries([...toAdd, { exercise: data.item._id!, series: [...dataToChange] }])
+
+                            }}
+                          />
+                        </View>
+                        <View className='justify-center items-center space-y-1'>
+                          <Text className='text-xs mb-1'>Tempo de Descanso</Text>
+                          <View className='flex-row items-end mx-3'>
+                            <Input
+                              defaultValue={serieData.restTime.toString()}
+                              keyboardType='numeric'
+                              className='bg-transparent border border-neutral-300  w-12 h-12 text-center text-lg font-semibold rounded-md'
+                              onChangeText={(value) => {
+                                const newRestTime = parseInt(value)
+
+                                if (!newRestTime || newRestTime === serieData?.restTime) return
+
+                                let dataToChange = array
+
+                                const toAdd = series.filter(sr => sr.exercise !== data.item._id)
+
+                                dataToChange[idx] = {
+                                  restTime: newRestTime,
+                                  reps: array[idx].reps
+                                }
+
+                                setSeries([...toAdd, { exercise: data.item._id!, series: [...dataToChange] }])
+                              }}
+                            />
+                            <Text className='text-xs ml-1'>seg.</Text>
+                          </View>
+                        </View>
+
+                        {array.length > 1 && <Pressable
+                          className='h-full w-8 justify-center items-center'
+                          onPressIn={() => {
+                            const filteredData = array.filter(v => v !== array[idx])
+                            const toAdd = series.filter(sr => sr.exercise !== data.item._id)
+
+                            setSeries([...toAdd, { exercise: data.item._id!, series: filteredData }])
+                          }}
+                        >
+                          <Feather name='x-circle' color='red' size={18} />
+                        </Pressable>}
+                      </View>
+                      {idx !== array.length - 1 && <View className='w-full h-0.5 bg-neutral-200 my-2' />}
                     </View>
+
+
+                  </ScrollView>
+                })}
+
+                <View className='w-full h-0.5 bg-neutral-200 my-2' />
+                <Pressable
+                  className='h-8 w-full'
+                  onPress={() => {
+                    const seriesData = series.find(sr => sr.exercise === data.item._id)
+
+                    if (!seriesData) return
+
+                    if (seriesData.series.length >= 10) {
+                      return
+                    }
+
+                    const toAdd = series.filter(sr => sr.exercise !== data.item._id)
+
+                    setSeries([...toAdd, {
+                      exercise: seriesData.exercise,
+                      series: [
+                        ...seriesData.series,
+                        {
+                          reps: 10,
+                          restTime: 60
+                        }
+                      ]
+                    }])
+                  }}
+
+                >
+                  <View className='w-full h-full space-x-2 flex-row items-center justify-center'>
+                    <Feather size={16} name='plus-circle' color='rgb(163 163 163)' />
+                    <Text className='text-neutral-400'>Adicionar {series.find(sr => sr.exercise === data.item._id)?.series.length + '/10'}</Text>
                   </View>
-                </View>
+                </Pressable>
               </Menu>
-              )
-            }}
-          />
+            )
+          }}
+        />
+      </View>
 
+      <View
+        className='w-full h-[1px] bg-neutral-300'
+      />
 
-        <View className='absolute w-full flex-col space-y-2 items-center bottom-0'>
-          {error !== '' && <MotiView
-            className='mx-10 h-fit p-3 bg-red-500/60 rounded-lg'
-            state={notificationErrorAnim}
-            transition={{
-              delay: 450,
-              duration: 400
-            }}
-
-          >
-            <Pressable className='h-fit w-fit flex-row items-center space-x-4' onPress={clearError}>
-              <View>
-                <Feather name='x' color='white' size={25} />
-              </View>
-              <View className='break-words pr-5'>
-                <Text className='text-neutral-50 font-medium'>{error}</Text>
-              </View>
-            </Pressable>
-          </MotiView>}
+      <View className='fixed bottom-3 w-full h-fit flex-col items-center justify-center space-y-2 mt-6'>
+        <Pressable
+          className='w-52 h-12 bg-blue-700 rounded-xl shadow-md shadow-black/50 flex-row space-x-2 items-center justify-center'
+          onPress={() => setShowExerciseList(true)}
+        >
+          <View>
+            <Feather name='plus' size={20} color='white' />
+          </View>
+          <Text className='text-neutral-50 font-bold'>Adicionar Exercício</Text>
+        </Pressable>
+        <View>
           <Button
-            size='lg'
+            color='green'
+            size='sm'
+            textStyle='font-bold'
             isLoading={isLoading}
-            onPress={handleEdit}
+            className='w-52 h-12 shadow-md shadow-black/50'
+            onPress={handleSubmit(handleEdit)}
           >
-            Confirmar Alterações
+            Criar
           </Button>
         </View>
-
-
-
       </View>
     </View>
   )
 }
-

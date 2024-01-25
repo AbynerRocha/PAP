@@ -47,14 +47,15 @@ export default function UserWorkouts() {
   function fetchWorkout() {
     setIsFetching(true)
 
-    Api.get(`/workout?p=${page}&cb=${user?._id}`)
+    Api.get(`/workout?p=${page}&&pvts=true&cb=${user?._id}`)
       .then((res: AxiosResponse<Response>) => {
         setWorkouts(res.data.workouts)
       })
       .catch((err: AxiosError<any>) => {
+        console.log(err.response?.data)
         switch (err.response?.data) {
-          case 'NOT_FOUND':
-            setError({ type: 'root', message: 'Sem exercícios' })
+          case 'PAGE_NOT_FOUND' || 'NOT_FOUND': 
+            setError({ type: '', message: '' })
             break
           default:
             setError({ type: 'root', message: `Não foi possivel realizar está ação neste momento (${err.code})` })
@@ -80,14 +81,12 @@ export default function UserWorkouts() {
     <ActivityIndicator size='large' color='black' />
   </View>
 
-  if (error.type === 'root') return <ErrorPage message='Não foi possivel realizar esta ação neste momento.' />
-
+  if (error.type !== '' && error.type === 'root') return <ErrorPage message='Não foi possivel realizar esta ação neste momento.' />
+  
   return <View className='flex-1'>
     <ScrollView className='flex-1'>
       {workouts.map((workout, idx) => {
         const difficulty = calcWorkoutDifficulty(workout.exercises)
-
-
 
         return <Pressable
           onLongPress={() => {
@@ -109,7 +108,7 @@ export default function UserWorkouts() {
 
               <View className='flex-row items-center space-x-1'>
                 <Ionicons name="cloud-download-outline" size={13} color="rgb(160 160 160)" />
-                <Text className='text-xs text-neutral-400'>{formatter.format(workout.saves + 10000)}</Text>
+                <Text className='text-xs text-neutral-400'>{formatter.format(workout.saves)}</Text>
               </View>
             </View>
           </View>

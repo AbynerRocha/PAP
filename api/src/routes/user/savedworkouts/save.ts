@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify"
-import { WorkoutSchema } from "../../../database/schemas/Workouts"
+import { Workout, WorkoutSchema } from "../../../database/schemas/Workouts"
 import WorkoutData from "../../../@types/Workout"
 import { UserSavedWorkouts } from "../../../database/schemas/User"
 
@@ -31,6 +31,8 @@ function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         workout: workoutId 
     })
     .catch((err) => rep.status(500).send({ err: err.name, message: 'Não foi possivel realizar esta ação.' }))
+
+    Workout.findByIdAndUpdate(workoutId)
 
     return rep.status(200).send()
 }

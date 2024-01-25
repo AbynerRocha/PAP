@@ -14,6 +14,7 @@ type Request = {
         name?: string,
         muscle?: string
         p: number
+        li?: number
     },
     Headers: {
         'auth-token': string
@@ -32,7 +33,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     if (!req.query.p) return rep.status(400).send({ error: 'MISSING_DATA' })
 
-    const { p: page } = req.query
+    const { p: page, li } = req.query
 
     let filters = {}
 
@@ -44,7 +45,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         filters = { ...filters, muscle: req.query.muscle }
     }
 
-    const limit = 25
+    const limit = li ? li : 25
     const totalExercises = await Exercise.countDocuments(filters)
     const numberOfPages = Math.ceil(totalExercises / limit)
     

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, Pressable, ActivityIndicator, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../../components/Input'
@@ -11,6 +11,9 @@ import { ExerciseData } from '../../@types/Exercise';
 import { Image } from 'moti';
 import { twMerge } from 'tailwind-merge';
 import { MuscleData } from '../../@types/Muscle';
+import { useQuery } from 'react-query';
+import Loading from '../loading';
+import { useExerciseStore } from '../../utils/states/exercises';
 
 type FiltersData = {
   name: string
@@ -18,27 +21,57 @@ type FiltersData = {
 }
 
 type ExerciseListProps = {
-  onExercisesChange: (changes: ExerciseData[]) => void
   onStateChange: (state: boolean) => void
-  exercises: ExerciseData[]
 }
 
-export default function ExercisesList({ onExercisesChange, exercises, onStateChange }: ExerciseListProps) {
+export default function ExercisesList({ onStateChange }: ExerciseListProps) {
   const [page, setPage] = useState(1)
   const [fetchedExercises, setFetchedExercises] = useState<ExerciseData[]>([])
-  const [isFetching, setIsFetching] = useState(true)
   const [fetchError, setFetchError] = useState('')
   const [muscles, setMuscles] = useState<MuscleData[]>([])
   const [filters, setFielters] = useState<FiltersData>({
     name: '',
     muscle: []
   })
-  const [exerciseSelectedList, setExerciseSelectedList] = useState<ExerciseData[]>([...exercises])
-
+  const { exercises, setExercisesData } = useExerciseStore()
+  const [exerciseSelectedList, setExerciseSelectedList] = useState<ExerciseData[]>([])
+  const [hasMoreData, setHasMoreData] = useState(false)
+  
   useEffect(() => {
-    fetchExercises()
-    fetchMuscles()
+    setExerciseSelectedList(exercises)
   }, [])
+
+  const { isFetching, isLoading, isRefetching, isError, refetch } = useQuery({
+    queryKey: '@fetchExercises',
+    queryFn: async () => {
+      const res = await Api.get(`/exercise?li=10&p=1`)
+
+      const exerciseFetched: ExerciseData[] = res.data.exercises
+      const nextPage: number | null = res.data.nextPage
+      
+      if(nextPage !== null) setHasMoreData(true)
+
+      setFetchedExercises(exerciseFetched)
+
+      Api.get('/muscle')
+        .then((res) => {
+          setMuscles(res.data.muscles)
+        })
+
+      return exerciseFetched
+    }
+  })
+
+  async function fetchNextPage() {
+    const res = await Api.get(`/exercise?li=10&p=${page}`)
+
+    const exerciseFetched: ExerciseData[] = res.data.exercises
+    const nextPage: number | null = res.data.nextPage
+
+    if(nextPage !== null) setHasMoreData(true)
+
+    setFetchedExercises((v) => [...v, ...exerciseFetched])
+  }
 
   function getFilteredExercises() {
     let filteredMuscles: ExerciseData[] = []
@@ -63,64 +96,35 @@ export default function ExercisesList({ onExercisesChange, exercises, onStateCha
     return filteredMuscles
   }
 
-  function fetchMuscles() {
-    setIsFetching(true)
-
-    Api.get('/muscle')
-      .then((res) => {
-        setMuscles(res.data.muscles)
-      })
-      .finally(() => setIsFetching(false))
-  }
-
-  function fetchExercises() {
-    Api.get(`/exercise?p=${page}`)
-      .then((res) => {
-        const exerciseFetched: ExerciseData[] = res.data.exercises
-
-        if(exercises.length > 0) {
-          const filtered = exerciseFetched.filter((e) => { return exercises.indexOf(e) === -1 })
-          
-          setFetchedExercises(filtered)
-          return
-        }
-        
-        setFetchedExercises(exerciseFetched)
-      })
-      .catch((err: AxiosError<any>) => {
-        setFetchError(err.response?.data.message)
-      })
-  }
 
   function handleSelectExercise(exercise: ExerciseData) {
-    if (exerciseSelectedList.find((e) => e === exercise)) {
-      setExerciseSelectedList((v) => v.filter(e => e !== exercise))
+    if (exerciseSelectedList.find((e) => e._id === exercise._id)) {
+      const toUpdate = exerciseSelectedList.filter(e => e._id !== exercise._id)
+      console.log(toUpdate)
+
+      setExerciseSelectedList(toUpdate)
       return
     }
-
-    setExerciseSelectedList((v) => ([...v, exercise]))
+    
+    setExerciseSelectedList((v) => [...v, exercise])
   }
 
   function handleChangeExercises() {
     let data = []
 
     for (const exercise of exerciseSelectedList) {
-      if (exercises.find(e => e === exercise)) continue
-
       data.push(exercise)
     }
 
-    onExercisesChange(data)
+    setExercisesData(data)
     onStateChange(false)
   }
 
-  if (isFetching) return <View className='h-screen w-screen items-center justify-center bg-neutral-50'>
-    <ActivityIndicator size='large' color='black' />
-  </View>
+  if (isFetching || isLoading) return <Loading/>
 
-  if (fetchError !== '') return <View className='h-screen w-screen items-center justify-center bg-neutral-50 space-y-2'>
+  if (isError) return <View className='h-screen w-screen items-center justify-center bg-neutral-50 space-y-2'>
     <Feather name='x-circle' color='red' size={40} />
-    <Text className='text-md font-medium text-center'>Erro: {fetchError}</Text>
+    <Text className='text-md font-medium text-center'>Não foi possivel realizar esta ação neste momento.</Text>
   </View>
 
   return <View className='h-screen w-screen p-3 items-center justify-center bg-neutral-50'>
@@ -163,73 +167,59 @@ export default function ExercisesList({ onExercisesChange, exercises, onStateCha
         })}
       </ScrollView>
     </View>
-    <ScrollView className='h-[90%] w-full space-y-3'>
-      {filters.name === '' && filters.muscle.length === 0 ?
-        fetchedExercises?.map((exercise, idx) => {
-          return <Pressable
-            key={idx}
-            className='p-3 h-20 w-full bg-neutral-100 border border-neutral-300 rounded-lg flex-row justify-between space-x-2'
-            onPress={() => handleSelectExercise(exercise)}
-          >
-            <View className='flex-row space-x-2 items-center'>
-              <View className='w-fit h-fit rounded-full'>
-                <Image
-                  source={{ uri: exercise.image }}
-                  alt={exercise.name}
-                  height={50}
-                  width={50}
-                  className='object-cover'
-                />
-              </View>
-              <View>
-                <Text className='font-medium text-md'>{exercise.name.length > 24 ? exercise.name.slice(0, 24) + ' ...' : exercise.name}</Text>
-              </View>
-            </View>
-            <View>
-              {exerciseSelectedList.find((e) => e._id === exercise._id) && <View
-                className='bg-blue-700 rounded-full w-6 h-6  items-center justify-center'
-              >
-                <Text className='text-s font-semibold text-neutral-50'>{exerciseSelectedList.findIndex((e) => e._id === exercise._id) + 1}</Text>
-              </View>}
-            </View>
-          </Pressable>
-        })
-        : getFilteredExercises()?.map((exercise, idx) => {
-          return <Pressable
-            key={idx}
-            className='p-3 h-20 w-full bg-neutral-100 border border-neutral-300 rounded-lg flex-row justify-between space-x-2'
-            onPress={() => handleSelectExercise(exercise)}
-          >
-            <View className='flex-row space-x-2 items-center'>
-              <View className='w-fit h-fit rounded-full'>
-                <Image
-                  source={{ uri: exercise.image }}
-                  alt={exercise.name}
-                  height={50}
-                  width={50}
-                  className='object-cover'
-                />
-              </View>
-              <View>
-                <Text className='font-medium text-md'>{exercise.name.length > 24 ? exercise.name.slice(0, 24) + ' ...' : exercise.name}</Text>
-              </View>
-            </View>
-            <View>
-              {exerciseSelectedList.find((e) => e._id === exercise._id) && <View
-                className='bg-blue-700 rounded-full w-6 h-6  items-center justify-center'
-              >
-                <Text className='text-s font-semibold text-neutral-50'>{exerciseSelectedList.findIndex((e) => e._id === exercise._id) + 1}</Text>
-              </View>}
-            </View>
-          </Pressable>
-        })
+    <FlatList
+      data={filters.name === '' && filters.muscle.length === 0 ? fetchedExercises : getFilteredExercises()}
+      keyExtractor={(item) => item._id!}
+      className='h-[88%] w-full space-y-3'
+      refreshControl={<RefreshControl 
+        refreshing={isRefetching} 
+        onRefresh={refetch} 
+      />
       }
-    </ScrollView>
+      onEndReached={() => {
+        if(!hasMoreData) return 
+
+        setPage((p) => p+1)
+        fetchNextPage()
+      }}
+      onEndReachedThreshold={0.1}
+      renderItem={({ item: exercise, index }) => {
+        return <Pressable
+          className={twMerge('p-3 h-20 w-full bg-neutral-100 border border-neutral-300 rounded-lg flex-row justify-between space-x-2 my-2')}
+          onPress={() => handleSelectExercise(exercise)}
+        >
+          <View className='flex-row space-x-2 items-center'>
+            <View className='w-fit h-fit rounded-full'>
+              <Image
+                source={{ uri: exercise.image }}
+                alt={exercise.name}
+                height={50}
+                width={50}
+                className='object-cover'
+              />
+            </View>
+            <View>
+              <Text className='font-medium text-md'>{exercise.name.length > 24 ? exercise.name.slice(0, 24) + ' ...' : exercise.name}</Text>
+            </View>
+          </View>
+          <View>
+            {exerciseSelectedList.find((e) => e._id === exercise._id) && <View
+              className='bg-blue-700 rounded-full w-6 h-6  items-center justify-center'
+            >
+              <Text className='text-s font-semibold text-neutral-50'>{exerciseSelectedList.findIndex((e) => e._id === exercise._id) + 1}</Text>
+            </View>}
+          </View>
+        </Pressable>
+      }}
+      ListFooterComponent={hasMoreData ? <ActivityIndicator size='small' color='black' /> : null}
+    />
+
+    <View className='mt-12'></View>
 
     <View className='absolute bottom-1 w-full h-20'>
       <View className='flex-row w-full h-full space-x-2 justify-center items-center'>
         <Button onPressIn={handleChangeExercises}>
-          Adicionar
+          Concluir
         </Button>
         <Button onPress={() => onStateChange(false)} color='red' size='sm'>Cancelar</Button>
       </View>

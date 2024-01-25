@@ -11,7 +11,8 @@ type Request = {
         p: number,
         name?: string
         cb?: string
-        id?: string
+        id?: string,
+        pvts: boolean // privates
     }
 }
 
@@ -39,7 +40,8 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
             createdBy: creator,
             saves: workout.saves,
             lastEdit: workout.lastEdit,
-            exercises
+            exercises,
+            isPrivate: workout.isPrivate
         }
 
         return rep.status(200).send({ workout: workoutData })
@@ -59,6 +61,10 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     if (req.query.cb) {
         filters = { ...filters, createdBy: req.query.cb }
+    }
+    
+    if (req.query.pvts) {
+        filters = { ...filters, $or: [{ isPrivate: true }, { isPrivate: false }] }
     }
 
     const page = req.query.p
@@ -97,7 +103,8 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
             createdBy: creator,
             saves: workout.saves,
             lastEdit: workout.lastEdit,
-            exercises
+            exercises,
+            isPrivate: workout.isPrivate
         }
 
         data.push(workoutData)

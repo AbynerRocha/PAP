@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge'
 import { useApp } from '../../contexts/App/AppContext'
 import { useRouter } from 'expo-router'
 
-export type Tabs = 'home' | 'workout' | 'evolution' | 'settings' | 'user_workouts' | 'home_offline' | 'charts_offline' |'user_offline_workouts'
+export type Tabs = 'home' | 'workout' | 'perfil' | 'settings' | 'user_workouts';
 
 export type TabsData = {
   name: string;
@@ -22,7 +22,7 @@ export default function Navbar({ isOffline }: NavbarProps) {
     { name: 'Inicio', key: 'home', route: '/(tabs)/home' },
     { name: 'Treinos', key: 'workout', route: '/(tabs)/workouts' },
     { name: 'Meus Treinos', key: 'user_workouts', route: '/(tabs)/user_workouts' },
-    { name: 'Evolução', key: 'evolution', route: '/(tabs)/charts' },
+    { name: 'Perfil', key: 'perfil', route: '/(tabs)/perfil' },
     { name: 'Definições', key: 'settings', route: '/(tabs)/settings' },
   ])
 

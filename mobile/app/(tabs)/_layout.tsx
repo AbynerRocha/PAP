@@ -6,6 +6,7 @@ import Navbar from '../../components/Navbar'
 import { useNetInfo } from '@react-native-community/netinfo'
 import { AlertDialog, useDisclose } from 'native-base'
 import { Feather } from '@expo/vector-icons'
+import { useExerciseStore } from '../../utils/states/exercises'
 
 
 export default function TabsLayout() {
@@ -13,10 +14,11 @@ export default function TabsLayout() {
   const { isOpen, onOpen, onClose } = useDisclose()
   const alertConnectionRef = useRef(null)
 
+  const { exercises, setExercisesData } = useExerciseStore()
+
   useEffect(() => {
     if(!isConnected) {
       onOpen()
-      Vibration.vibrate(300)
     }
 
     if(isOpen && isConnected) {
@@ -24,6 +26,10 @@ export default function TabsLayout() {
     }
   
   }, [isConnected])
+
+  if(exercises.length !== 0) {
+    setExercisesData([])
+  }
 
   return (
     <View className='h-full w-full'>

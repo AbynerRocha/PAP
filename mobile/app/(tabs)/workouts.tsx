@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge'
 import { Link, useRouter } from 'expo-router'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { Api } from '../../utils/Api'
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { WorkoutData } from '../../@types/Workout'
 import WorkoutDifficulty from '../../components/WorkoutDifficulty'
 import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
@@ -40,8 +40,8 @@ export default function Workouts() {
   ])
 
   const [filterApplied, setFilterApplied] = useState<number>(0)
-
-  const { data, isFetching, isLoading, error } = useQuery({
+  const [error, setError] = useState({ type: '', message: '' })
+  const { data, isFetching, isLoading } = useQuery({
     queryKey: '@getAllWorkouts',
     queryFn: fetchWorkouts
   })
@@ -88,9 +88,20 @@ export default function Workouts() {
   }
 
   async function fetchWorkouts() {
-    const res = await Api.get(`/workout?p=${page}`)
+    const res = await Api.get(`/workout?p=${page}&pvts=false`)
       .then((res: AxiosResponse<{ workouts: WorkoutData[] }>) => res.data.workouts)
-      .catch((err) => { throw err })
+      .catch((err: AxiosError<any>) => {
+        if(!err.response?.data.error) return
+
+        switch(err.response.data.error) {
+          case 'PAGE_NOT_FOUND': 
+            setError({ type: 'results', message: '' })
+            break
+          default: 
+            setError({ type: 'others', message: 'Não foi possivel realizar esta ação neste momento.' })
+            break
+        }
+      })
 
 
     return res
@@ -98,7 +109,7 @@ export default function Workouts() {
 
   if (isFetching || isLoading) return <Loading />
 
-  if (error) return <ErrorPage message='Não foi possivel realizar esta ação neste momento.' />
+  if (error.type === 'others') return <ErrorPage message='Não foi possivel realizar esta ação neste momento.' />
 
   return (
     <View className='flex-1'>
@@ -147,7 +158,7 @@ export default function Workouts() {
 
                   <View className='flex-row items-center space-x-1'>
                     <Ionicons name="cloud-download-outline" size={13} color="rgb(160 160 160)" />
-                    <Text className='text-xs text-neutral-400'>{formatter.format(item.saves + 10000)}</Text>
+                    <Text className='text-xs text-neutral-400'>{formatter.format(item.saves)}</Text>
                   </View>
                 </View>
               </View>

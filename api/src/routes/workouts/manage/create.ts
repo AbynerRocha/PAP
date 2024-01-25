@@ -9,22 +9,23 @@ type Request = {
     Body: {
         name: string,
         createdBy: string
-        exercises: { exercise: string, series: { reps: number, restTime: number }[] }[]
+        exercises: { exercise: string, series: { reps: number, restTime: number }[] }[],
+        isPrivate: boolean
     }
 }
 
 async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     if (!req.body) return rep.status(400).send({
+        error: 'MISSING_DATA (body)',
+        message: 'Não foi possivel realizar esta ação.'
+    })
+
+    if(!req.body.name || !req.body.createdBy || !req.body.exercises || req.body.isPrivate === undefined) return rep.status(400).send({
         error: 'MISSING_DATA',
         message: 'Não foi possivel realizar esta ação.'
     })
 
-    if(!req.body.name || !req.body.createdBy || !req.body.exercises) return rep.status(400).send({
-        error: 'MISSING_DATA',
-        message: 'Não foi possivel realizar esta ação.'
-    })
-
-    const { name, createdBy, exercises } = req.body
+    const { name, createdBy, exercises, isPrivate } = req.body
 
     const thisWorkoutExists = await Workout.find({ name })
 
@@ -34,7 +35,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         thisWorkoutExists
     })
 
-    const workout = await Workout.create({ name, createdBy, createdAt: new Date(), exercises, saves: 0 })
+    const workout = await Workout.create({ name, createdBy, createdAt: new Date(), exercises, saves: 0, isPrivate })
     .catch((err) => {
         console.log(err);
         return rep.status(500).send({ error: err.name, message: 'Não foi possivel realizar esta ação neste momento.'})

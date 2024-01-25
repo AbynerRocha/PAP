@@ -51,7 +51,7 @@ export default function Register() {
         authToken: string
       }
 
-      Api.post<Response>('user/auth/register', { name: data.name, email: data.email.trim(), password: data.password })
+      Api.post<Response>('user/auth/register', { name: data.name.trimStart().trimEnd(), email: data.email.trim(), password: data.password.trim() })
         .then((req) => req.data)
         .then(() => {
           signIn(data.email, data.password)

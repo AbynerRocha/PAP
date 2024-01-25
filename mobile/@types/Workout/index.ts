@@ -9,6 +9,7 @@ type WorkoutData = {
     createdBy: UserData
     exercises: ExerciseInfo[]
     lastEdit?: Date
+    isPrivate: boolean
 }
 
 type ExerciseInfo = {

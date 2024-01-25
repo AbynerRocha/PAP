@@ -5,12 +5,13 @@ import { twMerge } from 'tailwind-merge'
 type AvatarProps = {
   fallback?: { userName: string }
   className?: string
+  textClass?: string
 }
 
-export default function Avatar({ fallback, className }: AvatarProps) {
+export default function Avatar({ fallback, className, textClass }: AvatarProps) {
   return (
     <View className={twMerge('bg-blue-800 rounded-full w-14 h-14 items-center justify-center', className)}>
-      <Text className='text-2xl font-bold text-neutral-50'>{fallback && fallback.userName[0].toUpperCase()}</Text>
+      <Text className={twMerge('text-2xl font-bold text-neutral-50', textClass)}>{fallback && fallback.userName[0].toUpperCase()}</Text>
     </View>
   )
 }

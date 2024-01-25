@@ -2,7 +2,7 @@ import { View, Text, Image, ScrollView, Pressable, ActivityIndicator } from 'rea
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../../components/Input'
-import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import { useRouter } from 'expo-router';
 import { ExerciseData } from '../../@types/Exercise';
@@ -12,9 +12,9 @@ import { twMerge } from 'tailwind-merge';
 import { Api } from '../../utils/Api';
 import { useAuth } from '../../contexts/Auth/AuthContext';
 import { AxiosError } from 'axios';
-import { Divider, Menu } from 'native-base';
+import { Menu } from 'native-base';
 import { WorkoutLocalStoraged } from '../../database/controller/workout';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useExerciseStore, useExercisesStore } from '../../utils/states/exercises';
 
 type Fields = {
   name: string
@@ -47,11 +47,16 @@ export default function CreateWorkout() {
   const [exerciseSelected, setExerciseSelected] = useState<ExerciseData>()
   const [showMenu, setShowMenu] = useState(false)
   const [series, setSeries] = useState<SeriesData[]>([])
+  const [isPrivate, setIsPrivate] = useState(false)
+
+  const { exercises: storagedExercises, setExercisesData } = useExerciseStore()
 
   useEffect(() => {
-    for (const exercise of exercises) {
+    for (const exercise of storagedExercises) {
       setSeries((v) => [...v, { exercise: exercise._id!, series: [{ reps: 10, restTime: 60 }] }])
     }
+
+    setExercises(storagedExercises)
   }, [showExerciseList])
 
   async function onReordered(fromIndex: number, toIndex: number) {
@@ -73,15 +78,13 @@ export default function CreateWorkout() {
     Api.post('/workout', {
       name,
       createdBy: user?._id,
-      exercises: series
+      exercises: series,
+      isPrivate
     }).then((res) => {
       router.push(`/workout/${res.data.workout._id}`)
-
-      const storage = new WorkoutLocalStoraged()
-
-      storage.save(res.data.workout)
     })
       .catch((err: AxiosError<any>) => {
+        console.log(err.response?.data)
         setError('root', { message: err.response?.data.message })
       })
       .finally(() => setIsLoading(false))
@@ -89,8 +92,6 @@ export default function CreateWorkout() {
 
   return showExerciseList ? <ExercisesList
     onStateChange={setShowExerciseList}
-    onExercisesChange={setExercises}
-    exercises={exercises}
   /> : (
     <View className='h-screen w-screen'>
 
@@ -110,28 +111,39 @@ export default function CreateWorkout() {
           </View>
         </View>
 
-        <Controller
-          control={control}
-          rules={{ required: { value: true, message: 'Este campo é obrigatório.' } }}
-          name='name'
-          render={({ field: { value, name, onBlur, onChange } }) => {
-            return (
-              <View className='space-y-2'>
-                <Text className='text-sm text-neutral-500'>Nome</Text>
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  placeholder='Digite aqui'
-                  placeholderTextColor='rgb(163 163 163)'
-                  className='bg-transparent border border-neutral-300 p-3 rounded-lg text-md'
-                />
-                {errors.name && <Text className='text-red-500 text-sm mt-2'>{errors.name.message}</Text>}
-                {errors.root && <Text className='text-red-500 text-sm mt-2'>{errors.root.message}</Text>}
-              </View>
-            )
-          }}
-        />
+        
+          <Controller
+            control={control}
+            rules={{ required: { value: true, message: 'Este campo é obrigatório.' } }}
+            name='name'
+            render={({ field: { value, name, onBlur, onChange } }) => {
+              return (
+                <View className='space-y-2 w-full'>
+                  <Text className='text-sm text-neutral-500'>Nome</Text>
+                  <View className='flex-row w-full h-fit items-center space-x-2'>
+
+                    <Input
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      placeholder='Digite aqui'
+                      placeholderTextColor='rgb(163 163 163)'
+                      className='bg-transparent border border-neutral-300 p-3 rounded-lg text-md w-[82%]'
+                    />
+                    <Pressable
+                      className='items-center justify-center border border-neutral-300 h-14 w-14  rounded-lg'
+                      onPress={() => setIsPrivate((v) => !v)}
+                    >
+                      <MaterialIcons name={isPrivate ? 'public-off' : 'public'} size={24} color='black' />
+                    </Pressable>
+                  </View>
+                  {errors.name && <Text className='text-red-500 text-sm mt-2'>{errors.name.message}</Text>}
+                  {errors.root && <Text className='text-red-500 text-sm mt-2'>{errors.root.message}</Text>}
+                </View>
+              )
+            }}
+          />
+
       </View>
 
       <View
@@ -190,7 +202,7 @@ export default function CreateWorkout() {
                             className='bg-transparent border border-neutral-300 mx-3 w-12 h-12 text-center text-lg font-semibold rounded-md'
                             onChangeText={(value) => {
                               const newReps = parseInt(value)
-                              
+
                               if (!newReps || newReps === serieData?.reps) return
 
                               let dataToChange = array
@@ -295,7 +307,11 @@ export default function CreateWorkout() {
       <View className='fixed bottom-3 w-full h-fit flex-col items-center justify-center space-y-2 mt-6'>
         <Pressable
           className='w-52 h-12 bg-blue-700 rounded-xl shadow-md shadow-black/50 flex-row space-x-2 items-center justify-center'
-          onPress={() => setShowExerciseList(true)}
+          onPress={() => {
+            setShowExerciseList(true)
+
+            setExercisesData(exercises)
+          }}
         >
           <View>
             <Feather name='plus' size={20} color='white' />

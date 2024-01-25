@@ -8,3 +8,10 @@ export const useExercisesStore = create<{ exercises: ExerciseInfo[], setExercise
         setExercisesData: (data: ExerciseInfo[]) => set({ exercises: data })
     }
 ))
+
+export const useExerciseStore = create<{ exercises: ExerciseData[], setExercisesData: (data: ExerciseData[]) => void }>((set) => (
+    {
+        exercises: [],
+        setExercisesData: (data: ExerciseData[]) => set({ exercises: data })
+    }
+))
