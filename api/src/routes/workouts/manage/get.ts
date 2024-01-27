@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify"
 import { Workout } from "../../../database/schemas/Workouts"
 import { User } from "../../../database/schemas/User"
 import { Exercise } from "../../../database/schemas/Exercises"
+import { ObjectId } from "mongoose"
 
 const url = '/'
 const method = 'GET'
@@ -34,7 +35,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         }
 
         let workoutData = {
-            _id: workout._id,
+            _id: workout._id.toString(),
             name: workout.name,
             createdAt: workout.createdAt,
             createdBy: creator,

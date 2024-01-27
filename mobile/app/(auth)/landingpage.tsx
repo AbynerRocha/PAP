@@ -28,31 +28,31 @@ export default function Login() {
         height={screenHeight}
       />
       <View className='flex-row items-center absolute top-0 p-3 w-full'>
-        <View className='bg-neutral-50 flex-row items-center p-2 rounded-xl w-fit'>
+        <View className='bg-slate-50 flex-row items-center p-2 rounded-xl w-fit'>
 
           <View className='bg-blue-800 py-1 px-3 w-fit rounded-xl'>
-            <Text className='text-neutral-50 text-2xl font-bold italic'>Evo</Text>
+            <Text className='text-slate-50 text-2xl font-bold italic'>Evo</Text>
           </View>
-          <Text className='text-neutral-950 font-bold italic text-2xl'>Training</Text>
+          <Text className='text-slate-950 font-bold italic text-2xl'>Training</Text>
         </View>
       </View>
-      <View className='h-32 w-full bottom-0 absolute bg-neutral-100 rounded-t-2xl items-center justify-center space-y-3'>
+      <View className='h-32 w-full bottom-0 absolute bg-slate-100 rounded-t-2xl items-center justify-center space-y-3'>
         <View className='absolute -top-12'>
-          <Text className='font-semibold text-xl text-neutral-50 italic'>Aumente e Organize a sua Evolução</Text>
+          <Text className='font-semibold text-xl text-slate-50 italic'>Aumente e Organize a sua Evolução</Text>
         </View>
         <Button
           className='bg-blue-800 rounded-lg w-[60%] h-11 flex-row items-center justify-center'
         >
           <Link
             href='/(auth)/register'
-            className='text-neutral-50 font-semibold'
+            className='text-slate-50 font-semibold'
           >
             Criar uma conta
           </Link>
         </Button>
 
         <View className='flex-row space-x-1'>
-          <Text className='text-neutral-950'>Já tem uma conta?</Text>
+          <Text className='text-slate-950'>Já tem uma conta?</Text>
           <Link href='/(auth)/login' className='font-medium text-blue-800'>Entre aqui</Link>
         </View>
       </View>

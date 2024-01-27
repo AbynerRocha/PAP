@@ -63,7 +63,7 @@ export default function Alert({ children, onClose, colors, show }: Props) {
           <Feather name='x' color='white' size={25} />
         </View>
         <View className='break-words pr-5'>
-          <Text className='text-neutral-50 font-medium'>{children}</Text>
+          <Text className='text-slate-50 font-medium'>{children}</Text>
         </View>
       </Pressable>
     </MotiView>

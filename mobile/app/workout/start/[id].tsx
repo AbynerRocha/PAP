@@ -41,7 +41,7 @@ export default function StartWorkout() {
 
   if (isFetching || isLoading) return <Loading />
   
-  if (error) return <View className='h-[80%] w-full items-center justify-center bg-neutral-50 flex flex-col space-y-2 mx-4'>
+  if (error) return <View className='h-[80%] w-full items-center justify-center bg-slate-50 flex flex-col space-y-2 mx-4'>
     <Feather name='x-circle' color='red' size={50} />
     <Text className='text-md text-red-500'>{error.response?.data.message}</Text>
   </View>
@@ -51,7 +51,7 @@ export default function StartWorkout() {
       className='flex-1 bg-blue-800 items-center justify-center'
     >
       <View
-        className='bg-neutral-50 h-60 w-[95%] rounded-lg p-3 shadow-md shadow-white'
+        className='bg-slate-50 h-60 w-[95%] rounded-lg p-3 shadow-md shadow-white'
       >
         <Text className='text-3xl text-center font-semibold italic'>{data?.name && data.name.length > 23 ? data?.name.slice(0, 23) + '...' : data?.name}</Text>
 

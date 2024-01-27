@@ -41,7 +41,7 @@ export default function RecoveryPassword() {
         transition={{
           duration: 500
         }}
-        className='absolute top-0 bg-neutral-950/50 h-screen w-screen items-center justify-center'
+        className='absolute top-0 bg-slate-950/50 h-screen w-screen items-center justify-center'
       >
         <MotiView
           from={{
@@ -53,7 +53,7 @@ export default function RecoveryPassword() {
           transition={{
             duration: 1200,
           }}
-          className='bg-neutral-50 rounded-lg h-80 w-72 p-4 justify-center items-center space-y-4'
+          className='bg-slate-50 rounded-lg h-80 w-72 p-4 justify-center items-center space-y-4'
         >
           <Feather name="x-circle" size={100} color='rgb(30 64 175)' />
           <View>
@@ -113,8 +113,8 @@ export default function RecoveryPassword() {
   return errorModal.show ? <ErrorMessage reason={errorModal.reason} /> : (
     <View className='h-full w-full items-center justify-center space-y-4'>
       <View className='space-y-1 w-[76%] items-start'>
-        <Text className='text-neutral-950 font-bold text-3xl'>Trocar Senha</Text>
-        <Text className='text-neutral-500 font-medium text-md'>Digite abaixo a sua nova senha!</Text>
+        <Text className='text-slate-950 font-bold text-3xl'>Trocar Senha</Text>
+        <Text className='text-slate-500 font-medium text-md'>Digite abaixo a sua nova senha!</Text>
       </View>
       <View className='w-full h-fit items-center'>
         <Controller
@@ -125,7 +125,7 @@ export default function RecoveryPassword() {
             return (
               <View className='w-[76%] items-center space-y-1 mb-5'>
                 <View className='w-full items-start'>
-                  <Text className='text-neutral-600'>Senha</Text>
+                  <Text className='text-slate-600'>Senha</Text>
                 </View>
                 <View className='w-full h-fit flex-row border-b border-b-blue-700 items-center'>
                   <Input
@@ -166,7 +166,7 @@ export default function RecoveryPassword() {
             return <>
               <View className='w-[76%] items-center space-y-1 mb-2'>
                 <View className='w-full items-start '>
-                  <Text className='text-neutral-600'>Confirme a senha</Text>
+                  <Text className='text-slate-600'>Confirme a senha</Text>
                 </View>
                 <View className='w-full h-fit flex-row border-b border-b-blue-700 items-center'>
                   <Input
@@ -218,7 +218,7 @@ export default function RecoveryPassword() {
             className='w-[70%] flex-row items-center space-x-3 h-fit break-words p-3 rounded-lg border border-red-500 bg-red-600 mt-5'
           >
             <MaterialIcons name="error-outline" size={24} color="white" />
-            <Text className='text-sm text-neutral-50 font-semibold mr-6'>{errors.root.message}</Text>
+            <Text className='text-sm text-slate-50 font-semibold mr-6'>{errors.root.message}</Text>
           </MotiView>
         )}
         {success && (
@@ -236,7 +236,7 @@ export default function RecoveryPassword() {
             className='w-[70%] flex-row items-center space-x-3 h-fit break-words p-3 rounded-lg border border-green-600 bg-green-600 mt-5'
           >
             <MaterialIcons name="check" size={24} color="white" />
-            <Text className='text-sm text-neutral-50 font-semibold mr-6'>
+            <Text className='text-sm text-slate-50 font-semibold mr-6'>
               Sua senha foi trocada com sucesso!
               Iremos te redirecionar para o inicio em 3 segundos!
             </Text>

@@ -20,9 +20,9 @@ export default function Navbar({ isOffline }: NavbarProps) {
   const [tabSelected, setTab] = useState<Tabs>('home')
   const [tabs, setTabs] = useState<TabsData[]>([
     { name: 'Inicio', key: 'home', route: '/(tabs)/home' },
+    { name: 'Perfil', key: 'perfil', route: '/(tabs)/perfil' },
     { name: 'Treinos', key: 'workout', route: '/(tabs)/workouts' },
     { name: 'Meus Treinos', key: 'user_workouts', route: '/(tabs)/user_workouts' },
-    { name: 'Perfil', key: 'perfil', route: '/(tabs)/perfil' },
     { name: 'Definições', key: 'settings', route: '/(tabs)/settings' },
   ])
 
@@ -50,7 +50,7 @@ export default function Navbar({ isOffline }: NavbarProps) {
               })
             }}
           >
-            <Text className={twMerge('text-md font-semibold', (tabSelected === tab.key ? 'text-neutral-50' : 'text-neutral-950'))}>{tab.name}</Text>
+            <Text className={twMerge('text-md font-semibold', (tabSelected === tab.key ? 'text-slate-50' : 'text-slate-950'))}>{tab.name}</Text>
           </Pressable>
         })}
       </ScrollView>

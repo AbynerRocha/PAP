@@ -130,7 +130,7 @@ export default function VerifyEmail() {
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  className='border rounded-lg border-neutral-950 w-[80%] h-12 p-2 text-center'
+                  className='border rounded-lg border-slate-950 w-[80%] h-12 p-2 text-center'
                   placeholder='Digite aqui (xxxxx)'
                 />
               </View>
@@ -148,7 +148,7 @@ export default function VerifyEmail() {
         </Button>
 
         <View className='my-4'>
-          <Text className='text-neutral-950 text-center'>Não recebeu o email?</Text> 
+          <Text className='text-slate-950 text-center'>Não recebeu o email?</Text> 
           <Pressable
             disabled={disabledBtn}
             onPress={() => {
@@ -159,7 +159,7 @@ export default function VerifyEmail() {
               )
             }}
           >
-            <Text className='font-semibold text-neutral-950 text-center'>{disabledBtn ? timeToResend  + ' segundos' : 'Clique aqui para reenviar'}</Text>
+            <Text className='font-semibold text-slate-950 text-center'>{disabledBtn ? timeToResend  + ' segundos' : 'Clique aqui para reenviar'}</Text>
           </Pressable>
         </View>
 
@@ -178,7 +178,7 @@ export default function VerifyEmail() {
               className='w-[70%] flex-row items-center space-x-3 h-fit break-words p-3 rounded-lg border border-red-500 bg-red-600 mt-5'
             >
               <MaterialIcons name="error-outline" size={24} color="white" />
-              <Text className='text-sm text-neutral-50 font-semibold mr-6'>{errors.root.message}</Text>
+              <Text className='text-sm text-slate-50 font-semibold mr-6'>{errors.root.message}</Text>
             </MotiView>
           )}
       </View>

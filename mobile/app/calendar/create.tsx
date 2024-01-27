@@ -90,9 +90,9 @@ export default function CreateCalendar() {
       </View>
       <View className='flex-1 items-center mt-8'>
         <View className='w-full mb-2'>
-          <Text className={twMerge('mx-3 text-neutral-500 mb-2', (error.type === 'name' && 'text-red-300'))}>Nome do plano</Text>
+          <Text className={twMerge('mx-3 text-slate-500 mb-2', (error.type === 'name' && 'text-red-300'))}>Nome do plano</Text>
           <Input
-            className={twMerge('w-[94%] mx-3 h-16 border border-neutral-300 rounded-xl p-2', (error.type === 'name' && 'border-red-500'))}
+            className={twMerge('w-[94%] mx-3 h-16 border border-slate-300 rounded-xl p-2', (error.type === 'name' && 'border-red-500'))}
             defaultValue={trainingPlanName}
             onChangeText={setTrainingPlanName}
           />
@@ -118,7 +118,7 @@ export default function CreateCalendar() {
                   workout && setWorkoutSelected(workout.workout)
                 }}
               >
-                <Text className={twMerge('font-bold text-xs', (selected === day.value && 'text-neutral-50'))}>{day.name}</Text>
+                <Text className={twMerge('font-bold text-xs', (selected === day.value && 'text-slate-50'))}>{day.name}</Text>
               </Pressable>
             })}
           </ScrollView>
@@ -153,7 +153,7 @@ export default function CreateCalendar() {
           </View>
           : <Pressable className='flex-row space-x-2 justify-center items-center h-full w-full' onPress={() => setIsShowingSavedWorkouts(true)}>
             <Feather name='plus-circle' size={28} color='rgb(212 212 212 )' />
-            <Text className='text-neutral-300'>Selecionar Treino</Text>
+            <Text className='text-slate-300'>Selecionar Treino</Text>
           </Pressable>
         }
       </View>

@@ -134,7 +134,7 @@ export default function Register() {
           <Text className='text-2xl'>Bem vindo ao</Text>
           <View className='flex-row items-center'>
             <View className='bg-blue-800 py-1 px-3 w-fit rounded-xl'>
-              <Text className='text-neutral-50 text-2xl font-bold italic'>Evo</Text>
+              <Text className='text-slate-50 text-2xl font-bold italic'>Evo</Text>
             </View>
             <Text className='text-blue-950 font-bold italic text-2xl'>Training</Text>
           </View>
@@ -155,7 +155,7 @@ export default function Register() {
             render={({ field: { value, onBlur, onChange } }) => {
               return <View className='w-[76%] items-center space-y-1 mb-5'>
                 <View className='w-full items-start '>
-                  <Text className='text-neutral-600'>Seu nome</Text>
+                  <Text className='text-slate-600'>Seu nome</Text>
                 </View>
                 <Input
                   className='border-b border-b-blue-700 w-full p-2'
@@ -178,7 +178,7 @@ export default function Register() {
             render={({ field: { value, onBlur, onChange } }) => {
               return <View className='w-[76%] items-center space-y-1 mb-5'>
                 <View className='w-full items-start '>
-                  <Text className='text-neutral-600'>Seu email</Text>
+                  <Text className='text-slate-600'>Seu email</Text>
                 </View>
                 <Input
                   className='border-b border-b-blue-700 w-full p-2'
@@ -202,7 +202,7 @@ export default function Register() {
             render={({ field: { value, onBlur, onChange } }) => {
               return <View className='w-[76%] items-center space-y-1 mb-5'>
                 <View className='w-full items-start '>
-                  <Text className='text-neutral-600'>Senha</Text>
+                  <Text className='text-slate-600'>Senha</Text>
                 </View>
                 <View className='w-full h-fit flex-row border-b border-b-blue-700 items-center'>
                   <Input
@@ -242,7 +242,7 @@ export default function Register() {
               return <>
                 <View className='w-[76%] items-center space-y-1 mb-2'>
                   <View className='w-full items-start '>
-                    <Text className='text-neutral-600'>Confirme a senha</Text>
+                    <Text className='text-slate-600'>Confirme a senha</Text>
                   </View>
                   <View className='w-full h-fit flex-row border-b border-b-blue-700 items-center'>
                     <Input
@@ -266,7 +266,7 @@ export default function Register() {
             }}
           />
           <View className='space-y-2 mb-5'>
-            <Text className='text-neutral-600'>Seu género</Text>
+            <Text className='text-slate-600'>Seu género</Text>
 
             <View className='flex-row space-x-3'>
               <Pressable
@@ -315,7 +315,7 @@ export default function Register() {
               className='w-[70%] flex-row items-center space-x-3 h-fit break-words p-3 rounded-lg border border-red-500 bg-red-600 mt-5'
             >
               <MaterialIcons name="error-outline" size={24} color="white" />
-              <Text className='text-sm text-neutral-50 font-semibold mr-6'>{errors.root.message}</Text>
+              <Text className='text-sm text-slate-50 font-semibold mr-6'>{errors.root.message}</Text>
             </MotiView>
           )}
         </View>

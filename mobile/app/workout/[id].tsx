@@ -110,23 +110,23 @@ export default function Workout() {
       >
         <View className='w-full h-40 bg-blue-800 items-center p-3'>
           <View className='mt-10'>
-            <Text className='text-neutral-50 font-semibold text-4xl italic'>{data?.name}</Text>
+            <Text className='text-slate-50 font-semibold text-4xl italic'>{data?.name}</Text>
           </View>
           <View className='flex-1 w-full justify-between items-center flex-row '>
             <View className='flex-col space-y-2'>
               <View className='flex-row items-center space-x-1'>
                 <Feather name="user" size={20} color="rgb(250 250 250)" />
-                <Text className='text-md text-neutral-50'>{data?.createdBy.name.length! > 15 ? data?.createdBy.name.slice(0, 15) : data?.createdBy.name}</Text>
+                <Text className='text-md text-slate-50'>{data?.createdBy.name.length! > 15 ? data?.createdBy.name.slice(0, 15) : data?.createdBy.name}</Text>
               </View>
               <View className='flex-row items-center space-x-1'>
                 <MaterialIcons name='public' color='rgb(250 250 250)' size={20} />
-                <Text className='text-md text-neutral-50'>{data?.isPrivate ? 'Privado' : 'Público'}</Text>
+                <Text className='text-md text-slate-50'>{data?.isPrivate ? 'Privado' : 'Público'}</Text>
               </View>
             </View>
             <View className='flex-col space-y-2 items-end'>
               <View className='flex-row items-center space-x-1 mb-3'>
                 <Ionicons name="cloud-download-outline" size={20} color="rgb(250 250 250)" />
-                <Text className='text-md text-neutral-50'>{formatter.format(data?.saves!)}</Text>
+                <Text className='text-md text-slate-50'>{formatter.format(data?.saves!)}</Text>
               </View>
               <WorkoutDifficulty
                 className='flex-row space-x-1'
@@ -142,7 +142,7 @@ export default function Workout() {
           {data?.exercises.map(({ exercise, series }, index) => {
             return <View
               key={index}
-              className='border border-neutral-300 rounded-lg mx-3 p-3 my-2 h-20 items-center flex-row space-x-2'
+              className='border border-slate-300 rounded-lg mx-3 p-3 my-2 h-20 items-center flex-row space-x-2'
             >
               <View>
                 <Image
@@ -153,8 +153,8 @@ export default function Workout() {
                 />
               </View>
               <View className='flex-col space-x-1 items-start'>
-                <Text className='text-neutral-900 font-medium text-md ml-1'>{exercise.name}</Text>
-                <Text className='text-neutral-400 text-xs'>{series.length + (series.length > 1 ? ' séries' : ' série')} </Text>
+                <Text className='text-slate-900 font-medium text-md ml-1'>{exercise.name}</Text>
+                <Text className='text-slate-400 text-xs'>{series.length + (series.length > 1 ? ' séries' : ' série')} </Text>
               </View>
             </View>
           })}
@@ -164,7 +164,7 @@ export default function Workout() {
 
       </ScrollView>
       <MotiView
-        className='bg-neutral-50 h-20 w-[94%] mx-3 p-1 flex-row items-center justify-around absolute bottom-10 rounded-lg border border-neutral-300 shadow-md shadow-black/40'
+        className='bg-slate-50 h-20 w-[94%] mx-3 p-1 flex-row items-center justify-around absolute bottom-10 rounded-lg border border-slate-300 shadow-md shadow-black/40'
         state={functionBarState}
       >
         <Pressable
@@ -226,15 +226,15 @@ export default function Workout() {
           </View>
           <Actionsheet.Item
             startIcon={<Ionicons name='qr-code' size={18} color='gray' />}
-            className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+            className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
             onPressIn={() => dialogQrCode.onOpen()}
           >
             <Text>QR-Code</Text>
           </Actionsheet.Item>
-          <View className='w-full h-0.5 bg-neutral-200 my-2' />
+          <View className='w-full h-0.5 bg-slate-200 my-2' />
           <Actionsheet.Item
             startIcon={<Ionicons name='clipboard-outline' size={18} color='gray' />}
-            className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+            className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
             onPressIn={() => {
               const url = `https://evotraining.pt/redirect?ty=wrkot&tkn=${data?._id}`
 
@@ -245,10 +245,10 @@ export default function Workout() {
           >
             <Text>Copiar URL</Text>
           </Actionsheet.Item>
-          <View className='w-full h-0.5 bg-neutral-200 my-2' />
+          <View className='w-full h-0.5 bg-slate-200 my-2' />
           <Actionsheet.Item
             startIcon={<Feather name='more-horizontal' size={18} color='gray' />}
-            className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+            className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
             onPressIn={() => {
               const url = `https://evotraining.pt/redirect?ty=wrkot&tkn=${data?._id}`
 

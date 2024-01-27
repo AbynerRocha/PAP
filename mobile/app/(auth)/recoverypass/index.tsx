@@ -112,11 +112,11 @@ export default function RecoveryPassword() {
   }
 
   return success ? <SuccessMessage/> :(
-    <KeyboardAvoidingView className='flex-1 bg-neutral-50' behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView className='flex-1 bg-slate-50' behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View className='w-screen h-screen items-center justify-center space-y-6'>
         <View className='w-[76%] h-fit'>
           <Text className='text-3xl font-bold'>Recupere a sua senha</Text>
-          <Text className='text-md text-neutral-500'>Insira abaixo o seu email da conta que você deseja recuperar</Text>
+          <Text className='text-md text-slate-500'>Insira abaixo o seu email da conta que você deseja recuperar</Text>
         </View>
 
         <View className='h-fit w-full items-center'>
@@ -135,7 +135,7 @@ export default function RecoveryPassword() {
             render={({ field: { onChange, onBlur, value } }) => {
               return (<View className='w-[76%] items-center space-y-2 mb-5'>
                 <View className='w-full items-start '>
-                  <Text className='text-neutral-600'>Email</Text>
+                  <Text className='text-slate-600'>Email</Text>
                 </View>
                 <Input
                   autoFocus
@@ -180,7 +180,7 @@ export default function RecoveryPassword() {
             className='w-[70%] flex-row items-center space-x-3 h-fit break-words p-3 rounded-lg border border-red-500 bg-red-600 mt-5'
           >
             <MaterialIcons name="error-outline" size={24} color="white" />
-            <Text className='text-sm text-neutral-50 font-semibold mr-6'>{errors.root.message}</Text>
+            <Text className='text-sm text-slate-50 font-semibold mr-6'>{errors.root.message}</Text>
           </MotiView>
         )}
       </View>

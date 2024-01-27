@@ -32,7 +32,7 @@ export default function ModalRoot({ children, show }: ModalRootProps) {
   return (
     <View className='abosolute top-0 items-center justify-center'>
       <MotiView
-        className='h-72 w-72 rounded-xl bg-neutral-50 p-4 shadow-md shadow-black'
+        className='h-72 w-72 rounded-xl bg-slate-50 p-4 shadow-md shadow-black'
         
       >
 

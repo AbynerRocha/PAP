@@ -57,7 +57,7 @@ export default function SavedWorkouts({ onClose, onSelect }: Props) {
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
           renderItem={({ item }) => {
             return <Pressable
-            className='m-3 h-20 p-2 rounded-lg border border-neutral-300'
+            className='m-3 h-20 p-2 rounded-lg border border-slate-300'
             onPress={() => {
               onSelect(item.workout)
               onClose()
@@ -74,7 +74,7 @@ export default function SavedWorkouts({ onClose, onSelect }: Props) {
 
                 <View className='flex-row items-center space-x-1'>
                   <Ionicons name="cloud-download-outline" size={13} color="rgb(160 160 160)" />
-                  <Text className='text-xs text-neutral-400'>{formatter.format(item.workout.saves)}</Text>
+                  <Text className='text-xs text-slate-400'>{formatter.format(item.workout.saves)}</Text>
                 </View>
               </View>
             </View>

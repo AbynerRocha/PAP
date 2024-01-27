@@ -33,7 +33,7 @@ export default function Calendar({ workout }: Props) {
   return  (
     <View>
       <View className='h-fit w-full items-end my-3'>
-        <Text className='text-[14px] text-neutral-800 mr-5'>Treinos da semana</Text>
+        <Text className='text-[14px] text-slate-800 mr-5'>Treinos da semana</Text>
       </View>
 
       <ScrollView horizontal className=''>
@@ -47,9 +47,9 @@ export default function Calendar({ workout }: Props) {
                   handlerClickCalendar(day)
                 }}
               >
-                <Text className='text-sm font-semibold text-neutral-950 capitalize'>{day.weekday.split('-')[0]}</Text>
+                <Text className='text-sm font-semibold text-slate-950 capitalize'>{day.weekday.split('-')[0]}</Text>
                 <View className={twMerge('h-14 w-14 rounded-full items-center justify-center border', (weekDaySelected?.date === day.date ? 'bg-blue-800 border-blue-800' : 'bg-transparent border-black'))}>
-                  <Text className={twMerge('text-lg font-semibold', (weekDaySelected?.date === day.date ? 'text-neutral-50' : 'text-neutral-950'))}>{day.day}</Text>
+                  <Text className={twMerge('text-lg font-semibold', (weekDaySelected?.date === day.date ? 'text-slate-50' : 'text-slate-950'))}>{day.day}</Text>
                 </View>
               </Pressable>
             )
@@ -66,7 +66,7 @@ export default function Calendar({ workout }: Props) {
           >
 
             <View className='w-[90%] h-full items-center justify-center'>
-              <Text className='text-xl font-bold text-neutral-50 italic'>{workout?.workout.name}</Text>
+              <Text className='text-xl font-bold text-slate-50 italic'>{workout?.workout.name}</Text>
             </View>
             <View className='mr-4'>
               {!workout?.workout.dayOff && <FontAwesome name='chevron-right' size={20} color='white' />}

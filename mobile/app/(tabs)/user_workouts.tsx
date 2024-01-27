@@ -77,7 +77,7 @@ export default function UserWorkouts() {
       })
   }
 
-  if (isFetching) return <View className='h-screen w-screen items-center justify-center bg-neutral-50'>
+  if (isFetching) return <View className='h-screen w-screen items-center justify-center bg-slate-50'>
     <ActivityIndicator size='large' color='black' />
   </View>
 
@@ -96,7 +96,7 @@ export default function UserWorkouts() {
             actionSheet.onOpen()
           }}
           key={idx}
-          className='m-3 h-20 p-2 rounded-lg border border-neutral-300'
+          className='m-3 h-20 p-2 rounded-lg border border-slate-300'
         >
           <View className='w-full h-full justify-between'>
             <Text className='font-semibold'>{workout.name}</Text>
@@ -108,7 +108,7 @@ export default function UserWorkouts() {
 
               <View className='flex-row items-center space-x-1'>
                 <Ionicons name="cloud-download-outline" size={13} color="rgb(160 160 160)" />
-                <Text className='text-xs text-neutral-400'>{formatter.format(workout.saves)}</Text>
+                <Text className='text-xs text-slate-400'>{formatter.format(workout.saves)}</Text>
               </View>
             </View>
           </View>
@@ -134,32 +134,32 @@ export default function UserWorkouts() {
         </View>
         <Actionsheet.Item
           startIcon={<MaterialIcons name="open-in-new" size={19} color="gray" />}
-          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
           onPress={() => router.push(`/workout/${workoutSelected?._id}`)}
         >
           <Text className='font-medium'>Ver</Text>
         </Actionsheet.Item>
-        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <View className='w-full h-0.5 bg-slate-200 my-2' />
         <Actionsheet.Item
           startIcon={<Ionicons name='md-pencil-sharp' size={18} color='gray' />}
-          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
           onPress={() => router.push(`/workout/edit/${workoutSelected?._id}`)}
         >
           <Text className='font-medium'>Editar</Text>
         </Actionsheet.Item>
 
-        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <View className='w-full h-0.5 bg-slate-200 my-2' />
         <Actionsheet.Item
           startIcon={<Feather name='share' size={18} color='gray' />}
-          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
           onPressIn={() => actionSheetShare.onOpen()}
         >
           <Text className='font-medium'>Partilhar</Text>
         </Actionsheet.Item>
-        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <View className='w-full h-0.5 bg-slate-200 my-2' />
         <Actionsheet.Item
           startIcon={<Ionicons name='md-trash' size={18} color='red' />}
-          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
           onPress={() => {
             setWorkoutSelected(workoutSelected)
 
@@ -181,15 +181,15 @@ export default function UserWorkouts() {
         </View>
         <Actionsheet.Item
           startIcon={<Ionicons name='qr-code' size={18} color='gray' />}
-          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
           onPressIn={() => dialogQrCode.onOpen()}
         >
           <Text>QR-Code</Text>
         </Actionsheet.Item>
-        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <View className='w-full h-0.5 bg-slate-200 my-2' />
         <Actionsheet.Item
           startIcon={<Ionicons name='clipboard-outline' size={18} color='gray' />}
-          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
           onPressIn={() => {
             const url = `https://evotraining.pt/redirect?ty=wrkot&tkn=${workoutSelected?._id}`
 
@@ -204,10 +204,10 @@ export default function UserWorkouts() {
         >
           <Text>Copiar URL</Text>
         </Actionsheet.Item>
-        <View className='w-full h-0.5 bg-neutral-200 my-2' />
+        <View className='w-full h-0.5 bg-slate-200 my-2' />
         <Actionsheet.Item
           startIcon={<Feather name='more-horizontal' size={18} color='gray' />}
-          className='rounded-xl active:bg-neutral-200 active:transition-all active:duration-300 active:ease-in-out'
+          className='rounded-xl active:bg-slate-200 active:transition-all active:duration-300 active:ease-in-out'
           onPressIn={() => {
             const url = `https://evotraining.pt/redirect?ty=wrkot&tkn=${workoutSelected?._id}`
 

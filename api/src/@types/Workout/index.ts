@@ -15,6 +15,7 @@ type WorkoutData = {
         }[]
     }[]
     lastEdit?: Date
+    isPrivate: boolean
 }
 
 export default WorkoutData

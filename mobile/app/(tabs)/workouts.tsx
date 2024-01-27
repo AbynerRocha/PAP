@@ -116,11 +116,11 @@ export default function Workouts() {
       <View className='w-full items-center space-y-4'>
         <View className='flex-row space-x-2'>
           <TextInput
-            className='w-[70%] bg-neutral-100 border border-neutral-200 rounded-full h-12 px-5 py-3'
+            className='w-[70%] bg-slate-100 border border-slate-200 rounded-full h-12 px-5 py-3'
             placeholder='Procure aqui'
             placeholderTextColor={'#A3A3A3'}
           />
-          <Pressable className='w-12 h-12 items-center justify-center rounded-full bg-neutral-100 border border-neutral-200'>
+          <Pressable className='w-12 h-12 items-center justify-center rounded-full bg-slate-100 border border-slate-200'>
             <FontAwesome name='search' size={20} color='#A3A3A3' />
           </Pressable>
         </View>
@@ -132,7 +132,7 @@ export default function Workouts() {
                 onPress={() => handleSelectFilter(filter.value)}
                 className={twMerge('ml-9 px-6 items-center justify-center h-7 rounded-full', (filterApplied === filter.value && 'bg-blue-800'))}
               >
-                <Text className={twMerge('text-xs font-semibold text-neutral-950', (filterApplied === filter.value && 'text-neutral-50'))}>{filter.name}</Text>
+                <Text className={twMerge('text-xs font-semibold text-slate-950', (filterApplied === filter.value && 'text-slate-50'))}>{filter.name}</Text>
               </Pressable>
             })}
           </ScrollView>
@@ -145,7 +145,7 @@ export default function Workouts() {
           keyExtractor={(item) => item._id}
           renderItem={({ index, item }) => {
             return <Pressable
-              className='m-3 h-20 p-2 rounded-lg border border-neutral-300'
+              className='m-3 h-20 p-2 rounded-lg border border-slate-300'
               onPressIn={() => router.push(`/workout/${item._id}`)}
             >
               <View className='w-full h-full justify-between'>
@@ -158,7 +158,7 @@ export default function Workouts() {
 
                   <View className='flex-row items-center space-x-1'>
                     <Ionicons name="cloud-download-outline" size={13} color="rgb(160 160 160)" />
-                    <Text className='text-xs text-neutral-400'>{formatter.format(item.saves)}</Text>
+                    <Text className='text-xs text-slate-400'>{formatter.format(item.saves)}</Text>
                   </View>
                 </View>
               </View>

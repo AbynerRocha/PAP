@@ -24,7 +24,7 @@ export default function WorkoutHistory() {
 
   if (isLoading || isFetching) return <Loading />
 
-  if (error || !data) return <View className='h-[80%] w-full items-center justify-center bg-neutral-50 flex flex-col space-y-2'>
+  if (error || !data) return <View className='h-[80%] w-full items-center justify-center bg-slate-50 flex flex-col space-y-2'>
     <Feather name='x-circle' color='red' size={50} />
     <Text className='text-md text-red-500'>Não foi possivel realizar esta ação neste momento</Text>
   </View>
@@ -53,7 +53,7 @@ export default function WorkoutHistory() {
             </Pressable>
 
             <View
-              className='h-[1] w-full bg-neutral-300'
+              className='h-[1] w-full bg-slate-300'
             />
           </View>
         })}

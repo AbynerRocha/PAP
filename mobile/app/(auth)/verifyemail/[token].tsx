@@ -78,7 +78,7 @@ export default function RecoveryPassword() {
         transition={{
           duration: 500
         }}
-        className='absolute top-0 mt-1 bg-neutral-950/50 h-screen w-screen items-center justify-center'
+        className='absolute top-0 mt-1 bg-slate-950/50 h-screen w-screen items-center justify-center'
       >
         <MotiView
           from={{
@@ -90,7 +90,7 @@ export default function RecoveryPassword() {
           transition={{
             duration: 1200,
           }}
-          className='bg-neutral-50 rounded-lg h-80 w-72 p-4 justify-center items-center space-y-4'
+          className='bg-slate-50 rounded-lg h-80 w-72 p-4 justify-center items-center space-y-4'
         >
           <Feather name="x-circle" size={100} color='rgb(30 64 175)' />
           <View>
@@ -121,7 +121,7 @@ export default function RecoveryPassword() {
         transition={{
           duration: 500
         }}
-        className='absolute top-0 mt-1 bg-neutral-950/50 h-screen w-screen items-center justify-center'
+        className='absolute top-0 mt-1 bg-slate-950/50 h-screen w-screen items-center justify-center'
       >
         <MotiView
           from={{
@@ -133,7 +133,7 @@ export default function RecoveryPassword() {
           transition={{
             duration: 1200,
           }}
-          className='bg-neutral-50 rounded-lg h-80 w-72 p-4 justify-center items-center space-y-4'
+          className='bg-slate-50 rounded-lg h-80 w-72 p-4 justify-center items-center space-y-4'
         >
           <Feather name="check-circle" size={100} color='rgb(30 64 175)' />
           <View>

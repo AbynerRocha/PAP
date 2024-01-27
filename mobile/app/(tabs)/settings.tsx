@@ -21,13 +21,13 @@ export default function Settings() {
       <View className='mb-2 mx-5'>
         <Text className='text-3xl font-bold'>Definições</Text>
       </View>
-      <View className='h-0.5 w-full bg-neutral-100 mb-4' />
+      <View className='h-0.5 w-full bg-slate-100 mb-4' />
       {user && <View className='space-y-4 justify-center mx-5 mb-3'>
         <View className='flex-row space-x-4 items-center'>
           <Avatar fallback={{ userName: user.name }} />
           <View className='flex-col w-[50%]'>
             <Text className='text-lg font-semibold'>{user.name}</Text>
-            <Text className='text-xs text-neutral-400 break-words'>{user.email}</Text>
+            <Text className='text-xs text-slate-400 break-words'>{user.email}</Text>
 
 
           </View>
@@ -40,11 +40,11 @@ export default function Settings() {
           </Pressable>
         </View>
         {user.verified === false && <View className='my-2 bg-red-500 rounded-lg p-2 justify-center items-center'>
-          <Text className='text-sm text-neutral-50'>O seu email ainda não foi verificado.</Text>
-          <Link className='text-sm text-neutral-50 font-semibold' href='/(auth)/verifyemail'>Clique aqui para verificar</Link>
+          <Text className='text-sm text-slate-50'>O seu email ainda não foi verificado.</Text>
+          <Link className='text-sm text-slate-50 font-semibold' href='/(auth)/verifyemail'>Clique aqui para verificar</Link>
         </View>}
       </View>}
-      <View className='h-0.5 w-full bg-neutral-100 mb-4' />
+      <View className='h-0.5 w-full bg-slate-100 mb-4' />
       <ScrollView className='flex-1'>
         {options.map((opt, idx, array) => {
           return <View key={idx}>
@@ -55,7 +55,7 @@ export default function Settings() {
               {opt.icon}
               <Text className='text-lg font-medium'>{opt.name}</Text>
             </Pressable>
-            {idx !== array.length-1 && <View className='h-0.5 w-full bg-neutral-100 mb-4' />}
+            {idx !== array.length-1 && <View className='h-0.5 w-full bg-slate-100 mb-4' />}
           </View>
         })}
       </ScrollView>

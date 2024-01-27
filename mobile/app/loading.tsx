@@ -7,7 +7,7 @@ export default function Loading() {
     <View className='h-full w-full items-center justify-center space-y-4'>
         <ActivityIndicator size={60} color='black' />
         <MotiText 
-          className='font-bold text-center text-2xl text-neutral-950'
+          className='font-bold text-center text-2xl text-slate-950'
           from={{
             opacity: 0
           }}

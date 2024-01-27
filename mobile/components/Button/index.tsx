@@ -25,8 +25,8 @@ const textVariant = tv({
   base: 'font-md font-medium',
   variants: {
     text: { 
-      dark: 'text-neutral-50 text-md font-medium',
-      light: 'text-neutral-950 text-md font-medium'
+      dark: 'text-slate-50 text-md font-medium',
+      light: 'text-slate-950 text-md font-medium'
     },
     textSize: {
       sm: 'text-sm',

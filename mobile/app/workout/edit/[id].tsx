@@ -131,7 +131,7 @@ export default function EditWorkout() {
           render={({ field: { value, name, onBlur, onChange } }) => {
             return (
               <View className='space-y-2'>
-                <Text className='text-sm text-neutral-500'>Nome</Text>
+                <Text className='text-sm text-slate-500'>Nome</Text>
                 <View className='flex-row w-full h-fit items-center space-x-2'>
 
                   <Input
@@ -140,10 +140,10 @@ export default function EditWorkout() {
                     onChangeText={onChange}
                     placeholder='Digite aqui'
                     placeholderTextColor='rgb(163 163 163)'
-                    className='bg-transparent border border-neutral-300 p-3 rounded-lg text-md w-[82%]'
+                    className='bg-transparent border border-slate-300 p-3 rounded-lg text-md w-[82%]'
                   />
                   <Pressable
-                    className='items-center justify-center border border-neutral-300 h-14 w-14  rounded-lg'
+                    className='items-center justify-center border border-slate-300 h-14 w-14  rounded-lg'
                     onPress={() => setIsPrivate((v) => !v)}
                   >
                     <MaterialIcons name={isPrivate ? 'public-off' : 'public'} size={24} color='black' />
@@ -158,7 +158,7 @@ export default function EditWorkout() {
       </View>
 
       <View
-        className='w-full h-[1px] bg-neutral-300'
+        className='w-full h-[1px] bg-slate-300'
       />
       <View
         className='flex-1 w-full'
@@ -183,7 +183,7 @@ export default function EditWorkout() {
                   return <Pressable
                     {...triggerProps}
                     key={data.index}
-                    className={twMerge('text-lg text-center p-3 flex-row rounded-md my-2 mx-3 border border-neutral-300 items-center', (data.isActive && 'opacity-50'))}
+                    className={twMerge('text-lg text-center p-3 flex-row rounded-md my-2 mx-3 border border-slate-300 items-center', (data.isActive && 'opacity-50'))}
                     onLongPress={data.onDragStart}
                     onPressOut={data.isActive ? data.onDragEnd : () => { }}
                   >
@@ -210,7 +210,7 @@ export default function EditWorkout() {
                           <Text className='text-xs'>N. de Reps</Text>
                           <Input
                             defaultValue={serieData.reps.toString()}
-                            className='bg-transparent border border-neutral-300 mx-3 w-12 h-12 text-center text-lg font-semibold rounded-md'
+                            className='bg-transparent border border-slate-300 mx-3 w-12 h-12 text-center text-lg font-semibold rounded-md'
                             onChangeText={(value) => {
                               const newReps = parseInt(value)
 
@@ -236,7 +236,7 @@ export default function EditWorkout() {
                             <Input
                               defaultValue={serieData.restTime.toString()}
                               keyboardType='numeric'
-                              className='bg-transparent border border-neutral-300  w-12 h-12 text-center text-lg font-semibold rounded-md'
+                              className='bg-transparent border border-slate-300  w-12 h-12 text-center text-lg font-semibold rounded-md'
                               onChangeText={(value) => {
                                 const newRestTime = parseInt(value)
 
@@ -270,14 +270,14 @@ export default function EditWorkout() {
                           <Feather name='x-circle' color='red' size={18} />
                         </Pressable>}
                       </View>
-                      {idx !== array.length - 1 && <View className='w-full h-0.5 bg-neutral-200 my-2' />}
+                      {idx !== array.length - 1 && <View className='w-full h-0.5 bg-slate-200 my-2' />}
                     </View>
 
 
                   </ScrollView>
                 })}
 
-                <View className='w-full h-0.5 bg-neutral-200 my-2' />
+                <View className='w-full h-0.5 bg-slate-200 my-2' />
                 <Pressable
                   className='h-8 w-full'
                   onPress={() => {
@@ -306,7 +306,7 @@ export default function EditWorkout() {
                 >
                   <View className='w-full h-full space-x-2 flex-row items-center justify-center'>
                     <Feather size={16} name='plus-circle' color='rgb(163 163 163)' />
-                    <Text className='text-neutral-400'>Adicionar {series.find(sr => sr.exercise === data.item._id)?.series.length + '/10'}</Text>
+                    <Text className='text-slate-400'>Adicionar {series.find(sr => sr.exercise === data.item._id)?.series.length + '/10'}</Text>
                   </View>
                 </Pressable>
               </Menu>
@@ -316,7 +316,7 @@ export default function EditWorkout() {
       </View>
 
       <View
-        className='w-full h-[1px] bg-neutral-300'
+        className='w-full h-[1px] bg-slate-300'
       />
 
       <View className='fixed bottom-3 w-full h-fit flex-col items-center justify-center space-y-2 mt-6'>
@@ -327,7 +327,7 @@ export default function EditWorkout() {
           <View>
             <Feather name='plus' size={20} color='white' />
           </View>
-          <Text className='text-neutral-50 font-bold'>Adicionar Exercício</Text>
+          <Text className='text-slate-50 font-bold'>Adicionar Exercício</Text>
         </Pressable>
         <View>
           <Button

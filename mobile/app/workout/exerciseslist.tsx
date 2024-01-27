@@ -122,17 +122,17 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
 
   if (isFetching || isLoading) return <Loading/>
 
-  if (isError) return <View className='h-screen w-screen items-center justify-center bg-neutral-50 space-y-2'>
+  if (isError) return <View className='h-screen w-screen items-center justify-center bg-slate-50 space-y-2'>
     <Feather name='x-circle' color='red' size={40} />
     <Text className='text-md font-medium text-center'>Não foi possivel realizar esta ação neste momento.</Text>
   </View>
 
-  return <View className='h-screen w-screen p-3 items-center justify-center bg-neutral-50'>
+  return <View className='h-screen w-screen p-3 items-center justify-center bg-slate-50'>
     <Text className='text-center text-xl font-medium mb-3'>Selecione os exercicios</Text>
 
     <View className='w-full p-3'>
       <Input
-        className='w-full h-12 p-3 rounded-xl border border-neutral-300'
+        className='w-full h-12 p-3 rounded-xl border border-slate-300'
         placeholder='Procure aqui'
         onChangeText={(text) => {
           if (text.length > 0) {
@@ -162,7 +162,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
               setFielters((f) => ({ name: f.name, muscle: [...f.muscle] }))
             }}
           >
-            <Text className={twMerge('font-medium', (filtered ? 'text-neutral-50' : 'text-neutral-950'))}>{muscle.name.length > 10 ? muscle.name.slice(0, 10) + '...' : muscle.name}</Text>
+            <Text className={twMerge('font-medium', (filtered ? 'text-slate-50' : 'text-slate-950'))}>{muscle.name.length > 10 ? muscle.name.slice(0, 10) + '...' : muscle.name}</Text>
           </Pressable>
         })}
       </ScrollView>
@@ -185,7 +185,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
       onEndReachedThreshold={0.1}
       renderItem={({ item: exercise, index }) => {
         return <Pressable
-          className={twMerge('p-3 h-20 w-full bg-neutral-100 border border-neutral-300 rounded-lg flex-row justify-between space-x-2 my-2')}
+          className={twMerge('p-3 h-20 w-full bg-slate-100 border border-slate-300 rounded-lg flex-row justify-between space-x-2 my-2')}
           onPress={() => handleSelectExercise(exercise)}
         >
           <View className='flex-row space-x-2 items-center'>
@@ -206,7 +206,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
             {exerciseSelectedList.find((e) => e._id === exercise._id) && <View
               className='bg-blue-700 rounded-full w-6 h-6  items-center justify-center'
             >
-              <Text className='text-s font-semibold text-neutral-50'>{exerciseSelectedList.findIndex((e) => e._id === exercise._id) + 1}</Text>
+              <Text className='text-s font-semibold text-slate-50'>{exerciseSelectedList.findIndex((e) => e._id === exercise._id) + 1}</Text>
             </View>}
           </View>
         </Pressable>

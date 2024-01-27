@@ -106,8 +106,8 @@ export default function Login() {
   }
 
   return (
-    <KeyboardAvoidingView className='flex-1 bg-neutral-50' behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View className={twMerge('h-screen w-screen bg-neutral-50 space-y-5 items-center', (!showingKeyboard ? ' justify-center' : 'pt-10'))}>
+    <KeyboardAvoidingView className='flex-1 bg-slate-50' behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View className={twMerge('h-screen w-screen bg-slate-50 space-y-5 items-center', (!showingKeyboard ? ' justify-center' : 'pt-10'))}>
         <View className='w-[76%]'>
           <MotiView 
             className='w-full space-y-1'
@@ -115,16 +115,16 @@ export default function Login() {
             state={titleAnim} 
           >
             <Text 
-              className='text-neutral-950 font-bold text-4xl'
+              className='text-slate-950 font-bold text-4xl'
             >
               Login
             </Text>
             <View className='w-[76%]'>
-              <Text className='text-neutral-400 font-medium font-lg'>Insira os seus dados abaixo para ter acesso a aplicação</Text>
+              <Text className='text-slate-400 font-medium font-lg'>Insira os seus dados abaixo para ter acesso a aplicação</Text>
             </View>
           </MotiView>
         </View>
-        <View className='h-[2px] w-[80%] bg-neutral-200' />
+        <View className='h-[2px] w-[80%] bg-slate-200' />
         <View className='w-full items-center'>
           <Controller
             name='email'
@@ -133,7 +133,7 @@ export default function Login() {
             render={({ field: { onChange, onBlur, value } }) => {
               return (<View className='w-[76%] items-center space-y-2 mb-5'>
                 <View className='w-full items-start '>
-                  <Text className='text-neutral-600'>Email</Text>
+                  <Text className='text-slate-600'>Email</Text>
                 </View>
                 <Input
                   className='border-b border-b-blue-700 w-full p-2'
@@ -159,7 +159,7 @@ export default function Login() {
             render={({ field: { onChange, onBlur, value } }) => {
               return (<View className='w-[76%] items-center space-y-1 mb-5'>
                 <View className='w-full items-start '>
-                  <Text className='text-neutral-600'>Senha</Text>
+                  <Text className='text-slate-600'>Senha</Text>
                 </View>
                 <View className='w-full h-fit flex-row border-b border-b-blue-700 items-center'>
                   <Input
@@ -211,7 +211,7 @@ export default function Login() {
               className='w-[70%] flex-row items-center space-x-3 h-fit break-words p-3 rounded-lg border border-red-500 bg-red-600 mt-5'
             >
               <MaterialIcons name="error-outline" size={24} color="white" />
-              <Text className='text-sm text-neutral-50 font-semibold mr-6'>{errors.root.message}</Text>
+              <Text className='text-sm text-slate-50 font-semibold mr-6'>{errors.root.message}</Text>
             </MotiView>
           )}
         </View>

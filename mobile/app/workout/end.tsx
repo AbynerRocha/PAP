@@ -46,7 +46,7 @@ export default function WorkoutEnd() {
           }}
         >
           <Feather name='chevron-left' size={25} color='white'/>
-          <Text className='text-neutral-50 font-semibold'>Voltar para o inicio</Text>
+          <Text className='text-slate-50 font-semibold'>Voltar para o inicio</Text>
         </Button>
       </View>
     </View>

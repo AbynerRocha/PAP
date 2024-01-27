@@ -58,11 +58,11 @@ export default function StartExercise() {
 
     while (tmpNumberOfExercises != 0) {
       if (remainingExercises > 0) {
-        JSX.push(<View key={tmpNumberOfExercises} className='rounded-full bg-neutral-400 h-2 w-2' />)
+        JSX.push(<View key={tmpNumberOfExercises} className='rounded-full bg-slate-400 h-2 w-2' />)
         remainingExercises = remainingExercises - 1
         tmpNumberOfExercises = tmpNumberOfExercises - 1
       } else {
-        JSX.push(<View key={tmpNumberOfExercises} className='rounded-full bg-neutral-50 h-2 w-2' />)
+        JSX.push(<View key={tmpNumberOfExercises} className='rounded-full bg-slate-50 h-2 w-2' />)
         tmpNumberOfExercises = tmpNumberOfExercises - 1
       }
     }
@@ -145,7 +145,7 @@ export default function StartExercise() {
         className='h-16 w-full bg-blue-800 justify-center p-3 flex-col space-y-2'
       >
         <View className='w-full'>
-          <Text className='text-neutral-50 font-medium text-center text-lg'>{toDoExercise.exercise.name}</Text>
+          <Text className='text-slate-50 font-medium text-center text-lg'>{toDoExercise.exercise.name}</Text>
         </View>
         <View className='flex-row w-full justify-center items-center space-x-2'>
           {renderTopBalls()}
@@ -174,7 +174,7 @@ export default function StartExercise() {
             }
           </Button>
           <View
-            className='flex-row border-t border-neutral-300 h-20 w-full mb-8 items-center justify-around p-3'
+            className='flex-row border-t border-slate-300 h-20 w-full mb-8 items-center justify-around p-3'
           >
             <View>
               <Button color='red' >Sair</Button>
@@ -208,7 +208,7 @@ export default function StartExercise() {
                     nextExercise()
                   }}
                 >
-                  <Text className='text-xs text-center text-neutral-400'>Pular descanso</Text>
+                  <Text className='text-xs text-center text-slate-400'>Pular descanso</Text>
                 </Pressable>
               </View>
               }
@@ -226,7 +226,7 @@ export default function StartExercise() {
             <Input
               keyboardType='numeric'
               placeholder='kg'
-              className='h-10 w-full border border-neutral-300 rounded-lg p-2 text-center text-lg'
+              className='h-10 w-full border border-slate-300 rounded-lg p-2 text-center text-lg'
               onChangeText={(value) => setWeight(parseFloat(value))}
             />
             <Button
