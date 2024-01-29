@@ -7,11 +7,11 @@ import Input from '../../../../components/Input'
 import Button from '../../../../components/Button'
 import { Modal } from 'native-base'
 import { CountdownCircleTimer, useCountdown } from 'react-native-countdown-circle-timer'
-import { MotiView } from 'moti'
 import { UserExerciseStats } from '../../../../database/controller/workout'
 import { History } from '../../../../services/workouts'
 import { useAuth } from '../../../../contexts/Auth/AuthContext'
 import { useApp } from '../../../../contexts/App/AppContext'
+import * as Progress from 'react-native-progress';
 
 type Params = {
   exercises: string
@@ -137,6 +137,14 @@ export default function StartExercise() {
 
     setIsShowingModalWeight(false)
     setIsShowingModalTimer(true)
+  } 
+
+  function getPercentage() {
+    const exerciseIdx = exercises.findIndex(ex => ex === toDoExercise)+1
+    const total = numberOfExercises*numberOfSeries
+    
+
+    return exerciseIdx/total
   }
 
   return (
@@ -148,7 +156,13 @@ export default function StartExercise() {
           <Text className='text-slate-50 font-medium text-center text-lg'>{toDoExercise.exercise.name}</Text>
         </View>
         <View className='flex-row w-full justify-center items-center space-x-2'>
-          {renderTopBalls()}
+          <Progress.Bar 
+            width={200} 
+            height={10} 
+            color='rgb(255 255 255)' 
+            borderRadius={999} 
+            progress={getPercentage()} 
+          />
         </View>
       </View>
       <View className='flex-1 w-full'>
@@ -177,7 +191,12 @@ export default function StartExercise() {
             className='flex-row border-t border-slate-300 h-20 w-full mb-8 items-center justify-around p-3'
           >
             <View>
-              <Button color='red' >Sair</Button>
+              <Button color='red' onPress={() => {
+                setTabSelected({ key: 'workout', route: '/(tabs)/workouts' })
+                router.replace('/(tabs)/workouts')
+              }}>
+                Sair
+              </Button>
             </View>
 
           </View>

@@ -49,6 +49,16 @@ class History {
         })
     }
 
+    static get(userId: string, page: number) {
+        return new Promise<{ history: HistoryData[], nextPage: number | null }>((resolve, reject) => {
+            Api.get(`/user/workout-history?uid=${userId}&p=${page}&li=10`)
+            .then((res) => {
+                resolve(res.data)
+            })
+            .catch((err) => reject(err))
+        })
+    }
+
     static add(userId: string, workoutId: string) {
         return new Promise((resolve, reject) => {
             Api.post('/user/workout-history', {

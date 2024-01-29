@@ -32,7 +32,7 @@ export default class WorkoutController {
             })
         }
 
-        return workoutData
+        return workoutData as unknown as WorkoutData
     }
 
     static async getById(id: string) {
@@ -59,6 +59,6 @@ export default class WorkoutController {
             isPrivate: workout.isPrivate
         }
 
-        return workoutData
+        return workoutData as unknown as WorkoutData
     }
 }

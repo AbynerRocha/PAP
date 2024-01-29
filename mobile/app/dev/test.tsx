@@ -7,10 +7,11 @@ import { Accordion, Divider, Menu } from 'native-base'
 import Button from '../../components/Button'
 import Alert from '../../components/Alert'
 import BarChart from '../../components/Chart/Bar'
-
+import * as Progress from 'react-native-progress';
 
 export default function Test() {
   const [show, setShow] = useState(false)
+  const [percentage, setPercentage] = useState(0.1)
 
   const data = [
     { value: 1, label: 'Dez/12' },
@@ -21,16 +22,10 @@ export default function Test() {
   ]
 
   return (
-    <View className='w-full items-center justify-center'>
-      <BarChart 
-        data={data}
-        height={150}
-        width={500}
-        barWidth={32}
-        labelSize={20}
-        animated
+    <View className='flex-1 w-full items-center justify-center px-4'>
+      <Progress.Bar width={300} height={20} borderRadius={999} progress={percentage} color='rgb(30 64 175)' />
 
-      />
+      <Button onPressIn={() => setPercentage((v) => v !== 1 ? v+0.1 : v-0.9)}>Add</Button>
     </View>
   )
 }

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify"
 import { User, UserSavedWorkouts } from "../../../database/schemas/User"
 import { Workout } from "../../../database/schemas/Workouts"
 import { Exercise } from "../../../database/schemas/Exercises"
+import WorkoutController from "../../../controllers/Workout"
 
 const url = '/saved-workouts'
 const method = 'GET'
@@ -11,6 +12,7 @@ type Request = {
         uid: string
         wid?: string
         p?: number
+        li?: number
     }
 }
 
@@ -41,7 +43,55 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
         return rep.status(200).send({ savedWorkout: { ...savedWorkout, workout } })
     }
 
-    const page = req.query.p ? req.query.p : 1
+    const page = req.query.p || 1
+    const limit = req.query.li || 20
+    const total = await UserSavedWorkouts.countDocuments({ userId })
+    const numberOfPages = Math.ceil(total / limit)
+
+    if (page > numberOfPages) return rep.status(400).send({
+        error: 'PAGE_NOT_FOUND',
+        message: `A página ${page} não existe.`,
+        numberOfPages
+    })
+
+    const nextPage = numberOfPages > page ? page + 1 : null
+    const skip = page > 0 ? (page - 1) * limit : 0
+
+    const data = await UserSavedWorkouts.find({ userId }, {}, { skip, limit })
+        .catch((err) => rep.status(500).send({ error: err.name, message: 'Não foi possivel realizar esta ação neste momento' }))
+
+    var savedData = []
+
+    for(const saved of data) {
+        const workout = await WorkoutController.getById(saved.workout!)
+        const creator = await User.findById(workout?.createdBy).select('-password')
+
+        const exercises = []
+
+        if (!workout?.exercises) continue
+
+        for (const exerciseData of workout?.exercises) {
+
+            const data = await Exercise.findById(exerciseData.exercise)
+            exercises.push({ exercise: data, series: exerciseData.series })
+        }
+
+        savedData.push({
+            _id: saved._id,
+            userId,
+            workout: {
+                ...workout,
+                exercises,
+                createdBy: creator
+            }
+        })
+    }
+
+    return rep.status(200).send({ savedWorkouts: savedData, nextPage })
+}
+
+/*
+const page = req.query.p ? req.query.p : 1
 
     const limit = 25
     const totalWorkouts = await UserSavedWorkouts.countDocuments({ userId })
@@ -61,7 +111,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     let data = []
 
     for (const saved of savedWorkouts) {
-        const workout = await Workout.findById(saved.workout)
+        const workout = await WorkoutController.getById(saved.workout!)
         const creator = await User.findById(workout?.createdBy).select('-password')
 
         const exercises = []
@@ -71,23 +121,15 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
             exercises.push({ exercise: data, series: exerciseData.series })
         }
 
-        let workoutData = {
-            _id: workout?._id,
-            name: workout?.name,
-            createdAt: workout?.createdAt,
-            createdBy: creator,
-            saves: workout?.saves,
-            lastEdit: workout?.lastEdit,
-            exercises
-        }
-
         data.push({
             ...saved,
-            workout: workoutData
+            workout: {
+                ...workout,
+                exercises,
+                createdBy: creator
+            }
         })
     }
-
-    return rep.status(200).send({ savedWorkouts: data, nextPage })
-}
+*/
 
 export { url, method, handler }

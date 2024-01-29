@@ -1,24 +1,31 @@
-import { View, Text, ScrollView, Pressable, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import { View, Text, ScrollView, Pressable, NativeScrollEvent, NativeSyntheticEvent, FlatList, RefreshControl, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { History } from '../../services/workouts'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { useQuery } from 'react-query'
 import Loading from '../loading'
 import { Feather } from '@expo/vector-icons'
-import { MotiView, MotiText, motify, useDynamicAnimation, useAnimationState } from 'moti'
 import { useRouter } from 'expo-router'
+import { HistoryData } from '../../@types/User'
 
 
 export default function WorkoutHistory() {
   const { user } = useAuth()
   const router = useRouter()
 
-  const { data, isFetching, isLoading, error } = useQuery({
+  const [page, setPage] = useState(1)
+  const [nextPage, setNextPage] = useState<number | null>(null)
+  const [data, setData] = useState<HistoryData[]>([])
+
+  const { isFetching, isLoading, error, refetch, isRefetching } = useQuery({
     queryKey: '@fetchHistory',
     queryFn: async () => {
-      const historyData = await History.getAll(user?._id!)
+      const { history, nextPage: nextHistoryPage } = await History.get(user?._id!, 1)
 
-      return historyData
+      setNextPage(nextHistoryPage)
+      setData(history)
+
+      return history
     }
   })
 
@@ -29,6 +36,14 @@ export default function WorkoutHistory() {
     <Text className='text-md text-red-500'>Não foi possivel realizar esta ação neste momento</Text>
   </View>
 
+  async function fetchNextPage() {
+    if(nextPage === null) return 
+
+    const { history, nextPage: nextHistoryPage } = await History.get(user?._id!, nextPage)
+
+    setNextPage(nextHistoryPage)
+    setData((v) => [...v, ...history])
+  }
 
   return (
     <View className='flex-1'>
@@ -36,15 +51,16 @@ export default function WorkoutHistory() {
         className='m-4 text-4xl font-bold'>
         Histórico
       </Text>
-      <ScrollView
+
+      <FlatList
+        data={data}
         className='mb-9'
-      >
-        {data.map((history, idx) => {
-          return <View key={idx} className='flex-col w-fulç h-20'>
+        renderItem={({ item: history, index }) => {
+          return <View key={index} className='flex-col w-fulç h-20'>
             <Pressable
               cancelable
               className='flex-row space-x-1 w-full h-full'
-            onPressIn={() => router.push(`/workout/${history.workout._id}`)}
+              onPress={() => router.push(`/workout/${history.workout._id}`)}
             >
               <View className='flex-row items-center justify-between w-[100%] p-2'>
                 <Text className='text-lg'>{history.workout.name}</Text>
@@ -56,8 +72,12 @@ export default function WorkoutHistory() {
               className='h-[1] w-full bg-slate-300'
             />
           </View>
-        })}
-      </ScrollView>
+        }}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={nextPage !== null ? <ActivityIndicator size='small' color='black' className='mt-3'/> : null}
+      />
     </View>
   )
 }

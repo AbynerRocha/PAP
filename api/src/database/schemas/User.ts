@@ -5,7 +5,7 @@ import { WorkoutSchema } from './Workouts'
 
 export const userSchema = new Schema<UserData>({
     name: { type: String, required: true }, 
-    email: { type: String, required: true }, 
+    email: { type: String, required: true, unique: true }, 
     password: { type: String },
     avatar: { type: String, required: false },
     accessLevel: { type: Number, required: true, default: 1 },
@@ -15,15 +15,15 @@ export const userSchema = new Schema<UserData>({
 })
 
 const UserSavedWorkoutsSchema = new Schema({
-    userId: String,
-    workout: String
+    userId: { type: String, ref: 'users' },
+    workout: { type: String, ref: 'workouts' }
 })
 
 const ExerciseStatsSchema = new Schema({
-    userId: String,
+    userId: { type: String, ref: 'users' },
     data: {
         type: [{
-            exercise: String,
+            exercise: { type: String, ref: 'exercises' },
             stats: [{
                 date: { type: Date, default: new Date() },
                 reps: Number,
@@ -34,14 +34,30 @@ const ExerciseStatsSchema = new Schema({
 })
 
 const UserWorkoutsHistorySchema = new Schema({
-    user: String,
-    workout: String,
+    user: { type: String, ref: 'users' },
+    workout: { type: String, ref: 'workouts' },
     date: { type: Date, default: new Date() }
 })
+
+const UserTrainingPlanSchema = new Schema({
+    user: { type: String, ref: 'users' },
+    name: { type: String },
+    createdAt: { type: Date, default: new Date() },
+    plan: { type: [{ 
+        restDay: { type: Boolean, default: false },
+        workout: { type: String || undefined, ref: 'workouts' },
+        weekDay: { type: Number, validate: {
+            validator: (v: number) => v > 0 && v < 8,
+            message: '{VALUE} isnt a valid weekday value'
+        }}
+    }] }
+})
+
 
 const User = model('users', userSchema)
 const UserExerciseStats = model('user_exercise_stats', ExerciseStatsSchema)
 const UserSavedWorkouts = model('user_saved_workouts', UserSavedWorkoutsSchema)
 const UserWorkoutsHistory = model('user_workouts_history', UserWorkoutsHistorySchema)
+const UserTrainingPlan = model('user_training_plans', UserTrainingPlanSchema)
 
-export { User, UserSavedWorkouts, UserExerciseStats, UserWorkoutsHistory }
+export { User, UserSavedWorkouts, UserExerciseStats, UserWorkoutsHistory, UserTrainingPlan }

@@ -11,7 +11,9 @@ import Button from '../../components/Button'
 import SavedWorkouts from './savedworkoutslist'
 import WorkoutDifficulty from '../../components/WorkoutDifficulty'
 import calcWorkoutDifficulty from '../../utils/calcWorkoutDifficulty'
-import Alert from '../../components/Alert'
+import { Api } from '../../utils/Api'
+import { Alert } from 'native-base'
+import { MotiView, useAnimationState, useDynamicAnimation } from 'moti'
 
 export default function CreateCalendar() {
   const router = useRouter()
@@ -29,57 +31,133 @@ export default function CreateCalendar() {
 
   const [selected, setSelected] = useState(week[0].value)
   const [workoutSelected, setWorkoutSelected] = useState<WorkoutData>()
-  const [workouts, setWorkouts] = useState<{ value: number, workout: WorkoutData }[]>([])
+  const [workouts, setWorkouts] = useState<{ value: number, workout: WorkoutData, restDay: boolean }[]>([])
   const [trainingPlanName, setTrainingPlanName] = useState(`Plano de treino de ${user?.name}`)
   const [isShowingSavedWorkouts, setIsShowingSavedWorkouts] = useState(false)
   const [error, setError] = useState<{ type: string, message: string }>({ type: '', message: '' })
+  const [isLoading, setIsLoading] = useState(false)
 
+  const notifAnim = useAnimationState({
+    from: {
+      translateY: 200
+    },
+    to: {
+      translateY: 0
+    },
+    hide: {
+      translateY: 200
+    }
+  })
+
+  useEffect(() => {
+    if(error.type === 'root') {
+      notifAnim.transitionTo('to')
+
+      clearErrors()
+    }
+  }, [error])
+
+  function clearErrors() {
+    setTimeout(() => {
+      notifAnim.transitionTo('hide')
+
+      setTimeout(() => setError({ type: '', message: '' }), 500)
+    }, 3500)
+  }
 
   function numberOfSeries(exercises: ExerciseInfo[]) {
     let series = 0
 
-    for(const info of exercises) {
-      series = series+info.series.length
+    for (const info of exercises) {
+      series = series + info.series.length
     }
 
     return series
   }
 
   function handleCreate() {
-    if(trainingPlanName === '') {
+    clearErrors()
+    setIsLoading(true)
+
+    if (trainingPlanName === '') {
+      if(error.type === 'name') {
+        setIsLoading(false)
+        return
+      } 
+
       setError({
         type: 'name',
         message: 'Este campo é obrigatório.'
       })
-      return
-    } 
-
-    if(workouts.length < 2) {
-      setError({
-        type: 'workouts',
-        message: 'Você precisa selecionar pelo menos 2 treinos.'
-      })
+      setIsLoading(false)
       return
     }
+
+    if (workouts.length < 2) {
+      if(error.type === 'root') {
+        setIsLoading(false)
+        return
+      } 
+      
+      setError({
+        type: 'root',
+        message: 'Você precisa selecionar pelo menos 2 treinos.'
+      })
+      setIsLoading(false)
+      return
+    }
+
+    var plan = []
+
+    for (let i = 0; i < 7; i++) {
+      const workout = workouts[i] || { value: i + 1, workout: null, restDay: true }
+
+      plan.push({
+        weekDay: workout.value,
+        restDay: workout.restDay,
+        workout: workout.workout
+      })
+    }
+
+    Api.post('/user/training-plan', {
+      name: trainingPlanName,
+      user: user?._id,
+      plan
+    }).then(() => {
+      router.replace('/calendar/success')
+    }).catch((err) => {
+      if (!err.response.data.message) {
+        setError({
+          type: 'root',
+          message: 'Não foi possivel realizar esta ação'
+        })
+        return
+      }
+
+      setError({
+        type: 'root',
+        message: err.response.data.message
+      })
+    }).finally(() => setIsLoading(false))
   }
 
-  return isShowingSavedWorkouts ? <SavedWorkouts 
+  return isShowingSavedWorkouts ? <SavedWorkouts
     onClose={() => setIsShowingSavedWorkouts(false)}
     onSelect={(data) => {
       const verify = workouts.find(w => w.value === selected)
 
-      if(verify) {
+      if (verify) {
         const filtered = workouts.filter(w => w.value !== selected)
-        filtered.push({ value: selected, workout: data })
+        filtered.push({ value: selected, workout: data, restDay: false })
 
         setWorkouts(filtered)
         setWorkoutSelected(data)
         return
       }
 
-      setWorkouts((v) => [...v, { value: selected, workout: data }])
+      setWorkouts((v) => [...v, { value: selected, workout: data, restDay: false }])
       setWorkoutSelected(data)
-    }} 
+    }}
   /> : (
     <View className='flex-1'>
       <View className='flex-row space-x-4 items-center mt-3'>
@@ -110,7 +188,7 @@ export default function CreateCalendar() {
                 )}
                 onPress={() => {
                   if (selected === day.value) return
-                  
+
                   setSelected(day.value)
 
                   const workout = workouts.find((w) => w.value === selected)
@@ -129,7 +207,7 @@ export default function CreateCalendar() {
           ? <View className='h-full w-full'>
             <View className='p-3'>
               <Text className='text-3xl font-semibold'>{workoutSelected?.name}</Text>
-      
+
               <View className='flex-row items-center'>
                 <Text className='text-lg'>Dificuldade Média: </Text>
                 <WorkoutDifficulty size={14} className='flex-row space-x-1' difficulty={workoutSelected?.exercises ? calcWorkoutDifficulty(workoutSelected?.exercises) : 3} />
@@ -142,8 +220,8 @@ export default function CreateCalendar() {
                   const filtered = workouts.filter(w => w.value !== selected)
 
                   setWorkouts(filtered)
-                }} 
-                color='red'
+                }}
+                  color='red'
                 >
                   Remover
                 </Button>
@@ -158,10 +236,30 @@ export default function CreateCalendar() {
         }
       </View>
       <View className='h-32 w-full items-center justify-center p-2'>
-        <Button size='lg' textSize='lg' onPress={handleCreate}>Finalizar</Button>
+        <Button size='lg' textSize='lg' onPress={handleCreate} isLoading={isLoading}>Finalizar</Button>
       </View>
 
-      {error.type === 'workouts' && <Alert show={true} onClose={() => setError({ type: '', message: '' })} >aaaaa</Alert>}
+      <View
+        className='absolute bottom-24 w-[100%] h-fit'
+      >
+        <MotiView 
+          className='w-full h-fit items-center'
+          state={notifAnim}
+          transition={{
+            delay: 400,
+            duration: 600
+          }}
+        >
+          {error.type === 'root' && <Alert status='error' colorScheme='error'>
+            <View className='flex-row items-center space-x-2 w-48 break-words'>
+              <View>
+                <Alert.Icon />
+              </View>
+              <Text className='text-red-900 font-medium mr-5'>{error.message}</Text>
+            </View>
+          </Alert>}
+        </MotiView>
+      </View>
     </View>
   )
 }

@@ -18,7 +18,7 @@ export default function Home() {
       <View className='mx-4 space-y-2'>
         <Text className='text-lg font-medium text-slate-900'>Sugestão de treino para iniciantes</Text>
 
-        <View className='flex-row space-x-2 h-24'>
+        <View className='flex-row space-x-2 h-24 items-center justify-around'>
           <View className='bg-blue-800 rounded-2xl h-full w-54 p-3 items-center justify-center'>
             <Text className='text-slate-100 font-medium italic text-xl'>Plano de Treino Full-Body</Text>
           </View>

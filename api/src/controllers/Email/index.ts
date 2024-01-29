@@ -28,13 +28,13 @@ export default class EmailController {
 
         switch (template) {
             case 'reset-pass':
-                const resetPassTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'data', 'email', 'recoverypass_template.html'), 'utf-8')
+                const resetPassTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'assets', 'email', 'recoverypass_template.html'), 'utf-8')
                 htmlTemplate = resetPassTemplate.replace('{{linkToReset}}', `https://evotraining.pt/redirect?tkn=${data.token}&ty=rkp`)
                 break
             case 'verify-email':
                 if (!data.emailCode) throw new Error("Email code is required in 'verify-email' template")
 
-                const verifyEmailTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'data', 'email', 'verifyemail_template.html'), 'utf-8')
+                const verifyEmailTemplate = fs.readFileSync(join(__dirname, '..', '..', '..', 'assets', 'email', 'verifyemail_template.html'), 'utf-8')
                 htmlTemplate = verifyEmailTemplate.replace('{{linkToVerify}}', `https://evotraining.pt/redirect?tkn=${data.token}&ty=ve`).replace('{{code}}', data.emailCode)
                 break
             default:

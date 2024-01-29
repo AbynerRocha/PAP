@@ -35,7 +35,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
   })
   const { exercises, setExercisesData } = useExerciseStore()
   const [exerciseSelectedList, setExerciseSelectedList] = useState<ExerciseData[]>([])
-  const [hasMoreData, setHasMoreData] = useState(false)
+  const [nextPage, setNextPage] = useState<number | null>(null)
   
   useEffect(() => {
     setExerciseSelectedList(exercises)
@@ -47,10 +47,10 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
       const res = await Api.get(`/exercise?li=10&p=1`)
 
       const exerciseFetched: ExerciseData[] = res.data.exercises
-      const nextPage: number | null = res.data.nextPage
+      const nextExercisePage: number | null = res.data.nextPage
       
-      if(nextPage !== null) setHasMoreData(true)
-
+     
+      setNextPage(nextExercisePage)
       setFetchedExercises(exerciseFetched)
 
       Api.get('/muscle')
@@ -63,12 +63,15 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
   })
 
   async function fetchNextPage() {
-    const res = await Api.get(`/exercise?li=10&p=${page}`)
+    if(nextPage === null) return
+
+    const res = await Api.get(`/exercise?li=10&p=${nextPage}`)
 
     const exerciseFetched: ExerciseData[] = res.data.exercises
-    const nextPage: number | null = res.data.nextPage
+    const nextExercisePage: number | null = res.data.nextPage
 
-    if(nextPage !== null) setHasMoreData(true)
+    setPage(nextPage)
+    setNextPage(nextExercisePage)
 
     setFetchedExercises((v) => [...v, ...exerciseFetched])
   }
@@ -100,7 +103,6 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
   function handleSelectExercise(exercise: ExerciseData) {
     if (exerciseSelectedList.find((e) => e._id === exercise._id)) {
       const toUpdate = exerciseSelectedList.filter(e => e._id !== exercise._id)
-      console.log(toUpdate)
 
       setExerciseSelectedList(toUpdate)
       return
@@ -145,7 +147,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
           const filtered = filters.muscle.find((m) => m._id === muscle._id)
 
           return <Pressable
-            key={idx}
+            key={muscle._id}
             className={twMerge('w-24 h-7 rounded-full items-center justify-center', (filtered ? 'bg-blue-700' : 'bg-transparent'))}
             onPress={() => {
               if (filtered) {
@@ -177,14 +179,12 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
       />
       }
       onEndReached={() => {
-        if(!hasMoreData) return 
-
-        setPage((p) => p+1)
         fetchNextPage()
       }}
       onEndReachedThreshold={0.1}
       renderItem={({ item: exercise, index }) => {
         return <Pressable
+          key={index}
           className={twMerge('p-3 h-20 w-full bg-slate-100 border border-slate-300 rounded-lg flex-row justify-between space-x-2 my-2')}
           onPress={() => handleSelectExercise(exercise)}
         >
@@ -211,7 +211,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
           </View>
         </Pressable>
       }}
-      ListFooterComponent={hasMoreData ? <ActivityIndicator size='small' color='black' /> : null}
+      ListFooterComponent={nextPage !== null ? <ActivityIndicator size='small' color='black' /> : null}
     />
 
     <View className='mt-12'></View>
