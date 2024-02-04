@@ -3,16 +3,15 @@ import React from 'react'
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons"
 import Avatar from '../../components/Avatar'
 import { useAuth } from '../../contexts/Auth/AuthContext'
-import { MotiView } from 'moti'
 import { Link, useRouter } from 'expo-router'
-import Button from '../../components/Button'
 
 export default function Settings() {
   const { user, signOut } = useAuth()
   const router = useRouter()
 
   const options = [
-    { name: 'Histórico de Treinos', route: '/settings/history', icon: <FontAwesome5 name='history' size={20} color='gray' />  }
+    { name: 'Histórico de Treinos', route: '/settings/history', icon: <FontAwesome5 name='history' size={20} color='gray' />  },
+    { name: 'Planos de Treino', route: '/settings/training-plans', icon: <FontAwesome5 name="dumbbell" size={18} color="gray" /> }
   ]
 
 
@@ -24,7 +23,7 @@ export default function Settings() {
       <View className='h-0.5 w-full bg-slate-100 mb-4' />
       {user && <View className='space-y-4 justify-center mx-5 mb-3'>
         <View className='flex-row space-x-4 items-center'>
-          <Avatar fallback={{ userName: user.name }} />
+          <Avatar uri={user.avatar} fallback={{ userName: user.name }} size='md' />
           <View className='flex-col w-[50%]'>
             <Text className='text-lg font-semibold'>{user.name}</Text>
             <Text className='text-xs text-slate-400 break-words'>{user.email}</Text>

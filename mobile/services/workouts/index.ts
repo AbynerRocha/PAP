@@ -4,7 +4,7 @@ import { Api } from "../../utils/Api"
 class WorkoutService {
     static isSaved(userId: string, workoutId: string) {
         return new Promise<any>((resolve, reject) => {
-            Api.get(`/user/saved-workouts?uid=${userId}&wid=${workoutId}`)
+            Api.get('/user/saved-workouts', { params: { uid: userId, wid: workoutId }})
             .then((res) => {
                 if(res.data.savedWorkout) {
                     resolve(true)
@@ -41,7 +41,7 @@ class WorkoutService {
 class History {
     static getAll(userId: string) {
         return new Promise<HistoryData[]>((resolve, reject) => {
-            Api.get(`/user/workout-history?uid=${userId}`)
+            Api.get('/user/workout-history', { params: { uid: userId }})
             .then((res) => {
                 resolve(res.data.history)
             })
@@ -51,7 +51,7 @@ class History {
 
     static get(userId: string, page: number) {
         return new Promise<{ history: HistoryData[], nextPage: number | null }>((resolve, reject) => {
-            Api.get(`/user/workout-history?uid=${userId}&p=${page}&li=10`)
+            Api.get('/user/workout-history', { params: { uid: userId, p: page, li: 10 }})
             .then((res) => {
                 resolve(res.data)
             })

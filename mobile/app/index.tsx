@@ -6,6 +6,7 @@ import { generateID, isFirstLaunch } from '../database/controller/device'
 import { Redirect } from 'expo-router'
 import { useNetInfo } from '@react-native-community/netinfo'
 
+
 export default function App() {
   const { getTabRoute} = useApp()
   const { isLoading } = useAuth()

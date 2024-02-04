@@ -9,7 +9,8 @@ const method = 'GET'
 
 type Request = {
     Querystring: {
-        uid: string
+        uid: string,
+        pid: string
     }
 }
 
@@ -21,25 +22,62 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
 
     const { uid: userId } = req.query
 
-    const plansData = await UserTrainingPlan.find({ user: userId })
-        .catch((err) => rep.status(500).send({ error: err.name, message: 'Não foi possivel realizar esta ação neste momento.' }))
+    if (req.query.pid) {
+        const planData = await UserTrainingPlan.findOne({ _id: req.query.pid, user: userId })
 
-    var planData: UserTrainingPlanData[] = []
+        if (planData === null) return rep.status(404).send({ error: 'NOT_FOUND', message: 'Não foi possivel encontrar este plano de treino.' })
 
-    plansData.forEach(async (plans) => {
         let data = []
-        for (const value of plans.plan) {
-            if(!value.workout) {
+
+        for (const value of planData.plan) {
+            if (!value.workout) {
                 data.push({
                     restDay: true,
                     workout: null,
                     weekDay: value.weekDay!
                 })
                 continue
-            }   
+            }
 
             const workout = await WorkoutController.getById(value.workout)
-            
+
+            data.push({
+                restDay: false,
+                workout,
+                weekDay: value.weekDay!
+            })
+        }
+
+        return rep.status(200).send({
+            plan: {
+                _id: planData._id,
+                name: planData.name || 'Plano de treino',
+                user: planData.user!,
+                createdAt: planData.createdAt,
+                plan: data
+            }
+        })
+    }
+
+    const plansData = await UserTrainingPlan.find({ user: userId })
+        .catch((err) => rep.status(500).send({ error: err.name, message: 'Não foi possivel realizar esta ação neste momento.' }))
+
+    var planData: UserTrainingPlanData[] = []
+
+    for (const plans of plansData) {
+        let data = []
+        for (const value of plans.plan) {
+            if (!value.workout) {
+                data.push({
+                    restDay: true,
+                    workout: null,
+                    weekDay: value.weekDay!
+                })
+                continue
+            }
+
+            const workout = await WorkoutController.getById(value.workout)
+
             data.push({
                 restDay: false,
                 workout,
@@ -54,7 +92,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
             createdAt: plans.createdAt,
             plan: data
         })
-    })
+    }
 
     return rep.status(200).send({ plans: planData })
 }

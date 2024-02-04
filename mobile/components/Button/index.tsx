@@ -15,6 +15,7 @@ const button = tv({
       sm: 'py-3 px-5 w-24 h-12',
       md: 'py-3 px-5 w-40 h-12',
       lg: 'py-3 px-5 w-56 h-14',
+      xl: 'py-3 px-5 w-60 h-14',
       full: 'py-3 px-5, w-full h-12'
     }
   },

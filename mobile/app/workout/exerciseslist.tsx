@@ -44,7 +44,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
   const { isFetching, isLoading, isRefetching, isError, refetch } = useQuery({
     queryKey: '@fetchExercises',
     queryFn: async () => {
-      const res = await Api.get(`/exercise?li=10&p=1`)
+      const res = await Api.get('/exercise', { params: { li: 10, p: page }})
 
       const exerciseFetched: ExerciseData[] = res.data.exercises
       const nextExercisePage: number | null = res.data.nextPage
@@ -65,7 +65,7 @@ export default function ExercisesList({ onStateChange }: ExerciseListProps) {
   async function fetchNextPage() {
     if(nextPage === null) return
 
-    const res = await Api.get(`/exercise?li=10&p=${nextPage}`)
+    const res = await Api.get('/exercise', { params: { li: 10, p: page } })
 
     const exerciseFetched: ExerciseData[] = res.data.exercises
     const nextExercisePage: number | null = res.data.nextPage

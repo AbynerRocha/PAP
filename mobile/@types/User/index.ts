@@ -14,3 +14,15 @@ export type HistoryData = {
     workout: WorkoutData,
     date: Date
 }
+
+export type UserTrainingPlanData = {
+    _id: string,
+    name: string,
+    createdAt: Date, 
+    user: string,
+    plan: {
+        restDay: boolean,
+        weekDay: number,
+        workout: WorkoutData | null
+    }[]
+}

@@ -50,7 +50,7 @@ export default function EditWorkout() {
   const [isPrivate, setIsPrivate] = useState(false)
 
   useEffect(() => {
-    Api.get(`/workout?id=${id}`)
+    Api.get('/workout', { params: { id }})
       .then((res) => {
         const workoutData = res.data.workout as WorkoutData
 

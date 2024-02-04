@@ -23,11 +23,11 @@ export default function SavedWorkouts({ onClose, onSelect }: Props) {
 
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const { data, isLoading, isFetching, error, refetch } = useQuery({
+  const { data, isLoading, isFetching, error, refetch } = useQuery<{ workout: WorkoutData }[]>({
     queryKey: '@fetchSavedWorkouts',
     queryFn: async () => {
-      const res = await Api.get(`/user/saved-workouts?uid=${user?._id}`)
-      return res.data.savedWorkouts as { workout: WorkoutData }[]
+      const res = await Api.get('/user/saved-workouts', { params: { uid: user?._id } })
+      return res.data.savedWorkouts
     }
   })
 

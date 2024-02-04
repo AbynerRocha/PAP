@@ -1,15 +1,14 @@
 import jwt from 'jsonwebtoken'
 import { Types } from 'mongoose'
 import { TokensBlackList } from '../../database/schemas/Token'
+import { env } from '../../env'
 
 // Refresh Token
 
 const refreshTokenDuration = '7d'
-const secretRefreshToken = process.env.SECRET_JWT_REFRESH
+const secretRefreshToken = env.SECRET_JWT_REFRESH
 
 export function generateRefreshToken(userId: Types.ObjectId) {
-    if(!secretRefreshToken) throw new Error('There is not a secret to refresh token')
-
     const payload = {
         userId,
         type: 'refresh'
@@ -20,9 +19,8 @@ export function generateRefreshToken(userId: Types.ObjectId) {
 }
 
 export async function validateRefreshToken(token: string) {
-    if(!secretRefreshToken) throw new Error('There is not a secret to refresh token')
-
     const blToken = await TokensBlackList.findOne({ token })
+
     if (blToken !== null) return null
 
     try {
@@ -36,11 +34,9 @@ export async function validateRefreshToken(token: string) {
 // Auth Token 
 
 const authTokenDuration = '1h'
-const secretAuthToken = process.env.SECRET_JWT_AUTH
+const secretAuthToken = env.SECRET_JWT_AUTH
 
 export function generateAuthToken(userId: Types.ObjectId, accessLevel: number) {
-    if(!secretAuthToken) throw new Error('There is not a secret to auth token')
-
     const payload = {
         userId,
         accessLevel,
@@ -52,9 +48,8 @@ export function generateAuthToken(userId: Types.ObjectId, accessLevel: number) {
 }
 
 export async function validateAuthToken(token: string) {
-    if(!secretAuthToken) throw new Error('There is not a secret to auth token')
-
     const blToken = await TokensBlackList.findOne({ token })
+
     if (blToken !== null) return null
 
     try {
@@ -67,19 +62,16 @@ export async function validateAuthToken(token: string) {
 
 // Tokens Links
 
-const secretLinkToken = process.env.SECRET_JWT_LINK
+const secretLinkToken = env.SECRET_JWT_LINK
 
 export async function generateLinkToken(type: 'reset-pass' | 'verify-email' | 'request-rp', data: any) {
-    if(!secretLinkToken) throw new Error('There is not a secret to link token')
-
     const token = jwt.sign({ type, data }, secretLinkToken, { expiresIn: (type === 'reset-pass' ? '2h' : '12h') })
     return token
 }
 
 export async function validateLinkToken(token: string) {
-    if(!secretLinkToken) throw new Error('There is not a secret to link token')
-
     const blToken = await TokensBlackList.findOne({ token })
+
     if (blToken !== null) return null
 
     try {

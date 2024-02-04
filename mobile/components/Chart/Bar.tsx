@@ -52,7 +52,7 @@ export default function BarChart({
                 style={style}
                 from={{ height: 0, opacity: 0 }}
                 animate={{ height: barHeight, opacity: 1 }}
-                transition={{ type: 'timing', duration: 800 }}
+                transition={{ type: 'timing', duration: 1200 }}
               />
               : <View
                 style={style}

@@ -47,7 +47,13 @@ export default function UserWorkouts() {
   function fetchWorkout() {
     setIsFetching(true)
 
-    Api.get(`/workout?p=${page}&&pvts=true&cb=${user?._id}`)
+    Api.get('/workout', {
+      params: {
+        p: page,
+        pvts: true, 
+        cb: user?._id
+      }
+    })
       .then((res: AxiosResponse<Response>) => {
         setWorkouts(res.data.workouts)
       })

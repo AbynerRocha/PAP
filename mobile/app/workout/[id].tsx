@@ -48,7 +48,7 @@ export default function Workout() {
   }, [fetchedData])
 
   async function fetchWorkoutData() {
-    const res = await Api.get<{ workout: WorkoutData }>(`/workout?id=${id}`)
+    const res = await Api.get<{ workout: WorkoutData }>('/workout', { params: { id }})
     const fetchedData = res.data.workout
 
     WorkoutService.isSaved(user?._id!, fetchedData._id)

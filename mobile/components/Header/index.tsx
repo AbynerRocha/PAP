@@ -23,7 +23,7 @@ export default function Header() {
 
                     }}
                 >
-                    <Avatar fallback={{ userName: user.name }} />
+                    <Avatar uri={user.avatar} fallback={{ userName: user.name }} size='lg' />
                 </Pressable>
                 <View className='mt-4'>
                     <Text className='text-slate-900 text-md text-lg'>{

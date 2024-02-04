@@ -1,5 +1,5 @@
 import { View, Text, Image, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ExerciseInfo } from '../../../../@types/Workout'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useExercisesStore } from '../../../../utils/states/exercises'

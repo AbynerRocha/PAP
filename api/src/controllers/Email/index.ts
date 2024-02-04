@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import { join } from 'path'
 import { Resend } from 'resend'
+import { env } from '../../env'
 
 const from = 'EvoTraining <no-reply@evotraining.pt>'
 
@@ -20,7 +21,7 @@ export default class EmailController {
     private resend: Resend
 
     constructor() {
-        this.resend = new Resend(process.env.RESEND_API_KEY)
+        this.resend = new Resend(env.RESEND_API_KEY)
     }
 
     getTemplate(template: Template, data: { token: string, emailCode?: string }) {

@@ -1,11 +1,7 @@
-import mongoose, { Schema } from "mongoose"
-import dotenv from 'dotenv'
+import mongoose from "mongoose"
+import { env } from "../env"
 
-dotenv.config({
-    path: __dirname+'/../../.env'
-})
-
-const connectUrl = process.env.CONNECT_URL_MONGODB
+const connectUrl = env.CONNECT_URL_MONGODB
 
 function connect() {
     if(!connectUrl) throw new Error('There is not a connect url.')

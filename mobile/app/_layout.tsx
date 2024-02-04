@@ -1,13 +1,14 @@
-import { View, Text, Platform, StatusBar } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Platform, StatusBar } from 'react-native'
+import React from 'react'
 import { QueryClientProvider } from 'react-query'
-import { AuthProvider, useAuth } from '../contexts/Auth/AuthContext'
+import { AuthProvider } from '../contexts/Auth/AuthContext'
 import { clientQuery } from '../utils/queryClient'
-import { Slot, useRouter } from 'expo-router'
+import { Slot } from 'expo-router'
 import { AppProvider } from '../contexts/App/AppContext'
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import { NativeBaseProvider } from "native-base";
-import { useNetInfo } from '@react-native-community/netinfo'
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt'
+
+dayjs.locale('pt')
 
 export default function Layout() {
   return (

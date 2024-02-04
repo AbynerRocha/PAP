@@ -26,7 +26,7 @@ export default function CreateCalendar() {
     { name: 'Quarta', value: 4 },
     { name: 'Quinta', value: 5 },
     { name: 'Sexta', value: 6 },
-    { name: 'Sábado', value: 7 },
+    { name: 'Sabádo', value: 7 },
   ])
 
   const [selected, setSelected] = useState(week[0].value)

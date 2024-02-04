@@ -5,6 +5,7 @@ import EmailController from "../../../controllers/Email"
 import { Request, RequestType } from "../../../database/schemas/Request"
 import RequestController from "../../../controllers/Requests"
 import { Resend } from "resend"
+import { env } from '../../../env'
 
 const method = 'POST'
 const url = '/auth/request-changepassword'
@@ -55,7 +56,7 @@ async function handler(req: FastifyRequest<Request>, rep: FastifyReply) {
     const senderEmail = new EmailController()
     const token = await generateLinkToken('reset-pass', user._id)
     
-    const resend = new Resend(process.env.RESEND_API_KEY)
+    const resend = new Resend(env.RESEND_API_KEY)
     const html = senderEmail.getTemplate('reset-pass', { token })
 
     if(!html) return rep.status(500).send({ error: 'INTERNAL_ERROR', message: 'Não foi possivel realizar está ação neste momemnto.' })

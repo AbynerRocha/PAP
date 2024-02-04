@@ -13,5 +13,8 @@ export const LocalStorageKeys = {
     DEVICE: {
         FIRST_LAUNCH: '@f_launch',
         ID: '@device_id'
+    },
+    CALENDAR: {
+        SELECTED: '@calendar_plan_selected'
     }
 }

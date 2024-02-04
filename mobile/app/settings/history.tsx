@@ -4,7 +4,7 @@ import { History } from '../../services/workouts'
 import { useAuth } from '../../contexts/Auth/AuthContext'
 import { useQuery } from 'react-query'
 import Loading from '../loading'
-import { Feather } from '@expo/vector-icons'
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { HistoryData } from '../../@types/User'
 
@@ -56,12 +56,15 @@ export default function WorkoutHistory() {
         data={data}
         className='mb-9'
         renderItem={({ item: history, index }) => {
-          return <View key={index} className='flex-col w-fulç h-20'>
+          return <View key={index} className='flex-col w-full h-20'>
             <Pressable
               cancelable
-              className='flex-row space-x-1 w-full h-full'
+              className='flex-row space-x-1 w-[85%] h-full items-center ml-2'
               onPress={() => router.push(`/workout/${history.workout._id}`)}
             >
+              <View className='w-12 h-12 rounded-full items-center justify-center bg-blue-800'>
+                <MaterialCommunityIcons name="dumbbell" size={24} color="white" />
+              </View>
               <View className='flex-row items-center justify-between w-[100%] p-2'>
                 <Text className='text-lg'>{history.workout.name}</Text>
                 <Text className='text-right'>{new Date(history.date).toLocaleDateString('pt-PT')}</Text>

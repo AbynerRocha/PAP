@@ -27,7 +27,7 @@ export default function StartWorkout() {
 
 
   async function fetchWorkout() {
-    const res = await Api.get<{ workout: WorkoutData }>(`/workout?id=${id}`)
+    const res = await Api.get<{ workout: WorkoutData }>('/workout', { params: { id }})
     return res.data.workout
   }
 

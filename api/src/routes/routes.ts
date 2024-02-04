@@ -41,6 +41,10 @@ const routes = [
         plugin: (app: FastifyInstance, _opts: FastifyPluginOptions, done: any) => loadRoutes('workouts', app, _opts, done),
         prefix: '/workout'
     },
+    {
+        plugin: (app: FastifyInstance, _opts: FastifyPluginOptions, done: any) => loadRoutes('upload', app, _opts, done),
+        prefix: '/upload'
+    },
 ]
 
 export default routes

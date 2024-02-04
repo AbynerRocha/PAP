@@ -1,14 +1,18 @@
 import fastify from 'fastify'
-import './database'
 import routes from './routes/routes'
-import dotenv from 'dotenv'
 import cors from '@fastify/cors'
-
-dotenv.config()
+import multipart from '@fastify/multipart'
+import './database'
 
 const server = fastify()
 
-server.register(cors)
+server.register(cors, {
+    origin: '*',
+    allowedHeaders: ['*'],
+    methods: ['POST', 'GET', 'DELETE', 'PUT']
+})
+
+server.register(multipart)
 
 server.get('/', async (req, rep) => {
     return rep.status(200).send({ ok: true })

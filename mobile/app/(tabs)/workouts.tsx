@@ -88,7 +88,7 @@ export default function Workouts() {
   }
 
   async function fetchWorkouts() {
-    const res = await Api.get(`/workout?p=${page}&pvts=false`)
+    const res = await Api.get('/workout', { params: { p: page, pvts: false }})
       .then((res: AxiosResponse<{ workouts: WorkoutData[] }>) => res.data.workouts)
       .catch((err: AxiosError<any>) => {
         if(!err.response?.data.error) return
